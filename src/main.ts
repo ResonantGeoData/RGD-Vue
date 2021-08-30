@@ -13,7 +13,7 @@ Vue.use(VueCompositionAPI);
 
 Vue.use(VueCesium, {
   lang,
-  accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlMzBlNzBjYi1jMWFhLTQ1NDYtOWQ2MC1jNzJiODg4MTI1ZmMiLCJpZCI6NjUwNTQsImlhdCI6MTYyOTgyNzMxMn0.gQiyxnR1pHABJwXO0700mmhL_eVNiOTTEcLYWmXRZf8',
+  accessToken: process.env.CESIUM_ACCESS_TOKEN,
 });
 
 const axiosInstance = axios.create({
