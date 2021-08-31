@@ -18,6 +18,7 @@ export default defineComponent({
       roll: 0,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ready = (cesiumInstance: { Cesium: any; viewer: any }) => {
       const { Cesium, viewer } = cesiumInstance;
       viewer.entities.add({
@@ -58,6 +59,6 @@ export default defineComponent({
 <style>
   .viewer {
     width: 100%;
-    height: 400px !important;
+    max-height: 1200px !important;
   }
 </style>

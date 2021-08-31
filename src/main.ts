@@ -13,7 +13,7 @@ Vue.use(VueCompositionAPI);
 
 Vue.use(VueCesium, {
   lang,
-  accessToken: process.env.CESIUM_ACCESS_TOKEN,
+  accessToken: process.env.VUE_APP_CESIUM_ACCESS_TOKEN,
 });
 
 const axiosInstance = axios.create({
