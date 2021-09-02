@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent, inject } from '@vue/composition-api';
 import OAuthClient from '@girder/oauth-client';
-import CesiumViewer from '../components/CesiumViewer.vue';
+import CesiumViewer from '../components/organisms/CesiumViewer.vue';
+import SearchBar from '../components/organisms/SearchBar.vue';
 
 export default defineComponent({
   components: {
     CesiumViewer,
+    SearchBar,
   },
   setup() {
     const oauthClient = inject<OAuthClient>('oauthClient');
@@ -34,7 +36,10 @@ export default defineComponent({
 
 <template>
   <v-main>
-    <v-app-bar app>
+    <v-app-bar
+      app
+      light
+    >
       <v-spacer />
       <v-btn
         text
@@ -43,6 +48,23 @@ export default defineComponent({
         {{ loginText }}
       </v-btn>
     </v-app-bar>
-    <CesiumViewer />
+    <v-container
+      pt-0
+      fluid
+    >
+      <v-row
+        justify="center"
+        no-gutters
+      >
+        <v-col
+          cols="2"
+        >
+          <SearchBar />
+        </v-col>
+        <v-col cols="7">
+          <CesiumViewer />
+        </v-col>
+      </v-row>
+    </v-container>
   </v-main>
 </template>
