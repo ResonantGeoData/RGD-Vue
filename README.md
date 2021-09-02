@@ -1,28 +1,9 @@
-# Vue Project Template
+# RGD-Vue
 
-This is a project boilerplate template designed for building SPAs that will serve as
-front-ends to Girder 4-based servers. The following features are included:
-
-* `vuetify` installation and configuration
-* `axios` installation and configuration
-* `vue-router` installation and skeleton boilerplate
-* Girder 4 OAuth client library installation and configuration
-* A home page containing a working OAuth login / logout button
-* Sentry integration (if no DSN is provided, this will be inactive)
-* Vue composition API shims
-* TypeScript
-* Best-practice eslint configuration
-* GitHub Actions CI that runs tests, lint, and build
-
-## How to use this template
-
-1. Click the button in GitHub that says `Use this template`.
-
-> If you don't want to use GitHub, you can instead clone the repository,
-  `rm -rf .git/` in it, and `git init` the copy.
-
-2. After you have your copy, replace occurrences of `CHANGEME` in the codebase.
-
-```bash
-git grep CHANGEME
-```
+## Building
+* Set the envornment variables in a `.env.development.local` file:
+  * `VUE_APP_OAUTH_CLIENT_ID`: A new OAuth2 public client ID, from an instance of `RD-OpenGeo`.
+  * `VUE_APP_CESIUM_ACCESS_TOKEN`: A 
+    [Cesium ion access token](https://cesium.com/learn/cesiumjs-learn/cesiumjs-quickstart/#step-1-create-an-account-and-get-a-token).
+* `yarn`
+* `yarn serve`
