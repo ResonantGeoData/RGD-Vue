@@ -12,6 +12,10 @@ export default defineComponent({
       type: String,
       required: false,
     },
+    value: {
+      type: Number,
+      required: false,
+    },
   },
   inheritAttrs: false,
 });
@@ -24,10 +28,16 @@ export default defineComponent({
       v-if="items"
       v-bind="$attrs"
     >
-      <v-tabs>
+      <v-tabs
+        :value="value"
+        centered
+        grow
+        @change="$emit('input', $event)"
+      >
         <v-tab
           v-for="item in items"
           :key="item"
+          max-width="150px"
         >
           {{ item }}
         </v-tab>

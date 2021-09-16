@@ -1,12 +1,23 @@
 <script lang="ts">
-import { defineComponent, ref, reactive } from '@vue/composition-api';
+import {
+  defineComponent,
+  reactive,
+  watch,
+  toRef,
+} from '@vue/composition-api';
 
 export default defineComponent({
   name: 'CesiumViewer',
 
-  setup() {
-    const animation = ref(true);
-    const timeline = ref(true);
+  props: {
+    location: {
+      type: Object, /* TODO typescript interfaces for props */
+      required: false,
+      default: () => ({}),
+    },
+  },
+
+  setup(props) {
     const camera = reactive({
       position: {
         lng: -122.4175,
@@ -17,6 +28,15 @@ export default defineComponent({
       pitch: -90,
       roll: 0,
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateCamera = () => {
+      camera.position = ({
+        lng: props.location.longitude,
+        lat: props.location.latitude,
+        height: props.location.height,
+      });
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ready = (cesiumInstance: { Cesium: any; viewer: any }) => {
@@ -31,9 +51,11 @@ export default defineComponent({
       });
     };
 
+    watch(toRef(props, 'location'), updateCamera, {
+      deep: true,
+    });
+
     return {
-      animation,
-      timeline,
       camera,
       ready,
     };
@@ -45,8 +67,6 @@ export default defineComponent({
   <vc-viewer
     class="viewer"
     base-layer-picker
-    :animation="animation"
-    :timeline="timeline"
     :camera.sync="camera"
     @ready="ready"
   >

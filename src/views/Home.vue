@@ -1,5 +1,9 @@
 <script lang="ts">
-import { defineComponent, inject } from '@vue/composition-api';
+import {
+  defineComponent,
+  inject,
+  ref,
+} from '@vue/composition-api';
 import OAuthClient from '@girder/oauth-client';
 import CesiumViewer from '../components/organisms/CesiumViewer.vue';
 import SearchBar from '../components/organisms/SearchBar.vue';
@@ -11,12 +15,22 @@ export default defineComponent({
   },
   setup() {
     const oauthClient = inject<OAuthClient>('oauthClient');
+    const params = ref({
+      latitude: null as number | null,
+      longitude: null as number | null,
+      height: null as number | null,
+    });
+
     if (oauthClient === undefined) {
       throw new Error('Must provide "oauthClient" into component.');
     }
 
-    return { oauthClient };
+    return {
+      oauthClient,
+      params,
+    };
   },
+  // TODO covert to full composition API
   computed: {
     loginText(): string {
       return this.oauthClient.isLoggedIn ? 'Logout' : 'Login';
@@ -57,12 +71,20 @@ export default defineComponent({
         no-gutters
       >
         <v-col
+          xl="3"
           cols="2"
         >
-          <SearchBar />
+          <SearchBar
+            v-model="params"
+          />
         </v-col>
-        <v-col cols="7">
-          <CesiumViewer />
+        <v-col
+          xl="8"
+          cols="7"
+        >
+          <CesiumViewer
+            :location="params"
+          />
         </v-col>
       </v-row>
     </v-container>

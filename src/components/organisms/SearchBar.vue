@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, reactive, ref } from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
 
 export default defineComponent({
@@ -7,13 +7,27 @@ export default defineComponent({
   components: {
     ToolBar,
   },
+  props: {
+    value: {
+      type: Object,
+      required: true,
+    },
+  },
   setup() {
     const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     const text = 'Other Params';
+    const activeTab = ref(0);
+    const inputs = reactive({
+      longitude: null,
+      latitude: null,
+      height: null,
+    });
 
     return {
       tabData,
       text,
+      activeTab,
+      inputs,
     };
   },
 });
@@ -31,33 +45,62 @@ export default defineComponent({
       Sample Project
     </v-card-title>
     <ToolBar
+      v-model="activeTab"
       :items="tabData"
       color="blue-grey darken-2"
       flat
     />
-    <v-row no-gutters>
-      <v-col class="ma-1">
-        <v-text-field
-          label="Longitude(deg)"
-          outlined
-        />
-      </v-col>
-      <v-col class="ma-1">
-        <v-text-field
-          label="Latitdue(deg)"
-          outlined
-        />
-      </v-col>
-      <v-col
-        cols="10"
-        class="pl-1 pr-4"
+    <v-form @submit.prevent="$emit('input', inputs)">
+      <v-row
+        v-if="activeTab === 0"
+        no-gutters
+        justify="center"
       >
-        <v-text-field
-          label="Radius (m)"
-          outlined
-        />
-      </v-col>
-    </v-row>
+        <v-col
+          cols="5"
+          class="mr-3 mt-3"
+        >
+          <v-text-field
+            v-model.number="inputs.longitude"
+            label="Longitude(deg)"
+            outlined
+          />
+        </v-col>
+        <v-col
+          cols="5"
+          class="ml-3 mt-3"
+        >
+          <v-text-field
+            v-model.number="inputs.latitude"
+            label="Latitude(deg)"
+            outlined
+          />
+        </v-col>
+        <v-col
+          cols="9"
+          class="pl-1 pr-4"
+        >
+          <v-text-field
+            v-model.number="inputs.height"
+            label="Height (m)"
+            outlined
+          />
+        </v-col>
+        <v-btn
+          type="submit"
+          color="teal accent-4"
+          min-height="56px"
+          max-width="56px"
+          min-width="unset"
+        >
+          <v-icon
+            large
+          >
+            mdi-crosshairs-gps
+          </v-icon>
+        </v-btn>
+      </v-row>
+    </v-form>
     <ToolBar
       :text="text"
       color="blue-grey darken-2"
