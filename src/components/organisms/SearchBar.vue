@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
+import TabToolBar from '../molecules/TabToolBar.vue';
 
 export default defineComponent({
   name: 'SearchBar',
   components: {
     ToolBar,
+    TabToolBar,
   },
   props: {
     value: {
@@ -44,7 +46,7 @@ export default defineComponent({
     <v-card-title>
       Sample Project
     </v-card-title>
-    <ToolBar
+    <TabToolBar
       v-model="activeTab"
       :items="tabData"
       color="blue-grey darken-2"
