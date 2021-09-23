@@ -1,20 +1,36 @@
 <script lang="ts">
-import { defineComponent, inject } from '@vue/composition-api';
+import {
+  defineComponent,
+  inject,
+  ref,
+} from '@vue/composition-api';
 import OAuthClient from '@girder/oauth-client';
-import CesiumViewer from '../components/CesiumViewer.vue';
+import CesiumViewer from '../components/organisms/CesiumViewer.vue';
+import SearchBar from '../components/organisms/SearchBar.vue';
 
 export default defineComponent({
   components: {
     CesiumViewer,
+    SearchBar,
   },
   setup() {
     const oauthClient = inject<OAuthClient>('oauthClient');
+    const params = ref({
+      latitude: null as number | null,
+      longitude: null as number | null,
+      height: null as number | null,
+    });
+
     if (oauthClient === undefined) {
       throw new Error('Must provide "oauthClient" into component.');
     }
 
-    return { oauthClient };
+    return {
+      oauthClient,
+      params,
+    };
   },
+  // TODO covert to full composition API
   computed: {
     loginText(): string {
       return this.oauthClient.isLoggedIn ? 'Logout' : 'Login';
@@ -34,7 +50,10 @@ export default defineComponent({
 
 <template>
   <v-main>
-    <v-app-bar app>
+    <v-app-bar
+      app
+      light
+    >
       <v-spacer />
       <v-btn
         text
@@ -43,6 +62,31 @@ export default defineComponent({
         {{ loginText }}
       </v-btn>
     </v-app-bar>
-    <CesiumViewer />
+    <v-container
+      pt-0
+      fluid
+    >
+      <v-row
+        justify="center"
+        no-gutters
+      >
+        <v-col
+          xl="3"
+          cols="2"
+        >
+          <SearchBar
+            v-model="params"
+          />
+        </v-col>
+        <v-col
+          xl="8"
+          cols="7"
+        >
+          <CesiumViewer
+            :location="params"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
   </v-main>
 </template>
