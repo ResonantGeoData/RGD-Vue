@@ -3,18 +3,11 @@ import OauthClient from '@girder/oauth-client';
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import VueCompositionAPI from '@vue/composition-api';
-import VueCesium from 'vue-cesium';
-import lang from 'vue-cesium/lang/en-us';
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
 
 Vue.use(VueCompositionAPI);
-
-Vue.use(VueCesium, {
-  lang,
-  accessToken: process.env.VUE_APP_CESIUM_ACCESS_TOKEN,
-});
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_ROOT,
