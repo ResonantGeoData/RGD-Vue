@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@girder/oauth-client": "^0.7.6",
+    "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@sentry/vue": "^6.2.0",
     "@vue/composition-api": "^1.0.0-rc.2",
     "axios": "^0.21.1",
+    "cesium": "^1.85.0",
+    "copy-webpack-plugin": "6",
+    "strip-pragma-loader": "^1.0.0",
     "vue": "^2.6.11",
-    "vue-cesium": "^2.2.6",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0"
   },
