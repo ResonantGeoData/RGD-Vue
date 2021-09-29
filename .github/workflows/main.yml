@@ -2,10 +2,10 @@ name: CI
 on:
   pull_request:
     branches:
-      - master
+      - [ $default-branch ]
   push:
     branches:
-      - master
+      - [ $default-branch ]
 jobs:
   build-and-test:
     name: Build and test
