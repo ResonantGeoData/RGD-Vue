@@ -20,8 +20,8 @@ module.exports = {
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
-          { from: `${cesiumSource}Workers`, to: 'Workers' },
-          { from: `${cesiumSource}ThirdParty`, to: 'ThirdParty' },
+          { from: `${cesiumBuild}Workers`, to: 'Workers' },
+          { from: `${cesiumBuild}ThirdParty`, to: 'ThirdParty' },
           { from: `${cesiumBuild}Assets`, to: 'Assets' },
           { from: `${cesiumBuild}Widgets`, to: 'Widgets' },
         ],
