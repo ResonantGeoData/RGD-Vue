@@ -7,12 +7,9 @@ import {
   watch,
 }
   from '@vue/composition-api';
-
 import Cesium from '@/plugins/cesium';
-
 export default defineComponent({
   name: 'CesiumViewer',
-
   props: {
     location: {
       type: Object, /* TODO typescript interfaces for props */
@@ -20,10 +17,8 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-
   setup(props) {
     const cesiumViewer = ref();
-
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
         animation: false,
@@ -33,7 +28,6 @@ export default defineComponent({
         destination: Cesium.Cartesian3.fromDegrees(-122.4175, 37.655, 400),
       });
     });
-
     const updateCamera = () => {
       cesiumViewer.value.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(
@@ -43,14 +37,11 @@ export default defineComponent({
         ),
       });
     };
-
     watch(toRef(props, 'location'), updateCamera, {
       deep: true,
     });
   },
-
 });
-
 </script>
 <template>
   <div id="cesiumContainer" />
