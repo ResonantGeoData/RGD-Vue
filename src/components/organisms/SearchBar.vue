@@ -2,12 +2,18 @@
 import { defineComponent, reactive, ref } from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
+import GeoJsonForm from '../molecules/GeoJsonForm.vue';
+import BoundingBoxForm from '../molecules/BoundingBoxForm.vue';
+import LatLongForm from '../molecules/LatLongForm.vue';
 
 export default defineComponent({
   name: 'SearchBar',
   components: {
     ToolBar,
     TabToolBar,
+    GeoJsonForm,
+    BoundingBoxForm,
+    LatLongForm,
   },
   props: {
     value: {
@@ -19,17 +25,32 @@ export default defineComponent({
     const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     const text = 'Other Params';
     const activeTab = ref(0);
-    const inputs = reactive({
-      longitude: null,
-      latitude: null,
-      height: null,
+
+    const boundingBox = reactive({
+      minLng: null,
+      maxLng: null,
+      minLat: null,
+      maxLat: null,
     });
+    const geoJson = ref();
+    const predicate = [
+      'within',
+      'contains',
+      'crosses',
+      'disjoint',
+      'equals',
+      'intersects',
+      'overlaps',
+      'touches',
+    ];
 
     return {
       tabData,
       text,
       activeTab,
-      inputs,
+      boundingBox,
+      geoJson,
+      predicate,
     };
   },
 });
@@ -53,60 +74,34 @@ export default defineComponent({
       flat
     />
     <v-form @submit.prevent="$emit('input', inputs)">
-      <v-row
+      <LatLongForm
         v-if="activeTab === 0"
-        no-gutters
-        justify="center"
-      >
-        <v-col
-          cols="5"
-          class="mr-3 mt-3"
-        >
-          <v-text-field
-            v-model.number="inputs.longitude"
-            label="Longitude(deg)"
-            outlined
-          />
-        </v-col>
-        <v-col
-          cols="5"
-          class="ml-3 mt-3"
-        >
-          <v-text-field
-            v-model.number="inputs.latitude"
-            label="Latitude(deg)"
-            outlined
-          />
-        </v-col>
-        <v-col
-          cols="9"
-          class="pl-1 pr-4"
-        >
-          <v-text-field
-            v-model.number="inputs.height"
-            label="Height (m)"
-            outlined
-          />
-        </v-col>
-        <v-btn
-          type="submit"
-          color="teal accent-4"
-          min-height="56px"
-          max-width="56px"
-          min-width="unset"
-        >
-          <v-icon
-            large
-          >
-            mdi-crosshairs-gps
-          </v-icon>
-        </v-btn>
-      </v-row>
+      />
+      <BoundingBoxForm
+        v-if="activeTab === 1"
+      />
+      <GeoJsonForm
+        v-if="activeTab === 2"
+      />
     </v-form>
     <ToolBar
       :text="text"
       color="blue-grey darken-2"
       flat
     />
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="11"
+        class="mt-3"
+      >
+        <v-select
+          :items="predicate"
+          label="Predicate"
+          outlined
+        />
+      </v-col>
+    </v-row>
   </v-card>
 </template>
