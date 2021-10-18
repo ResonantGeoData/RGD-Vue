@@ -26,12 +26,6 @@ export default defineComponent({
     const text = 'Other Params';
     const activeTab = ref(0);
 
-    const boundingBox = reactive({
-      minLng: null,
-      maxLng: null,
-      minLat: null,
-      maxLat: null,
-    });
     const geoJson = ref();
     const predicate = [
       'within',
@@ -48,7 +42,6 @@ export default defineComponent({
       tabData,
       text,
       activeTab,
-      boundingBox,
       geoJson,
       predicate,
     };
