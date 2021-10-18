@@ -25,8 +25,9 @@ export default defineComponent({
         animation: false,
         timeline: false,
       });
+      cesiumViewer.value.forceResize();
       cesiumViewer.value.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(-122.4175, 37.655, 400),
+        destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
     });
     const updateCamera = () => {
@@ -49,8 +50,10 @@ export default defineComponent({
 </template>;
 
 <style>
-  .viewer {
-    width: 100%;
-    max-height: 1200px !important;
+  #cesiumContainer{
+    width: 100% !important;
+    min-height: 800px !important;
+    height: 850px;
+    max-height: 900px !important;
   }
 </style>

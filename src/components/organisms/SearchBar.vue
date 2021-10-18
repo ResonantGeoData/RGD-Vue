@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, reactive, ref } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -22,11 +22,10 @@ export default defineComponent({
     },
   },
   setup() {
-    const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
-    const text = 'Other Params';
-    const activeTab = ref(0);
+    // Will be needed in second iteration
+    // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
+    // const activeTab = ref(0);
 
-    const geoJson = ref();
     const predicate = [
       'within',
       'contains',
@@ -39,10 +38,6 @@ export default defineComponent({
     ];
 
     return {
-      tabData,
-      text,
-      activeTab,
-      geoJson,
       predicate,
     };
   },
@@ -60,25 +55,30 @@ export default defineComponent({
     <v-card-title>
       Sample Project
     </v-card-title>
-    <TabToolBar
+    <!-- Will be needed in second iteration -->
+    <!-- <TabToolBar
       v-model="activeTab"
       :items="tabData"
       color="blue-grey darken-2"
       flat
-    />
+    /> -->
     <v-form @submit.prevent="$emit('input', inputs)">
-      <LatLongForm
+      <!-- Will be needed in second iteration -->
+      <!-- <LatLongForm
         v-if="activeTab === 0"
       />
       <BoundingBoxForm
         v-if="activeTab === 1"
+      /> -->
+      <ToolBar
+        text="Geo Json"
+        color="blue-grey darken-2"
+        flat
       />
-      <GeoJsonForm
-        v-if="activeTab === 2"
-      />
+      <GeoJsonForm />
     </v-form>
     <ToolBar
-      :text="text"
+      text="Other Params"
       color="blue-grey darken-2"
       flat
     />
