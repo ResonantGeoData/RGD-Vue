@@ -46,7 +46,7 @@ export default defineComponent({
 <template>
   <v-card
     color="blue-grey darken-4"
-    height="1200px"
+    height="850px"
   >
     <ToolBar
       color="blue-grey darken-2"
