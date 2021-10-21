@@ -5,6 +5,7 @@ import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
 import BoundingBoxForm from '../molecules/BoundingBoxForm.vue';
 import LatLongForm from '../molecules/LatLongForm.vue';
+import OtherParams from '../molecules/OtherParams.vue';
 
 export default defineComponent({
   name: 'SearchBar',
@@ -14,6 +15,7 @@ export default defineComponent({
     GeoJsonForm,
     BoundingBoxForm,
     LatLongForm,
+    OtherParams,
   },
   props: {
     value: {
@@ -25,21 +27,6 @@ export default defineComponent({
     // Will be needed in second iteration
     // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     // const activeTab = ref(0);
-
-    const predicate = [
-      'within',
-      'contains',
-      'crosses',
-      'disjoint',
-      'equals',
-      'intersects',
-      'overlaps',
-      'touches',
-    ];
-
-    return {
-      predicate,
-    };
   },
 });
 </script>
@@ -82,19 +69,6 @@ export default defineComponent({
       color="blue-grey darken-2"
       flat
     />
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="11"
-        class="mt-3"
-      >
-        <v-select
-          :items="predicate"
-          label="Predicate"
-          outlined
-        />
-      </v-col>
-    </v-row>
+    <OtherParams />
   </v-card>
 </template>
