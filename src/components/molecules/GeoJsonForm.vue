@@ -1,8 +1,15 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
+import eventBus from '../../eventBus';
 
 export default defineComponent({
   name: 'GeoJsonForm',
+
+  setup() {
+    return {
+      eventBus,
+    };
+  },
 });
 
 </script>
@@ -20,6 +27,7 @@ export default defineComponent({
         block
         x-large
         class="mt-3"
+        @click="eventBus.$emit('geo-map', $event)"
       >
         Use Map
       </v-btn>
