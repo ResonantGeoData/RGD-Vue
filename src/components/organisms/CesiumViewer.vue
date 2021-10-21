@@ -8,17 +8,13 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import eventBus from '../../eventBus';
-
-interface GeoShape {
-  type: string;
-  coordinates: any[];
-}
+import { GeoJsonShape } from '../../store/types';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [];
-    const geoShape = reactive({} as GeoShape);
+    const geoShape = reactive({} as GeoJsonShape);
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
