@@ -1,13 +1,19 @@
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, reactive, ref } from '@vue/composition-api';
 import eventBus from '../../eventBus';
 
 export default defineComponent({
   name: 'GeoJsonForm',
 
   setup() {
+    // eslint-disable-next-line no-var
+    var geoJsonShape = ref();
+    eventBus.$on('geo-shape', (geoShape: any) => {
+      geoJsonShape.value = JSON.stringify(geoShape);
+    });
     return {
       eventBus,
+      geoJsonShape,
     };
   },
 });
@@ -37,6 +43,7 @@ export default defineComponent({
       class="mt-3"
     >
       <v-text-field
+        :value.sync="geoJsonShape"
         label="GeoJson"
         outlined
       />

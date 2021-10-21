@@ -2,15 +2,23 @@
 import {
   defineComponent,
   onMounted,
+  reactive,
   ref,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import eventBus from '../../eventBus';
 
+interface GeoShape {
+  type: string;
+  coordinates: any[];
+}
+
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
+    const polyPoints: any[] = [];
+    const geoShape = reactive({} as GeoShape);
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
@@ -70,7 +78,6 @@ export default defineComponent({
             createPoint(earthPosition);
           }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
         handler.setInputAction((event: { endPosition: any }) => {
           if (Cesium.defined(floatingPoint)) {
             const newPosition = cesiumViewer.value.scene.pickPosition(event.endPosition);
@@ -91,6 +98,21 @@ export default defineComponent({
           activeShapePoints = [];
         }
         handler.setInputAction((event: any) => {
+          activeShapePoints.forEach((element) => {
+            polyPoints.push([
+              Cesium.Math.toDegrees(
+                (Cesium.Cartographic.fromCartesian(element)
+                ).longitude,
+              ),
+              Cesium.Math.toDegrees(
+                (Cesium.Cartographic.fromCartesian(element)
+                ).latitude,
+              ),
+            ]);
+          });
+          geoShape.type = 'Polygon';
+          geoShape.coordinates = polyPoints;
+          eventBus.$emit('geo-shape', geoShape);
           terminateShape();
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
       });
