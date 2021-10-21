@@ -21,6 +21,7 @@ export default defineComponent({
         selectionIndicator: false,
         terrainProvider: Cesium.createWorldTerrain(),
       });
+      cesiumViewer.value.forceResize();
       cesiumViewer.value.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
