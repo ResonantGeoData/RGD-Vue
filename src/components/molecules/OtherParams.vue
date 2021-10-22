@@ -34,6 +34,37 @@ export default defineComponent({
         :items="predicate"
         label="Predicate"
         outlined
+        dense
+      />
+    <!-- </v-col>
+    <v-col
+      cols="11"
+      class="mt-3"
+    > -->
+      <v-text-field
+        label="Distance(min)"
+        outlined
+        dense
+      />
+    <!-- </v-col>
+    <v-col
+      cols="11"
+      class="mt-3"
+    > -->
+      <v-text-field
+        label="Distance(max)"
+        outlined
+        dense
+      />
+    <!-- </v-col>
+    <v-col
+      cols="11"
+      class="mt-3"
+    > -->
+      <v-text-field
+        label="Instrumentation"
+        outlined
+        dense
       />
     </v-col>
   </v-row>

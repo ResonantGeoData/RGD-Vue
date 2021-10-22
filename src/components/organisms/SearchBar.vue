@@ -63,12 +63,29 @@ export default defineComponent({
         flat
       />
       <GeoJsonForm />
+      <ToolBar
+        text="Other Params"
+        color="blue-grey darken-2"
+        flat
+      />
+      <OtherParams />
+      <v-row
+        no-gutters
+        justify="center"
+      >
+        <v-col
+          cols="11"
+        >
+          <v-btn
+            color="teal accent-4"
+            block
+            x-large
+            class="mt-3"
+          >
+            Search
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
-    <ToolBar
-      text="Other Params"
-      color="blue-grey darken-2"
-      flat
-    />
-    <OtherParams />
   </v-card>
 </template>
