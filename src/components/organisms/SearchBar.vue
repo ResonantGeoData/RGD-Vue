@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -33,12 +33,8 @@ export default defineComponent({
 <template>
   <v-card
     color="blue-grey darken-4"
-    height="1200px"
+    height="900px"
   >
-    <ToolBar
-      color="blue-grey darken-2"
-      flat
-    />
     <v-card-title>
       Sample Project
     </v-card-title>
