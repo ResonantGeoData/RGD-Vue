@@ -13,7 +13,6 @@ export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [];
-    // const geoShape = reactive({} as GeoJsonShape);
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {

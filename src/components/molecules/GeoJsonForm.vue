@@ -1,8 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from '@vue/composition-api';
 import { useMap, geoShape } from '@/store';
-// import eventBus from '../../eventBus';
-// import { GeoJsonShape } from '../../store/types';
 
 export default defineComponent({
   name: 'GeoJsonForm',
