@@ -1,7 +1,8 @@
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
-import eventBus from '../../eventBus';
-import { GeoJsonShape } from '../../store/types';
+import { defineComponent, ref, watch } from '@vue/composition-api';
+import { useMap, geoShape } from '@/store';
+// import eventBus from '../../eventBus';
+// import { GeoJsonShape } from '../../store/types';
 
 export default defineComponent({
   name: 'GeoJsonForm',
@@ -9,11 +10,20 @@ export default defineComponent({
   setup() {
     // eslint-disable-next-line no-var
     var geoJsonShape = ref();
-    eventBus.$on('geo-shape', (geoShape: GeoJsonShape) => {
-      geoJsonShape.value = JSON.stringify(geoShape);
-    });
+    watch(geoShape, () => {
+      if (geoShape.value.type) {
+        geoJsonShape.value = JSON.stringify(geoShape.value);
+      }
+    }, { deep: true });
+    const clearShape = () => {
+      geoShape.value = {
+        type: '',
+        coordinates: [],
+      };
+    };
     return {
-      eventBus,
+      useMap,
+      clearShape,
       geoJsonShape,
     };
   },
@@ -34,7 +44,7 @@ export default defineComponent({
         block
         x-large
         class="mt-3"
-        @click="eventBus.$emit('geo-map', $event)"
+        @click="useMap = true"
       >
         Use Map
       </v-btn>
@@ -47,6 +57,8 @@ export default defineComponent({
         :value.sync="geoJsonShape"
         label="GeoJson"
         outlined
+        clearable
+        @click:clear="clearShape"
       />
     </v-col>
   </v-row>

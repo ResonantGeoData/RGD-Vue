@@ -2,19 +2,18 @@
 import {
   defineComponent,
   onMounted,
-  reactive,
   ref,
+  watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import eventBus from '../../eventBus';
-import { GeoJsonShape } from '../../store/types';
+import { useMap, geoShape } from '@/store';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [];
-    const geoShape = reactive({} as GeoJsonShape);
+    // const geoShape = reactive({} as GeoJsonShape);
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
@@ -29,7 +28,10 @@ export default defineComponent({
       cesiumViewer.value.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
-      eventBus.$on('geo-map', () => {
+    });
+    watch(useMap, (val) => {
+      if (!val) { return; }
+      {
         cesiumViewer.value.cesiumWidget.screenSpaceEventHandler.removeInputAction(
           Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
         );
@@ -44,7 +46,7 @@ export default defineComponent({
           });
           return point;
         };
-        function drawShape(positionData: any[]) {
+        const drawShape = (positionData: any[]) => {
           const shape = cesiumViewer.value.entities.add({
             polygon: {
               hierarchy: positionData,
@@ -54,7 +56,7 @@ export default defineComponent({
             },
           });
           return shape;
-        }
+        };
 
         let activeShapePoints: any[] = [];
         let activeShape: any;
@@ -84,7 +86,7 @@ export default defineComponent({
             }
           }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        function terminateShape() {
+        const terminateShape = () => {
           activeShapePoints.pop();
           drawShape(activeShapePoints);
           cesiumViewer.value.entities.remove(floatingPoint);
@@ -92,7 +94,7 @@ export default defineComponent({
           floatingPoint = null;
           activeShape = null;
           activeShapePoints = [];
-        }
+        };
         handler.setInputAction((event: any) => {
           activeShapePoints.forEach((element) => {
             polyPoints.push([
@@ -106,12 +108,11 @@ export default defineComponent({
               ),
             ]);
           });
-          geoShape.type = 'Polygon';
-          geoShape.coordinates = polyPoints;
-          eventBus.$emit('geo-shape', geoShape);
+          geoShape.value.type = 'Polygon';
+          geoShape.value.coordinates = polyPoints;
           terminateShape();
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-      });
+      }
     });
   },
 });
