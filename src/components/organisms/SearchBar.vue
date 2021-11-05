@@ -1,5 +1,7 @@
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import {
+  defineComponent, ref,
+} from '@vue/composition-api';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -24,6 +26,23 @@ export default defineComponent({
     },
   },
   setup() {
+    const params = ref({
+      predicate: null as string | null,
+      distanceMin: null as number | null,
+      distanceMax: null as number | null,
+      instrumentation: null as string | null,
+      dateAndTime: {
+        startDate: null as string | null,
+        endDate: null as string | null,
+        startTime: null as string | null,
+        endTime: null as string | null,
+      },
+    });
+
+    return {
+      params,
+    };
+
     // Will be needed in second iteration
     // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     // const activeTab = ref(0);
@@ -64,7 +83,9 @@ export default defineComponent({
         color="blue-grey darken-2"
         flat
       />
-      <OtherParams />
+      <OtherParams
+        v-model="params"
+      />
       <v-row
         no-gutters
         justify="center"

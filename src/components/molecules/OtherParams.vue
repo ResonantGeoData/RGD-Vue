@@ -1,6 +1,6 @@
 <script lang="ts">
 import {
-  defineComponent, reactive, ref,
+  defineComponent, ref,
 } from '@vue/composition-api';
 
 export default defineComponent({
@@ -16,30 +16,28 @@ export default defineComponent({
       'overlaps',
       'touches',
     ];
-
-    const dateAndTime = reactive({
-      startDate: '',
-      startDateModal: false,
-      endDate: '',
-      endDateModal: false,
-      startTime: '',
-      startTimeModal: false,
-      endTime: '',
-      endTimeModal: false,
+    const parameters = ref({
+      predicate: '',
+      dateAndTime: {
+        startDate: '',
+        startDateModal: false,
+        endDate: '',
+        endDateModal: false,
+        startTime: '',
+        startTimeModal: false,
+        endTime: '',
+        endTimeModal: false,
+      },
+      distance: {
+        min: '',
+        max: '',
+      },
+      instrumentation: '',
     });
-
-    const distance = reactive({
-      min: '',
-      max: '',
-    });
-
-    const instrumentation = ref('');
 
     return {
       predicate,
-      dateAndTime,
-      distance,
-      instrumentation,
+      parameters,
     };
   },
 });
@@ -54,36 +52,41 @@ export default defineComponent({
       class="mt-3"
     >
       <v-select
+        v-model="parameters.predicate"
         :items="predicate"
         label="Predicate"
         outlined
         dense
+        value=""
+        @input="$emit('input', parameters)"
       />
       <v-text-field
-        v-model="distance.min"
+        v-model="parameters.distance.min"
         label="Distance(min)"
         outlined
         dense
+        @input="$emit('input', parameters)"
       />
       <v-text-field
-        v-model="distance.max"
+        v-model="parameters.distance.max"
         label="Distance(max)"
         outlined
         dense
+        @input="$emit('input', parameters)"
       />
       <v-text-field
-        v-model="instrumentation"
+        v-model="parameters.instrumentation"
         label="Instrumentation"
         outlined
         dense
+        @input="$emit('input', parameters)"
       />
       <div>
         Acquired
       </div>
       <v-row>
         <v-dialog
-          ref="dateAndTime.startDate"
-          v-model="dateAndTime.startDateModal"
+          v-model="parameters.dateAndTime.startDateModal"
           width="290px"
         >
           <template v-slot:activator="{ on, attrs }">
@@ -91,7 +94,7 @@ export default defineComponent({
               cols="6"
             >
               <v-text-field
-                :value.sync="dateAndTime.startDate"
+                :value.sync="parameters.dateAndTime.startDate"
                 prepend-icon="mdi-calendar"
                 clearable
                 readonly
@@ -102,27 +105,27 @@ export default defineComponent({
             </v-col>
           </template>
           <v-date-picker
-            v-model="dateAndTime.startDate"
+            v-model="parameters.dateAndTime.startDate"
             scrollable
           >
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.startDateModal = false"
+              @click="parameters.dateAndTime.startDateModal = false"
             >
               Cancel
             </v-btn>
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.startDateModal = false"
+              @click="parameters.dateAndTime.startDateModal = false, $emit('input', parameters)"
             >
               OK
             </v-btn>
           </v-date-picker>
         </v-dialog>
         <v-dialog
-          v-model="dateAndTime.endDateModal"
+          v-model="parameters.dateAndTime.endDateModal"
           width="290px"
         >
           <template v-slot:activator="{ on, attrs }">
@@ -130,7 +133,7 @@ export default defineComponent({
               cols="6"
             >
               <v-text-field
-                :value.sync="dateAndTime.endDate"
+                :value.sync="parameters.dateAndTime.endDate"
                 prepend-icon="mdi-calendar"
                 clearable
                 readonly
@@ -141,21 +144,21 @@ export default defineComponent({
             </v-col>
           </template>
           <v-date-picker
-            v-model="dateAndTime.endDate"
+            v-model="parameters.dateAndTime.endDate"
             scrollable
           >
             <v-spacer />
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.endDateModal = false"
+              @click="parameters.dateAndTime.endDateModal = false"
             >
               Cancel
             </v-btn>
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.endDateModal = false"
+              @click="parameters.dateAndTime.endDateModal = false, $emit('input', parameters)"
             >
               OK
             </v-btn>
@@ -167,7 +170,7 @@ export default defineComponent({
       </div>
       <v-row>
         <v-dialog
-          v-model="dateAndTime.startTimeModal"
+          v-model="parameters.dateAndTime.startTimeModal"
           width="290px"
         >
           <template v-slot:activator="{ on, attrs }">
@@ -175,7 +178,7 @@ export default defineComponent({
               cols="6"
             >
               <v-text-field
-                :value.sync="dateAndTime.startTime"
+                :value.sync="parameters.dateAndTime.startTime"
                 prepend-icon="mdi-clock-time-four-outline"
                 clearable
                 readonly
@@ -186,8 +189,8 @@ export default defineComponent({
             </v-col>
           </template>
           <v-time-picker
-            v-if="dateAndTime.startTimeModal"
-            v-model="dateAndTime.startTime"
+            v-if="parameters.dateAndTime.startTimeModal"
+            v-model="parameters.dateAndTime.startTime"
             ampm-in-title
             format="ampm"
             use-seconds
@@ -197,21 +200,21 @@ export default defineComponent({
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.startTimeModal = false"
+              @click="parameters.dateAndTime.startTimeModal = false"
             >
               Cancel
             </v-btn>
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.startTimeModal = false"
+              @click="parameters.dateAndTime.startTimeModal = false, $emit('input', parameters)"
             >
               OK
             </v-btn>
           </v-time-picker>
         </v-dialog>
         <v-dialog
-          v-model="dateAndTime.endTimeModal"
+          v-model="parameters.dateAndTime.endTimeModal"
           width="290px"
         >
           <template v-slot:activator="{ on, attrs }">
@@ -219,7 +222,7 @@ export default defineComponent({
               cols="6"
             >
               <v-text-field
-                :value.sync="dateAndTime.endTime"
+                :value.sync="parameters.dateAndTime.endTime"
                 prepend-icon="mdi-clock-time-four-outline"
                 clearable
                 readonly
@@ -230,8 +233,8 @@ export default defineComponent({
             </v-col>
           </template>
           <v-time-picker
-            v-if="dateAndTime.endTimeModal"
-            v-model="dateAndTime.endTime"
+            v-if="parameters.dateAndTime.endTimeModal"
+            v-model="parameters.dateAndTime.endTime"
             ampm-in-title
             format="ampm"
             use-seconds
@@ -241,14 +244,14 @@ export default defineComponent({
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.endTimeModal = false"
+              @click="parameters.dateAndTime.endTimeModal = false"
             >
               Cancel
             </v-btn>
             <v-btn
               text
               color="primary"
-              @click="dateAndTime.endTimeModal = false"
+              @click="parameters.dateAndTime.endTimeModal = false, $emit('input', parameters)"
             >
               OK
             </v-btn>
