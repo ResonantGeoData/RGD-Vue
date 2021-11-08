@@ -7,26 +7,28 @@ import Cesium from './plugins/cesium';
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
+import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 
 Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
 
-const axiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_API_ROOT,
-});
+// const axiosInstance = axios.create({
+//   baseURL: process.env.VUE_APP_API_ROOT,
+// });
 
-const oauthClient = new OauthClient(
-  process.env.VUE_APP_OAUTH_API_ROOT,
-  process.env.VUE_APP_OAUTH_CLIENT_ID,
-);
+// const oauthClient = new OauthClient(
+//   process.env.VUE_APP_OAUTH_API_ROOT,
+//   process.env.VUE_APP_OAUTH_CLIENT_ID,
+// );
 
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
 });
+async function login() {
+  return restoreLogin();
+}
 
-oauthClient.maybeRestoreLogin().then(async () => {
-  Object.assign(axiosInstance.defaults.headers.common, oauthClient.authHeaders);
-
+login().then(() => {
   new Vue({
     provide: {
       axios: axiosInstance,
