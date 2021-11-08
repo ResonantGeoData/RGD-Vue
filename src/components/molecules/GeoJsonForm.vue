@@ -6,8 +6,7 @@ export default defineComponent({
   name: 'GeoJsonForm',
 
   setup() {
-    // eslint-disable-next-line no-var
-    var geoJsonShape = ref();
+    const geoJsonShape = ref();
     watch(geoShape, () => {
       if (geoShape.value.type) {
         geoJsonShape.value = JSON.stringify(geoShape.value);
