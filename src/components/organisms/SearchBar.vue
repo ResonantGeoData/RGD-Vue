@@ -49,6 +49,7 @@ export default defineComponent({
     // Will be needed in second iteration
     // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     // const activeTab = ref(0);
+    test();
   },
 });
 </script>
