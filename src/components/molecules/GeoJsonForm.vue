@@ -1,8 +1,29 @@
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, ref, watch } from '@vue/composition-api';
+import { useMap, geoShape } from '@/store';
 
 export default defineComponent({
   name: 'GeoJsonForm',
+
+  setup() {
+    const geoJsonShape = ref();
+    watch(geoShape, () => {
+      if (geoShape.value.type) {
+        geoJsonShape.value = JSON.stringify(geoShape.value);
+      }
+    }, { deep: true });
+    const clearShape = () => {
+      geoShape.value = {
+        type: '',
+        coordinates: [],
+      };
+    };
+    return {
+      useMap,
+      clearShape,
+      geoJsonShape,
+    };
+  },
 });
 
 </script>
@@ -20,6 +41,7 @@ export default defineComponent({
         block
         x-large
         class="mt-3"
+        @click="useMap = true"
       >
         Use Map
       </v-btn>
@@ -29,8 +51,11 @@ export default defineComponent({
       class="mt-3"
     >
       <v-text-field
+        :value.sync="geoJsonShape"
         label="GeoJson"
         outlined
+        clearable
+        @click:clear="clearShape"
       />
     </v-col>
   </v-row>
