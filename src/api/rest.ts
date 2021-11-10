@@ -15,12 +15,6 @@ export async function restoreLogin() {
     return;
   }
   await oauthClient.maybeRestoreLogin();
-  // .then(async () => {
-  //   Object.assign(axiosInstance.defaults.headers.common, oauthClient.authHeaders);
-  // });
-  // if (!oauthClient.isLoggedIn) {
-
-  // }
 }
 
 axiosInstance.interceptors.request.use((config) => ({
@@ -30,13 +24,7 @@ axiosInstance.interceptors.request.use((config) => ({
     ...config.headers,
   },
 }));
-// .then
-//   async () => {
-//     Object.assign(axiosInstance.defaults.headers.common, oauthClient.authHeaders);
-//   },
-// );
-
-export async function test() {
-  const data = await axiosInstance.get('rgd/search');
-  console.log(data);
+export async function rgdSearch() {
+  const response = await axiosInstance.get('rgd/search');
+  return response;
 }
