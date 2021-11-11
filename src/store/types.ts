@@ -6,8 +6,8 @@ export type GeoJsonShape = {
 export interface Parameters {
   predicate: string | null;
   distance: {
-    min: number | null;
-    max: number | null;
+    min: string | null;
+    max: string | null;
   };
   instrumentation: string | null;
   dateAndTime: {
