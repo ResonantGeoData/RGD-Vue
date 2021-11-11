@@ -1,6 +1,7 @@
 <script lang="ts">
+import { Parameters } from '@/store/types';
 import {
-  defineComponent, ref,
+  defineComponent, Ref, ref,
 } from '@vue/composition-api';
 
 export default defineComponent({
@@ -16,7 +17,7 @@ export default defineComponent({
       'overlaps',
       'touches',
     ];
-    const parameters = ref({
+    const parameters: Ref<Parameters> = ref({
       predicate: '',
       dateAndTime: {
         startDate: '',
@@ -29,8 +30,8 @@ export default defineComponent({
         endTimeModal: false,
       },
       distance: {
-        min: '',
-        max: '',
+        min: null,
+        max: null,
       },
       instrumentation: '',
     });

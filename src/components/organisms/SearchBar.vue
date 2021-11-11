@@ -1,7 +1,8 @@
 <script lang="ts">
 import {
-  defineComponent, ref,
+  defineComponent, Ref, ref,
 } from '@vue/composition-api';
+import { Parameters } from '@/store/types';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -26,16 +27,18 @@ export default defineComponent({
     },
   },
   setup() {
-    const params = ref({
-      predicate: null as string | null,
-      distanceMin: null as number | null,
-      distanceMax: null as number | null,
-      instrumentation: null as string | null,
+    const params: Ref<Parameters> = ref({
+      predicate: null,
+      distance: {
+        min: null,
+        max: null,
+      },
+      instrumentation: null,
       dateAndTime: {
-        startDate: null as string | null,
-        endDate: null as string | null,
-        startTime: null as string | null,
-        endTime: null as string | null,
+        startDate: null,
+        endDate: null,
+        startTime: null,
+        endTime: null,
       },
     });
 
