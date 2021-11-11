@@ -11,15 +11,6 @@ import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 
 Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
 
-// const axiosInstance = axios.create({
-//   baseURL: process.env.VUE_APP_API_ROOT,
-// });
-
-// const oauthClient = new OauthClient(
-//   process.env.VUE_APP_OAUTH_API_ROOT,
-//   process.env.VUE_APP_OAUTH_CLIENT_ID,
-// );
-
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
