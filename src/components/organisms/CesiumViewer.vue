@@ -12,7 +12,7 @@ import { useMap, geoShape } from '@/store';
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    const polyPoints: any[] = [];
+    const polyPoints: any[] = [[]];
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
@@ -96,7 +96,7 @@ export default defineComponent({
         };
         handler.setInputAction((event: any) => {
           activeShapePoints.forEach((element) => {
-            polyPoints.push([
+            polyPoints[0].push([
               Cesium.Math.toDegrees(
                 (Cesium.Cartographic.fromCartesian(element)
                 ).longitude,
@@ -107,6 +107,7 @@ export default defineComponent({
               ),
             ]);
           });
+          polyPoints[0].push(polyPoints[0][0]);
           geoShape.value.type = 'Polygon';
           geoShape.value.coordinates = polyPoints;
           terminateShape();
@@ -124,7 +125,7 @@ export default defineComponent({
   #cesiumContainer{
     width: 100% !important;
     min-height: 800px !important;
-    height: 850px;
+    height: 900px;
     max-height: 900px !important;
   }
 </style>
