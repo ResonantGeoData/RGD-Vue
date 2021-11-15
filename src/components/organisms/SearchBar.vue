@@ -1,5 +1,8 @@
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import {
+  defineComponent, Ref, ref,
+} from '@vue/composition-api';
+import { Parameters } from '@/store/types';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -24,6 +27,25 @@ export default defineComponent({
     },
   },
   setup() {
+    const params: Ref<Parameters> = ref({
+      predicate: null,
+      distance: {
+        min: null,
+        max: null,
+      },
+      instrumentation: null,
+      dateAndTime: {
+        startDate: null,
+        endDate: null,
+        startTime: null,
+        endTime: null,
+      },
+    });
+
+    return {
+      params,
+    };
+
     // Will be needed in second iteration
     // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
     // const activeTab = ref(0);
@@ -33,12 +55,8 @@ export default defineComponent({
 <template>
   <v-card
     color="blue-grey darken-4"
-    height="1200px"
+    height="900px"
   >
-    <ToolBar
-      color="blue-grey darken-2"
-      flat
-    />
     <v-card-title>
       Sample Project
     </v-card-title>
@@ -63,12 +81,31 @@ export default defineComponent({
         flat
       />
       <GeoJsonForm />
+      <ToolBar
+        text="Other Params"
+        color="blue-grey darken-2"
+        flat
+      />
+      <OtherParams
+        v-model="params"
+      />
+      <v-row
+        no-gutters
+        justify="center"
+      >
+        <v-col
+          cols="11"
+        >
+          <v-btn
+            color="teal accent-4"
+            block
+            x-large
+            class="mt-3"
+          >
+            Search
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
-    <ToolBar
-      text="Other Params"
-      color="blue-grey darken-2"
-      flat
-    />
-    <OtherParams />
   </v-card>
 </template>
