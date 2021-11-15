@@ -113,6 +113,8 @@ export default defineComponent({
         <v-btn
           v-if="searchResults"
           plain
+          right
+          color="blue"
           @click="reveal=true"
         >
           Show Results
@@ -129,9 +131,10 @@ export default defineComponent({
           <v-data-table
             :headers="headers"
             :items="searchResults"
+            class="resultsTable"
           >
             <!-- eslint-disable-next-line -->
-            <template #item.id-name="{item}" >
+            <template #item.id-name="{item}">
               <a :href="`${baseLink}${item.spatial_id}`">
                 {{ item.spatial_id }} - {{ item.subentry_name }}
               </a>
@@ -209,5 +212,11 @@ export default defineComponent({
   opacity: 1 !important;
   position: absolute;
   width: 100%;
+}
+.resultsTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 75px;
 }
 </style>
