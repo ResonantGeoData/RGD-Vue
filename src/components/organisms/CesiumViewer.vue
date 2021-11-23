@@ -7,12 +7,15 @@ import {
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { useMap, geoShape } from '@/store';
+import { useMap, geoShape, searchResults } from '@/store';
+import { rgdFootprint } from '@/api/rest';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [[]];
+    const footPrints = ref();
+
     const cesiumViewer = ref();
     onMounted(() => {
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
@@ -21,6 +24,7 @@ export default defineComponent({
         fullscreenButton: false,
         infoBox: false,
         selectionIndicator: false,
+        homeButton: false,
         terrainProvider: Cesium.createWorldTerrain(),
       });
       cesiumViewer.value.forceResize();
@@ -114,6 +118,36 @@ export default defineComponent({
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
       }
     });
+    const getFootPrints = async () => {
+      const resArray: any[] = [];
+      // eslint-disable-next-line no-unused-expressions
+      searchResults.value?.forEach(async (element) => {
+        const res = await rgdFootprint(element.spatial_id);
+        resArray.push(res.data);
+      });
+      footPrints.value = resArray;
+    };
+    // TODO double check footprints
+    // likely better way to call this
+    // also double check inputs
+    watch(searchResults, getFootPrints);
+    watch(footPrints, () => {
+      // eslint-disable-next-line no-unused-expressions
+      footPrints.value?.forEach((element: { footprint: { coordinates: any } }) => {
+        const cesiumPoints: any [] = [];
+        element.footprint.coordinates[0].forEach((e: any) => {
+          cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+        });
+        cesiumViewer.value.entities.add({
+          polygon: {
+            hierarchy: cesiumPoints,
+            material: new Cesium.ColorMaterialProperty(
+              Cesium.Color.fromRandom(),
+            ),
+          },
+        });
+      });
+    }, { deep: true });
   },
 });
 </script>

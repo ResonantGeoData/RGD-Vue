@@ -194,7 +194,6 @@ export default defineComponent({
             v-model="parameters.dateAndTime.startTime"
             ampm-in-title
             format="ampm"
-            use-seconds
             full-width
           >
             <v-spacer />
@@ -238,7 +237,6 @@ export default defineComponent({
             v-model="parameters.dateAndTime.endTime"
             ampm-in-title
             format="ampm"
-            use-seconds
             full-width
           >
             <v-spacer />

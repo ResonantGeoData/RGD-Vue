@@ -3,7 +3,7 @@ import {
   defineComponent, Ref, ref, reactive, watch,
 } from '@vue/composition-api';
 import { Parameters } from '@/store/types';
-import { geoShape } from '@/store';
+import { geoShape, searchResults } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -32,7 +32,7 @@ export default defineComponent({
   setup() {
     const geoJsonShape = ref();
 
-    const searchResults = ref();
+    // const searchResults = ref();
 
     const reveal = false;
 

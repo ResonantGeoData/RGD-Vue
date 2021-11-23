@@ -52,7 +52,7 @@ export default defineComponent({
   <v-main>
     <v-app-bar
       app
-      light
+      dense
     >
       <v-spacer />
       <v-btn
