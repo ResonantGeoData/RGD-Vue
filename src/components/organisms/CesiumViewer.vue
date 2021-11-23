@@ -18,15 +18,49 @@ export default defineComponent({
 
     const cesiumViewer = ref();
     onMounted(() => {
+      // Create ProviderViewModel based on different imagery sources
+      // - these can be used without Cesium Ion
+      var imageryViewModels = [];
+      imageryViewModels.push(new Cesium.ProviderViewModel({
+        name: 'Open\u00adStreet\u00adMap',
+        iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
+        tooltip: 'OpenStreetMap (OSM) is a collaborative project to create a free editable \
+      map of the world.\nhttp://www.openstreetmap.org',
+        creationFunction: function() {
+          return new Cesium.OpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+          });
+        }
+      }));
+      imageryViewModels.push(new Cesium.ProviderViewModel({
+        name: 'Positron',
+        tooltip: 'CartoDB Positron basemap',
+        // iconUrl: Cesium.buildModuleUrl(),
+        creationFunction: function() {
+          return new Cesium.UrlTemplateImageryProvider({
+            url: 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+            iconUrl: 'http://a.basemaps.cartocdn.com/light_all/5/15/12.png',
+            credit: 'Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+          });
+        }
+      }));
+
+      // Initialize the viewer - this works without a token
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
+        imageryProvider: false,
+        imageryProviderViewModels: imageryViewModels,
+        selectedImageryProviderViewModel: imageryViewModels[0],
+        mapProjection: new Cesium.WebMercatorProjection(),
         animation: false,
         timeline: false,
-        fullscreenButton: false,
         infoBox: false,
-        selectionIndicator: false,
         homeButton: false,
-        terrainProvider: Cesium.createWorldTerrain(),
+        fullscreenButton: false,
+        selectionIndicator: false,
       });
+      // Remove the Terrain section of the baseLayerPicker
+      viewer.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
+
       cesiumViewer.value.forceResize();
       cesiumViewer.value.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
