@@ -1,5 +1,3 @@
-// import axios from 'axios';
-// import OauthClient from '@girder/oauth-client';
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import '@/plugins/composition';
