@@ -203,7 +203,7 @@ export default defineComponent({
         selectionIndicator: false,
       });
       // Remove the Terrain section of the baseLayerPicker
-      viewer.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
+      cesiumViewer.value.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
 
       cesiumViewer.value.forceResize();
       cesiumViewer.value.camera.flyTo({
