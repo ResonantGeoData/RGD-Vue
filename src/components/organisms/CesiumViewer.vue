@@ -220,8 +220,8 @@ export default defineComponent({
           const point = cesiumViewer.value.entities.add({
             position: worldPosition,
             point: {
-              color: Cesium.Color.WHITE,
-              pixelSize: 5,
+              color: Cesium.Color.GREY,
+              pixelSize: 10,
               heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
             },
           });
@@ -293,7 +293,7 @@ export default defineComponent({
           geoShape.value.type = 'Polygon';
           geoShape.value.coordinates = polyPoints;
           terminateShape();
-        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       }
     });
     const getFootPrints = async () => {
