@@ -21,6 +21,7 @@ export default defineComponent({
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
       var imageryViewModels = [];
+
       /* Stamen's website (http://maps.stamen.com) as of 2019-08-28 says that the
        * maps they host may be used free of charge.  For http access, use a url like
        * http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png */
@@ -191,10 +192,9 @@ export default defineComponent({
 
       // Initialize the viewer - this works without a token
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
-        imageryProvider: false,
+        // imageryProvider: false,
         imageryProviderViewModels: imageryViewModels,
         selectedImageryProviderViewModel: imageryViewModels[0],
-        mapProjection: new Cesium.WebMercatorProjection(),
         animation: false,
         timeline: false,
         infoBox: false,
@@ -232,7 +232,7 @@ export default defineComponent({
             polygon: {
               hierarchy: positionData,
               material: new Cesium.ColorMaterialProperty(
-                Cesium.Color.WHITE.withAlpha(0.7),
+                Cesium.Color.RED.withAlpha(0.7),
               ),
             },
           });
@@ -244,7 +244,7 @@ export default defineComponent({
         let floatingPoint: any;
         const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.canvas);
         handler.setInputAction((event: { position: any }) => {
-          const earthPosition = cesiumViewer.value.scene.pickPosition(event.position);
+          const earthPosition = cesiumViewer.value.camera.pickEllipsoid(event.position);
           if (Cesium.defined(earthPosition)) {
             if (activeShapePoints.length === 0) {
               floatingPoint = createPoint(earthPosition);
@@ -259,7 +259,7 @@ export default defineComponent({
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
         handler.setInputAction((event: { endPosition: any }) => {
           if (Cesium.defined(floatingPoint)) {
-            const newPosition = cesiumViewer.value.scene.pickPosition(event.endPosition);
+            const newPosition = cesiumViewer.value.camera.pickEllipsoid(event.endPosition);
             if (Cesium.defined(newPosition)) {
               floatingPoint.position.setValue(newPosition);
               activeShapePoints.pop();
