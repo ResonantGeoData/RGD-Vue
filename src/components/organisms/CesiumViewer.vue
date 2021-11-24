@@ -34,7 +34,7 @@ export default defineComponent({
       let CartoAttribution = 'Map tiles by <a href="https://carto.com">Carto</a>, under CC BY 3.0. Data by <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.'
 
       imageryViewModels.push(new Cesium.ProviderViewModel({
-        name: 'Open\u00adStreet\u00adMap',
+        name: 'OpenStreetMap',
         iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
         tooltip: 'OpenStreetMap (OSM) is a collaborative project to create a free editable \
       map of the world.\nhttp://www.openstreetmap.org',
