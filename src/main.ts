@@ -13,7 +13,6 @@ import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 // Set token to `null` to avoid warning
 Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
 
-
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
