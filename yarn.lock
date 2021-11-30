@@ -2274,9 +2274,9 @@ caseless@~0.12.0:
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
 cesium@^1.85.0:
-  version "1.85.0"
-  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.85.0.tgz#00d983648710f13a925c20504548879eac38e902"
-  integrity sha512-GqcEkcG5owC7rDroZzy3ic9d5oCrpqmpLZ9kWVnVBgvtjL/aAS+eUZ2wz8vCYAcYW77wYnIWeBRbMbaqdAH2XQ==
+  version "1.87.1"
+  resolved "https://registry.yarnpkg.com/cesium/-/cesium-1.87.1.tgz#c122f8b92b2a1c01ad7feddb159531695b3a67a4"
+  integrity sha512-j0ywezLnCRJ3BWTnD7N2W2jfGlaLa5UklXpxVOLTZUx1NJsvkekpztHuRf4eMVCew/rKcXRzIOAvS7FHo6JHSw==
 
 chalk@^1.1.3:
   version "1.1.3"

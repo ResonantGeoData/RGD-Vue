@@ -10,6 +10,7 @@ import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 
 // Vue.use(DatetimePicker);
 
+// Set token to `null` to avoid warning
 Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
 
 Sentry.init({
