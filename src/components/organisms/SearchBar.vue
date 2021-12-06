@@ -46,8 +46,6 @@ export default defineComponent({
       buttonText.value = 'Close';
     };
 
-    const baseLink = `${process.env.VUE_APP_API_ROOT}rgd/spatial_entries/`;
-
     const params: Ref<Parameters> = ref({
       predicate: null,
       distance: {
@@ -89,7 +87,6 @@ export default defineComponent({
       searchResults,
       updateResults,
       toggle,
-      baseLink,
       buttonText,
       reveal,
     };
