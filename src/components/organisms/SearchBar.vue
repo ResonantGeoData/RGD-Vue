@@ -1,17 +1,17 @@
 <script lang="ts">
 import {
-  defineComponent, Ref, ref, reactive, watch,
+  defineComponent, Ref, ref, watch,
 } from '@vue/composition-api';
 import { Parameters } from '@/store/types';
-import { geoShape } from '@/store';
+import { geoShape, searchResults } from '@/store';
 import { rgdSearch } from '@/api/rest';
-import type { DataOptions } from 'vuetify';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
 import BoundingBoxForm from '../molecules/BoundingBoxForm.vue';
 import LatLongForm from '../molecules/LatLongForm.vue';
 import OtherParams from '../molecules/OtherParams.vue';
+import Results from '../molecules/Results.vue';
 
 export default defineComponent({
   name: 'SearchBar',
@@ -22,6 +22,7 @@ export default defineComponent({
     BoundingBoxForm,
     LatLongForm,
     OtherParams,
+    Results,
   },
   props: {
     value: {
@@ -32,9 +33,18 @@ export default defineComponent({
   setup() {
     const geoJsonShape = ref();
 
-    const searchResults = ref();
+    const reveal = ref(false);
+    const buttonText = ref('Show Results');
 
-    const reveal = false;
+    const toggle = () => {
+      if (reveal.value) {
+        reveal.value = false;
+        buttonText.value = 'Show Results';
+        return;
+      }
+      reveal.value = true;
+      buttonText.value = 'Close';
+    };
 
     const baseLink = `${process.env.VUE_APP_API_ROOT}rgd/spatial_entries/`;
 
@@ -69,17 +79,6 @@ export default defineComponent({
       searchResults.value = res.data.results;
     };
 
-    const tableOptions = reactive({
-      page: 1,
-      sortBy: ['spatial_id'],
-      sortDesc: [true],
-    } as DataOptions);
-
-    const headers = [
-      { text: 'ID-Name', value: 'id-name' },
-      { text: 'Data Type', value: 'subentry_type' },
-    ];
-
     watch(geoShape, () => {
       if (geoShape.value.type) {
         geoJsonShape.value = JSON.stringify(geoShape.value);
@@ -87,12 +86,12 @@ export default defineComponent({
     }, { deep: true });
     return {
       params,
-      tableOptions,
-      headers,
       searchResults,
       updateResults,
-      reveal,
+      toggle,
       baseLink,
+      buttonText,
+      reveal,
     };
 
     // Will be needed in second iteration
@@ -115,108 +114,66 @@ export default defineComponent({
           plain
           right
           color="blue"
-          @click="reveal=true"
+          @click="toggle"
+          v-text="buttonText"
         >
           Show Results
         </v-btn>
       </v-card-actions>
     </v-card-title>
-    <v-expand-transition>
-      <template>
-        <v-card
-          v-if="reveal"
-          class="transition-fast-in-fast-out v-card--reveal"
-          style="height: 100%;"
-        >
-          <v-data-table
-            :headers="headers"
-            :items="searchResults"
-            class="resultsTable"
-          >
-            <!-- eslint-disable-next-line -->
-            <template #item.id-name="{item}">
-              <a :href="`${baseLink}${item.spatial_id}`">
-                {{ item.spatial_id }} - {{ item.subentry_name }}
-              </a>
-            </template>
-          </v-data-table>
-          <v-card-actions class="pt-0">
-            <v-btn
-              text
-              color="teal accent-4"
-              @click="reveal = false"
-            >
-              Close
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-
-        <!-- Will be needed in second iteration -->
-        <!-- <TabToolBar
+    <Results
+      v-if="reveal==true"
+    />
+    <!-- Will be needed in second iteration -->
+    <!-- <TabToolBar
       v-model="activeTab"
       :items="tabData"
       color="blue-grey darken-2"
       flat
     /> -->
-        <v-form
-          @submit.prevent="updateResults"
-        >
-          <!-- Will be needed in second iteration -->
-          <!-- <LatLongForm
+    <v-form
+      v-if="reveal==false"
+      @submit.prevent="updateResults"
+    >
+      <!-- Will be needed in second iteration -->
+      <!-- <LatLongForm
         v-if="activeTab === 0"
       />
       <BoundingBoxForm
         v-if="activeTab === 1"
       /> -->
-          <ToolBar
-            text="Geo Json"
-            color="blue-grey darken-2"
-            flat
-          />
-          <GeoJsonForm />
-          <ToolBar
-            text="Other Params"
-            color="blue-grey darken-2"
-            flat
-          />
-          <OtherParams
-            v-model="params"
-          />
-          <v-row
-            no-gutters
-            justify="center"
+      <ToolBar
+        text="Geo Json"
+        color="blue-grey darken-2"
+        flat
+      />
+      <GeoJsonForm />
+      <ToolBar
+        text="Other Params"
+        color="blue-grey darken-2"
+        flat
+      />
+      <OtherParams
+        v-model="params"
+      />
+      <v-row
+        no-gutters
+        justify="center"
+      >
+        <v-col
+          cols="11"
+        >
+          <v-btn
+            color="teal accent-4"
+            block
+            x-large
+            type="submit"
+            class="mt-3"
           >
-            <v-col
-              cols="11"
-            >
-              <v-btn
-                color="teal accent-4"
-                block
-                x-large
-                type="submit"
-                class="mt-3"
-              >
-                Search
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
-      </template>
-    </v-expand-transition>
+            Search
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
   </v-card>
 </template>
-
-<style>
-.v-card--reveal {
-  bottom: 0;
-  opacity: 1 !important;
-  position: absolute;
-  width: 100%;
-}
-.resultsTable td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 75px;
-}
-</style>
