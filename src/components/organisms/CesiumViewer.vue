@@ -335,8 +335,6 @@ export default defineComponent({
 <style>
   #cesiumContainer{
     width: 100% !important;
-    min-height: 800px !important;
-    height: 900px;
-    max-height: 900px !important;
+    height: calc(100vh - 48px) !important;
   }
 </style>
