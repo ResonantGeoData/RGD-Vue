@@ -18,7 +18,7 @@ export default defineComponent({
       'touches',
     ];
     const parameters: Ref<Parameters> = ref({
-      predicate: '',
+      predicate: 'intersects',
       dateAndTime: {
         startDate: '',
         startDateModal: false,
