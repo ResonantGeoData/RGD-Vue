@@ -39,7 +39,7 @@ export default defineComponent({
     const baseLink = `${process.env.VUE_APP_API_ROOT}rgd/spatial_entries/`;
 
     const params: Ref<Parameters> = ref({
-      predicate: null,
+      predicate: 'intersects',
       distance: {
         min: null,
         max: null,
