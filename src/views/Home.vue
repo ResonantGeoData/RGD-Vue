@@ -71,7 +71,7 @@ export default defineComponent({
         no-gutters
       >
         <v-col
-          xl="3"
+          lg="3"
           cols="2"
         >
           <SearchBar

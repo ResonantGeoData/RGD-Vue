@@ -3,11 +3,23 @@ export type GeoJsonShape = {
   coordinates: Array<Array<number>>;
 }
 
+export type RGDResultList = Array<{
+  spatial_id: number;
+  acquisition_date: string | null;
+  instrumentation: string | null;
+  outline: {
+    type: string;
+    coordinates: Array<Array<number>>;
+  };
+  subentry_type: string;
+  subentry_name: string;
+}>
+
 export interface Parameters {
   predicate: string | null;
   distance: {
-    min: number | null;
-    max: number | null;
+    min: string | null;
+    max: string | null;
   };
   instrumentation: string | null;
   dateAndTime: {
