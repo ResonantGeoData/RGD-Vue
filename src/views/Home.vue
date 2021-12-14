@@ -63,24 +63,23 @@ export default defineComponent({
       </v-btn>
     </v-app-bar>
     <v-container
-      pt-0
+      pa-0
       fluid
+      fill-height
     >
       <v-row
         justify="center"
         no-gutters
       >
         <v-col
-          lg="3"
-          cols="2"
+          cols="3"
         >
           <SearchBar
             v-model="params"
           />
         </v-col>
         <v-col
-          xl="8"
-          cols="7"
+          cols="9"
         >
           <CesiumViewer
             :location="params"
