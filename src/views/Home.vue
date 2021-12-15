@@ -54,6 +54,13 @@ export default defineComponent({
       app
       dense
     >
+      <v-img
+        src="RGD_Logo.png"
+        height="calc(100% - 5px)"
+        contain
+        class="flex-shrink-1 ml-5"
+        position="left"
+      />
       <v-spacer />
       <v-btn
         text
