@@ -174,18 +174,3 @@ export default defineComponent({
     </v-form>
   </v-card>
 </template>
-
-<style>
-.v-card--reveal {
-  bottom: 0;
-  opacity: 1 !important;
-  position: absolute;
-  width: 100%;
-}
-.resultsTable td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 75px;
-}
-</style>
