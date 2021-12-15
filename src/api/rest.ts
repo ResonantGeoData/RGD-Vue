@@ -4,7 +4,6 @@ import OauthClient from '@girder/oauth-client';
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
 });
-
 export const oauthClient = new OauthClient(
   process.env.VUE_APP_OAUTH_API_ROOT,
   process.env.VUE_APP_OAUTH_CLIENT_ID,
@@ -24,7 +23,6 @@ axiosInstance.interceptors.request.use((config) => ({
     ...config.headers,
   },
 }));
-
 export async function rgdSearch(
   q?: string,
   predicate?: string | null,
