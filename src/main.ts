@@ -1,5 +1,3 @@
-import axios from 'axios';
-import OauthClient from '@girder/oauth-client';
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import '@/plugins/composition';
@@ -9,7 +7,8 @@ import router from './router';
 import vuetify from './plugins/vuetify';
 import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 
-Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
+// Set token to `null` to avoid warning
+Cesium.Ion.defaultAccessToken = null;
 
 Sentry.init({
   Vue,

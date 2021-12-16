@@ -47,7 +47,7 @@ export default defineComponent({
     };
 
     const params: Ref<Parameters> = ref({
-      predicate: null,
+      predicate: 'intersects',
       distance: {
         min: null,
         max: null,
@@ -100,7 +100,7 @@ export default defineComponent({
 <template>
   <v-card
     color="blue-grey darken-4"
-    height="900px"
+    height="calc(100vh - 48px)"
   >
     <v-card-title>
       Sample Project
