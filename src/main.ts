@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import '@/plugins/composition';
-// import DatetimePicker from 'vuetify-datetime-picker';
 import Cesium from './plugins/cesium';
 import App from './App.vue';
 import router from './router';
@@ -9,7 +8,7 @@ import vuetify from './plugins/vuetify';
 import { restoreLogin, oauthClient, axiosInstance } from './api/rest';
 
 // Set token to `null` to avoid warning
-Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ACCESS_TOKEN;
+Cesium.Ion.defaultAccessToken = null;
 
 Sentry.init({
   Vue,
