@@ -52,9 +52,20 @@ export default defineComponent({
           class="text-truncate"
           style="max-width: 10vw;"
         >
-          <a :href="`${baseLink}${item.spatial_id}`">
-            {{ item.spatial_id }} - {{ item.subentry_name }}
-          </a>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <a
+                :href="`${baseLink}${item.spatial_id}`"
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ item.spatial_id }}{{ item.subentry_name ? ` - ${item.subentry_name}` : '' }}
+              </a>
+            </template>
+            <span>
+              View {{ item.spatial_id }}{{ item.subentry_name ? ` - ${item.subentry_name}` : '' }}
+            </span>
+          </v-tooltip>
         </div>
       </template>
     </v-data-table>
