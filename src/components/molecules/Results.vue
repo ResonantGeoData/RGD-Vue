@@ -77,7 +77,7 @@ export default defineComponent({
         <template v-slot:activator="{ on, attrs }">
           <img
             v-bind="attrs"
-            :src="`icons/${item.subentry_type.toLowerCase()}.png`"
+            :src="`${item.subentry_type.toLowerCase()}.png`"
             :alt="item.subentry_type"
             class="data-type-icon"
             v-on="on"
