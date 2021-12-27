@@ -40,6 +40,7 @@ export default defineComponent({
     logInOrOut(): void {
       if (this.oauthClient.isLoggedIn) {
         this.oauthClient.logout();
+        window.location.reload();
       } else {
         this.oauthClient.redirectToLogin();
       }
@@ -63,6 +64,7 @@ export default defineComponent({
       />
       <v-spacer />
       <v-btn
+        v-if="oauthClient.isLoggedIn"
         text
         @click="logInOrOut"
       >
@@ -93,6 +95,19 @@ export default defineComponent({
           />
         </v-col>
       </v-row>
+      <v-overlay
+        :absolute="true"
+        :value="!oauthClient.isLoggedIn"
+        :opacity="0.8"
+        style="margin-top: -30vh"
+      >
+        <v-btn
+          color="teal accent-4"
+          @click="logInOrOut"
+        >
+          Log in to Continue
+        </v-btn>
+      </v-overlay>
     </v-container>
   </v-main>
 </template>
