@@ -94,7 +94,6 @@ export default defineComponent({
 <style scoped>
 .data-type-icon {
   max-height: 25px;
-  aspect-ratio: 1;
   filter: invert(100%);
 }
 </style>
