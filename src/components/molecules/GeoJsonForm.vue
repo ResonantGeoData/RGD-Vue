@@ -6,6 +6,11 @@ export default defineComponent({
   name: 'GeoJsonForm',
 
   setup() {
+    const geoOptions = [
+      'Draw on Map',
+      'Copy/Paste GeoJson',
+      'Upload File',
+    ];
     const geoJsonShape = ref();
     watch(geoShape, () => {
       if (geoShape.value.type) {
@@ -22,6 +27,7 @@ export default defineComponent({
       useMap,
       clearShape,
       geoJsonShape,
+      geoOptions,
     };
   },
 });
@@ -35,12 +41,20 @@ export default defineComponent({
   >
     <v-col
       cols="11"
+      class="mt-3"
     >
+      <v-select
+        :value.sync="geoJsonShape"
+        :items="geoOptions"
+        label="GeoJson"
+        outlined
+        clearable
+        @click:clear="clearShape"
+      />
       <v-btn
-        color="teal accent-4"
+        color="#188DC8"
         block
         x-large
-        class="mt-3"
         @click="useMap = true"
       >
         Use Map
@@ -49,14 +63,6 @@ export default defineComponent({
     <v-col
       cols="11"
       class="mt-3"
-    >
-      <v-text-field
-        :value.sync="geoJsonShape"
-        label="GeoJson"
-        outlined
-        clearable
-        @click:clear="clearShape"
-      />
-    </v-col>
+    />
   </v-row>
 </template>

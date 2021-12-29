@@ -1,17 +1,17 @@
 <script lang="ts">
 import {
-  defineComponent, Ref, ref, watch,
+  defineComponent, ref, watch,
 } from '@vue/composition-api';
-import { Parameters } from '@/store/types';
-import { geoShape, searchResults } from '@/store';
+import { geoShape, searchResults, searchParameters } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
 import BoundingBoxForm from '../molecules/BoundingBoxForm.vue';
 import LatLongForm from '../molecules/LatLongForm.vue';
-import OtherParams from '../molecules/OtherParams.vue';
-import Results from '../molecules/Results.vue';
+import Results from './Results.vue';
+import Predicate from '../atoms/Predicate.vue';
+import DateRange from '../atoms/DateRange.vue';
 
 export default defineComponent({
   name: 'SearchBar',
@@ -21,7 +21,8 @@ export default defineComponent({
     GeoJsonForm,
     BoundingBoxForm,
     LatLongForm,
-    OtherParams,
+    Predicate,
+    DateRange,
     Results,
   },
   props: {
@@ -35,43 +36,26 @@ export default defineComponent({
 
     const reveal = ref(false);
     const buttonText = ref('Show Results');
+    const cardTitle = ref('Search');
 
     const toggle = () => {
       if (reveal.value) {
         reveal.value = false;
         buttonText.value = 'Show Results';
+        cardTitle.value = 'Search';
         return;
       }
       reveal.value = true;
-      buttonText.value = 'Close';
+      buttonText.value = 'Back to Search';
+      cardTitle.value = 'Results';
     };
-
-    const params: Ref<Parameters> = ref({
-      predicate: 'intersects',
-      distance: {
-        min: null,
-        max: null,
-      },
-      instrumentation: null,
-      dateAndTime: {
-        startDate: null,
-        endDate: null,
-        startTime: null,
-        endTime: null,
-      },
-    });
 
     const updateResults = async () => {
       const res = await rgdSearch(
         geoJsonShape.value,
-        params.value.predicate,
-        params.value.distance.min,
-        params.value.distance.max,
-        params.value.instrumentation,
-        params.value.dateAndTime.startDate,
-        params.value.dateAndTime.endDate,
-        params.value.dateAndTime.startTime,
-        params.value.dateAndTime.endTime,
+        searchParameters.value.predicate,
+        searchParameters.value.acquired.startDate,
+        searchParameters.value.acquired.endDate,
 
       );
       searchResults.value = res.data.results;
@@ -83,17 +67,13 @@ export default defineComponent({
       }
     }, { deep: true });
     return {
-      params,
       searchResults,
       updateResults,
       toggle,
       buttonText,
       reveal,
+      cardTitle,
     };
-
-    // Will be needed in second iteration
-    // const tabData = ['LatLong', 'Bounding Box', 'GeoJson'];
-    // const activeTab = ref(0);
   },
 });
 </script>
@@ -102,57 +82,56 @@ export default defineComponent({
     color="blue-grey darken-4"
     height="calc(100vh - 48px)"
   >
-    <v-card-title>
-      Sample Project
+    <v-card-title
+      class="blue-grey darken-2 text-uppercase"
+    >
+      {{ cardTitle }}
       <v-spacer />
-      <v-card-actions>
-        <v-btn
-          v-if="searchResults"
-          plain
-          right
-          color="blue"
-          @click="toggle"
-          v-text="buttonText"
+      <v-btn
+        v-if="searchResults"
+        right
+        color="#188DC8"
+        outlined
+        @click="toggle"
+      >
+        <div
+          class="white--text"
         >
-          Show Results
-        </v-btn>
-      </v-card-actions>
+          <v-icon
+            v-if="reveal"
+            left
+          >
+            mdi-arrow-left
+          </v-icon>
+          {{ buttonText }}
+        </div>
+      </v-btn>
     </v-card-title>
     <Results
-      v-if="reveal==true"
+      v-if="reveal"
     />
-    <!-- Will be needed in second iteration -->
-    <!-- <TabToolBar
-      v-model="activeTab"
-      :items="tabData"
-      color="blue-grey darken-2"
-      flat
-    /> -->
     <v-form
-      v-if="reveal==false"
+      v-if="!reveal"
       @submit.prevent="updateResults"
     >
-      <!-- Will be needed in second iteration -->
-      <!-- <LatLongForm
-        v-if="activeTab === 0"
-      />
-      <BoundingBoxForm
-        v-if="activeTab === 1"
-      /> -->
-      <ToolBar
-        text="Geo Json"
-        color="blue-grey darken-2"
-        flat
-      />
       <GeoJsonForm />
-      <ToolBar
-        text="Other Params"
-        color="blue-grey darken-2"
-        flat
-      />
-      <OtherParams
-        v-model="params"
-      />
+      <template>
+        <v-row
+          justify="center"
+          no-gutters
+        >
+          <v-col
+            cols="11"
+          >
+            <Predicate />
+            <div>
+              Acquired
+            </div>
+            <DateRange />
+          </v-col>
+        </v-row>
+      </template>
+
       <v-row
         no-gutters
         justify="center"
@@ -161,7 +140,7 @@ export default defineComponent({
           cols="11"
         >
           <v-btn
-            color="teal accent-4"
+            color="#188DC8"
             block
             x-large
             type="submit"

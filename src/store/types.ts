@@ -15,20 +15,25 @@ export type RGDResultList = Array<{
   subentry_name: string;
 }>
 
-export interface Parameters {
+export interface SearchParameters {
   predicate: string | null;
+  acquired: {
+    startDate: string | null;
+    endDate: string | null;
+    startDateModal?: boolean;
+    endDateModal?: boolean;
+  };
+}
+
+export interface ResultsFilter {
   distance: {
     min: string | null;
     max: string | null;
   };
   instrumentation: string | null;
-  dateAndTime: {
-    startDate: string | null;
-    endDate: string | null;
+  time: {
     startTime: string | null;
     endTime: string | null;
-    startDateModal?: boolean;
-    endDateModal?: boolean;
     startTimeModal?: boolean;
     endTimeModal?: boolean;
   };
