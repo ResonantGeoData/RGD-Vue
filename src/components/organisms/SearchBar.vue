@@ -114,8 +114,14 @@ export default defineComponent({
       v-if="!reveal"
       @submit.prevent="updateResults"
     >
+      <v-card-subtitle>
+        Specify search area
+      </v-card-subtitle>
       <GeoJsonForm />
       <template>
+        <v-card-subtitle>
+          Apply search logic
+        </v-card-subtitle>
         <v-row
           justify="center"
           no-gutters
@@ -125,7 +131,7 @@ export default defineComponent({
           >
             <Predicate />
             <div>
-              Acquired
+              Acquired date range
             </div>
             <DateRange />
           </v-col>

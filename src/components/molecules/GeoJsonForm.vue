@@ -41,28 +41,30 @@ export default defineComponent({
   >
     <v-col
       cols="11"
-      class="mt-3"
     >
       <v-select
-        :value.sync="geoJsonShape"
+        v-model="geoJsonShape"
         :items="geoOptions"
-        label="GeoJson"
+        label="Search area"
+        messages="Select a method of specifying a geographical area."
+        :hide-details="geoJsonShape !== undefined"
         outlined
         clearable
         @click:clear="clearShape"
       />
       <v-btn
+        v-if="geoJsonShape === geoOptions[0]"
         color="#188DC8"
         block
-        x-large
+        class="mt-3"
         @click="useMap = true"
       >
-        Use Map
+        Draw polygon on map
       </v-btn>
+      <div v-if="geoJsonShape === geoOptions[0] && useMap">
+        Click on the map to draw points of a polygon.
+        Double click to complete the polygon selection.
+      </div>
     </v-col>
-    <v-col
-      cols="11"
-      class="mt-3"
-    />
   </v-row>
 </template>
