@@ -274,6 +274,7 @@ export default defineComponent({
           floatingPoint = null;
           activeShape = null;
           activeShapePoints = [];
+          useMap.value = false;
         };
         handler.setInputAction((event: any) => {
           activeShapePoints.forEach((element) => {
@@ -325,16 +326,28 @@ export default defineComponent({
         });
       });
     }, { deep: true });
+
+    return {
+      useMap,
+    };
   },
 });
 </script>
+
 <template>
-  <div id="cesiumContainer" />
-</template>;
+  <div
+    id="cesiumContainer"
+    :class="useMap? 'draw-mode': ''"
+  />
+</template>
 
 <style>
   #cesiumContainer{
     width: 100% !important;
     height: calc(100vh - 48px) !important;
+    cursor: grab;
+  }
+  #cesiumContainer.draw-mode{
+    cursor: crosshair
   }
 </style>
