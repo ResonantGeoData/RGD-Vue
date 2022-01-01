@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from '@vue/composition-api';
 import { useMap, geoShape } from '@/store';
+import { hint } from 'geojsonhint';
 
 export default defineComponent({
   name: 'GeoJsonForm',
@@ -23,11 +24,25 @@ export default defineComponent({
         coordinates: [],
       };
     };
+    const geoJsonString = ref('');
+    const geoJsonErrorMessages = ref(['']);
+    const isGeoJSON = (inputText: string) => {
+      const validation = hint(inputText);
+      geoJsonErrorMessages.value = validation.map((error: {message: string}) => error.message);
+      return true;
+    };
+    const confirmGeoJSON = () => {
+      geoShape.value = JSON.parse(geoJsonString.value).geometry;
+    };
     return {
       useMap,
       clearShape,
       geoJsonShape,
       geoOptions,
+      geoJsonString,
+      geoJsonErrorMessages,
+      isGeoJSON,
+      confirmGeoJSON,
     };
   },
 });
@@ -64,6 +79,28 @@ export default defineComponent({
       <div v-if="geoJsonShape === geoOptions[0] && useMap">
         Click on the map to draw points of a polygon.
         Double click to complete the polygon selection.
+      </div>
+      <div
+        v-if="geoJsonShape === geoOptions[1]"
+      >
+        Paste GeoJSON contents below.
+        <v-spacer />
+        <v-textarea
+          v-model="geoJsonString"
+          autofocus
+          clearablecolor="primary"
+          :rules="[isGeoJSON]"
+          :messages="geoJsonErrorMessages"
+        />
+        <v-btn
+          v-if="geoJsonErrorMessages.length === 0"
+          color="#188DC8"
+          block
+          class="mt-3"
+          @click="confirmGeoJSON"
+        >
+          Confirm GeoJSON search area
+        </v-btn>
       </div>
     </v-col>
   </v-row>
