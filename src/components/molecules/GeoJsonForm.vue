@@ -62,6 +62,16 @@ export default defineComponent({
       };
       return true;
     };
+    const geoJsonString = ref('');
+    const geoJsonErrorMessages = ref(['']);
+    const isGeoJSON = (inputText: string) => {
+      const validation = hint(inputText);
+      geoJsonErrorMessages.value = validation.map((error: {message: string}) => error.message);
+      return true;
+    };
+    const confirmGeoJSON = () => {
+      geoShape.value = JSON.parse(geoJsonString.value).geometry;
+    };
     return {
       useMap,
       clearShape,
