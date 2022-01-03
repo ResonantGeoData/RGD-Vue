@@ -102,6 +102,17 @@ export default defineComponent({
           Confirm GeoJSON search area
         </v-btn>
       </div>
+      <div v-if="geoJsonShape === geoOptions[2]">
+        <v-file-input
+          autofocus
+          clearable
+          dense
+          full-width
+          hint="Provide GeoJSON file"
+          persistent-hint
+          chips
+        />
+      </div>
     </v-col>
   </v-row>
 </template>
