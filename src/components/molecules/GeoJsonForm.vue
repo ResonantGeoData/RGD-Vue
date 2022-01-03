@@ -13,6 +13,9 @@ export default defineComponent({
       'Upload File',
     ];
     const geoJsonShape = ref();
+    const geoJsonString = ref('');
+    const geoJsonErrorMessages = ref(['']);
+
     watch(geoShape, () => {
       if (geoShape.value.type) {
         geoJsonShape.value = JSON.stringify(geoShape.value);
@@ -23,25 +26,57 @@ export default defineComponent({
         type: '',
         coordinates: [],
       };
+      geoJsonErrorMessages.value = [];
     };
-    const geoJsonString = ref('');
-    const geoJsonErrorMessages = ref(['']);
+    const selectShape = (value: string) => {
+      clearShape();
+      geoJsonShape.value = value;
+    };
+
     const isGeoJSON = (inputText: string) => {
       const validation = hint(inputText);
       geoJsonErrorMessages.value = validation.map((error: {message: string}) => error.message);
       return true;
     };
     const confirmGeoJSON = () => {
-      geoShape.value = JSON.parse(geoJsonString.value).geometry;
+      const jsonForm = JSON.parse(geoJsonString.value);
+      if (jsonForm.geometry) {
+        geoShape.value = jsonForm.geometry;
+      } else {
+        geoShape.value = jsonForm;
+      }
+    };
+    const validateFile = (file: File) => {
+      const reader = new FileReader();
+      reader.readAsText(file, 'UTF-8');
+      reader.onload = (readEvent) => {
+        if (readEvent.target) {
+          const { result } = readEvent.target;
+          if (result && typeof result === 'string') {
+            isGeoJSON(result);
+            if (geoJsonErrorMessages.value.length === 0) {
+              geoJsonString.value = result;
+              confirmGeoJSON();
+            }
+          }
+        }
+      };
+      reader.onerror = () => {
+        geoJsonErrorMessages.value = ['Error reading file.'];
+      };
+      return true;
     };
     return {
       useMap,
       clearShape,
+      selectShape,
+      geoShape,
       geoJsonShape,
       geoOptions,
       geoJsonString,
       geoJsonErrorMessages,
       isGeoJSON,
+      validateFile,
       confirmGeoJSON,
     };
   },
@@ -66,6 +101,7 @@ export default defineComponent({
         outlined
         clearable
         @click:clear="clearShape"
+        @change="selectShape"
       />
       <v-btn
         v-if="geoJsonShape === geoOptions[0]"
@@ -88,7 +124,7 @@ export default defineComponent({
         <v-textarea
           v-model="geoJsonString"
           autofocus
-          clearablecolor="primary"
+          clearable
           :rules="[isGeoJSON]"
           :messages="geoJsonErrorMessages"
         />
@@ -104,15 +140,24 @@ export default defineComponent({
       </div>
       <div v-if="geoJsonShape === geoOptions[2]">
         <v-file-input
+          accept=".json,.txt"
           autofocus
+          chips
           clearable
           dense
           full-width
           hint="Provide GeoJSON file"
           persistent-hint
-          chips
+          :rules="[validateFile]"
+          :messages="geoJsonErrorMessages"
         />
       </div>
+      <v-text-field
+        v-if="geoShape.coordinates.length > 0"
+        readonly
+        label="Copy search area specification"
+        :value="JSON.stringify(geoShape)"
+      />
     </v-col>
   </v-row>
 </template>
