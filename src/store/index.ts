@@ -1,9 +1,14 @@
 import { ref } from '@vue/composition-api';
+import { rgdFootprint } from '@/api/rest';
 import {
   GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter,
 } from './types';
 
 export const useMap = ref(false);
+
+export const footPrints = ref();
+
+export const geoInputShape = ref();
 
 export const geoShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
@@ -32,3 +37,13 @@ export const resultsFilter = ref<ResultsFilter>({
     endTimeModal: false,
   },
 });
+
+export const getFootPrints = async () => {
+  const resArray: any[] = [];
+  // eslint-disable-next-line no-unused-expressions
+  searchResults.value?.forEach(async (element) => {
+    const res = await rgdFootprint(element.spatial_id);
+    resArray.push(res.data);
+  });
+  footPrints.value = resArray;
+};

@@ -2,7 +2,9 @@
 import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
-import { geoShape, searchResults, searchParameters } from '@/store';
+import {
+  geoShape, searchResults, searchParameters, getFootPrints,
+} from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
@@ -59,6 +61,7 @@ export default defineComponent({
 
       );
       searchResults.value = res.data.results;
+      getFootPrints();
     };
 
     watch(geoShape, () => {

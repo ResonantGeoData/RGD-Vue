@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from '@vue/composition-api';
-import { useMap, geoShape } from '@/store';
+import { useMap, geoShape, geoInputShape } from '@/store';
 import { hint } from 'geojsonhint';
 
 export default defineComponent({
@@ -45,6 +45,7 @@ export default defineComponent({
       } else {
         geoShape.value = jsonForm;
       }
+      geoInputShape.value = geoShape.value;
     };
     const validateFile = (file: File) => {
       const reader = new FileReader();

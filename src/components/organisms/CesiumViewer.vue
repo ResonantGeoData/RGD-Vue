@@ -7,14 +7,14 @@ import {
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { useMap, geoShape, searchResults } from '@/store';
-import { rgdFootprint } from '@/api/rest';
+import {
+  useMap, geoShape, footPrints, geoInputShape,
+} from '@/store';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [[]];
-    const footPrints = ref();
 
     const cesiumViewer = ref();
     onMounted(() => {
@@ -296,19 +296,22 @@ export default defineComponent({
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       }
     });
-    const getFootPrints = async () => {
-      const resArray: any[] = [];
-      // eslint-disable-next-line no-unused-expressions
-      searchResults.value?.forEach(async (element) => {
-        const res = await rgdFootprint(element.spatial_id);
-        resArray.push(res.data);
+
+    watch(geoInputShape, () => {
+      const uploadedFootPrint: any[] = [];
+      geoInputShape.value.coordinates[0].forEach((e: any) => {
+        uploadedFootPrint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
-      footPrints.value = resArray;
-    };
-    // TODO double check footprints
-    // likely better way to call this
-    // also double check inputs
-    watch(searchResults, getFootPrints);
+      cesiumViewer.value.entities.add({
+        polygon: {
+          hierarchy: uploadedFootPrint,
+          material: new Cesium.ColorMaterialProperty(
+            Cesium.Color.RED,
+          ),
+        },
+      });
+    }, { deep: true });
+
     watch(footPrints, () => {
       // eslint-disable-next-line no-unused-expressions
       footPrints.value?.forEach((element: { footprint: { coordinates: any } }) => {
