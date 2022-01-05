@@ -79,6 +79,7 @@ export default defineComponent({
       } else {
         geoShape.value = jsonForm;
       }
+      geoInputShape.value = geoShape.value;
     };
     const validateFile = (file: File) => {
       const reader = new FileReader();
