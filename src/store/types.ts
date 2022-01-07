@@ -13,6 +13,7 @@ export type RGDResultList = Array<{
   };
   subentry_type: string;
   subentry_name: string;
+  show_footprint: boolean;
 }>
 
 export interface SearchParameters {

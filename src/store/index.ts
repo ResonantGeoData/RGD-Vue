@@ -6,9 +6,7 @@ import {
 
 export const useMap = ref(false);
 
-export const geoJsonShape = ref();
-
-export const footPrints = ref();
+export const footPrints = ref([]);
 
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
@@ -40,17 +38,11 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const updateFootPrints = () => {
-  const resArray: any[] = [];
-  const getFootPrints = async (current: { spatial_id: number }) => {
-    const res = await rgdFootprint(current.spatial_id);
-    resArray.push(res.data.footprint);
-    footPrints.value = resArray;
-  };
-  if (searchResults.value) {
-    for (let i = 0; i < searchResults.value?.length; i += 1) {
-      const currentRequest = searchResults.value[i];
-      getFootPrints(currentRequest);
-    }
-  }
+export const getFootPrint = async (spatialId: number) => {
+  const res = await rgdFootprint(spatialId);
+  footPrints.value.push(res.data);
+};
+
+export const removeFootPrint = (spatialId: number) => {
+  footPrints.value = footPrints.value.filter((entry) => entry.spatial_id !== spatialId);
 };

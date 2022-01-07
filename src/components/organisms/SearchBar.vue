@@ -3,7 +3,7 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
-  drawnShape, searchResults, searchParameters, updateFootPrints, geoJsonShape, specifiedShape,
+  geoShape, searchResults, searchParameters,
 } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';

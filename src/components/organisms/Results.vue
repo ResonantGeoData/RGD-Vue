@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@vue/composition-api';
-import { searchResults } from '@/store';
+import { searchResults, getFootPrint, removeFootPrint } from '@/store';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -24,6 +24,9 @@ export default defineComponent({
       {
         text: 'Data Type', value: 'subentry_type', align: 'center', width: 2,
       },
+      {
+        text: 'Show Footprint', value: 'show_footprint', align: 'end', width: 1,
+      },
     ];
 
     const ellipsisText = (str: string) => {
@@ -32,11 +35,31 @@ export default defineComponent({
       }
       return str;
     };
+
+    const toggleFootprintVisibility = (spatialId: number, value: boolean) => {
+      if (!searchResults.value) {
+        return null;
+      }
+      if (value) {
+        getFootPrint(spatialId);
+      } else {
+        removeFootPrint(spatialId);
+      }
+      searchResults.value = searchResults.value.map((entry) => {
+        if (entry.spatial_id === spatialId) {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          return Object.assign(entry, { show_footprint: value });
+        }
+        return entry;
+      });
+    };
+
     return {
       searchResults,
       tableOptions,
       headers,
       ellipsisText,
+      toggleFootprintVisibility,
     };
   },
 });
@@ -75,6 +98,15 @@ export default defineComponent({
             {{ item.subentry_type }}
           </span>
         </v-tooltip>
+      </template>
+      <!-- eslint-disable-next-line -->
+      <template #item.show_footprint="{item}">
+        <v-simple-checkbox
+          v-ripple
+          dark
+          :value="item.show_footprint"
+          @input="(value) => toggleFootprintVisibility(item.spatial_id, value)"
+        />
       </template>
     </v-data-table>
   </div>
