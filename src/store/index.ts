@@ -44,8 +44,6 @@ export const updateFootPrints = () => {
   const resArray: any[] = [];
   const getFootPrints = async (current: { spatial_id: number }) => {
     const res = await rgdFootprint(current.spatial_id);
-    // eslint-disable-next-line no-unused-expressions
-
     resArray.push(res.data.footprint);
     footPrints.value = resArray;
   };
