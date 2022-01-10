@@ -205,7 +205,7 @@ export default defineComponent({
       cesiumViewer.value.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll();
 
       cesiumViewer.value.forceResize();
-      cesiumViewer.value.camera.flyTo({
+      cesiumViewer.value.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
     });
