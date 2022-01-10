@@ -8,7 +8,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footPrints, specifiedShape, searchResults,
+  useMap, drawnShape, footPrints, specifiedShape, footPrintFlag,
 } from '@/store';
 
 export default defineComponent({
@@ -312,7 +312,8 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(searchResults, () => {
+    watch(footPrintFlag, () => {
+      console.log(footPrintFlag.value);
       // eslint-disable-next-line no-unused-expressions
       footPrints.value?.forEach((element: { coordinates: any }) => {
         const cesiumPoints: any [] = [];

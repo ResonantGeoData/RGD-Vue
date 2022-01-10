@@ -10,6 +10,8 @@ export const geoJsonShape = ref();
 
 export const footPrints = ref();
 
+export const footPrintFlag = ref(false);
+
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
@@ -40,8 +42,17 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const updateFootPrints = () => {
+const footPrintFlagToggle = () => {
+  if (footPrintFlag.value === true) {
+    footPrintFlag.value = false;
+  } else {
+    footPrintFlag.value = true;
+  }
+};
+
+export const updateFootPrints = async () => {
   const resArray: any[] = [];
+  const promiseList: Promise<unknown>[] = [];
   const getFootPrints = async (current: { spatial_id: number }) => {
     const res = await rgdFootprint(current.spatial_id);
     resArray.push(res.data.footprint);
@@ -50,7 +61,9 @@ export const updateFootPrints = () => {
   if (searchResults.value) {
     for (let i = 0; i < searchResults.value?.length; i += 1) {
       const currentRequest = searchResults.value[i];
-      getFootPrints(currentRequest);
+      promiseList.push(getFootPrints(currentRequest));
     }
   }
+  await Promise.all(promiseList);
+  footPrintFlagToggle();
 };

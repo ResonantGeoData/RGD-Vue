@@ -3,7 +3,12 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
-  drawnShape, searchResults, searchParameters, updateFootPrints, geoJsonShape, specifiedShape,
+  drawnShape,
+  searchResults,
+  searchParameters,
+  updateFootPrints,
+  geoJsonShape,
+  specifiedShape,
 } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -49,7 +54,13 @@ export default defineComponent({
       buttonText.value = 'Back to Search';
       cardTitle.value = 'Results';
     };
-
+    // const footPrintFlagToggle = () => {
+    //   if (footPrintFlag.value === true) {
+    //     footPrintFlag.value = false;
+    //   } else {
+    //     footPrintFlag.value = true;
+    //   }
+    // };
     const updateResults = async () => {
       const res = await rgdSearch(
         geoJsonShape.value,
@@ -59,6 +70,7 @@ export default defineComponent({
 
       );
       searchResults.value = res.data.results;
+      updateFootPrints();
     };
 
     watch(drawnShape, () => {
@@ -119,7 +131,7 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults().then(updateFootPrints)"
+      @submit.prevent="updateResults()"
     >
       <v-card-subtitle>
         Specify search area
