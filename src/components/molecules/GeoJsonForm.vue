@@ -1,6 +1,8 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from '@vue/composition-api';
-import { useMap, geoShape, geoInputShape } from '@/store';
+import { defineComponent, ref } from '@vue/composition-api';
+import {
+  useMap, drawnShape, specifiedShape, geoJsonShape,
+} from '@/store';
 import { hint } from 'geojsonhint';
 
 export default defineComponent({
@@ -12,17 +14,11 @@ export default defineComponent({
       'Copy/Paste GeoJson',
       'Upload File',
     ];
-    const geoJsonShape = ref();
     const geoJsonString = ref('');
     const geoJsonErrorMessages = ref(['']);
 
-    watch(geoShape, () => {
-      if (geoShape.value.type) {
-        geoJsonShape.value = JSON.stringify(geoShape.value);
-      }
-    }, { deep: true });
     const clearShape = () => {
-      geoShape.value = {
+      drawnShape.value = {
         type: '',
         coordinates: [],
       };
@@ -41,11 +37,10 @@ export default defineComponent({
     const confirmGeoJSON = () => {
       const jsonForm = JSON.parse(geoJsonString.value);
       if (jsonForm.geometry) {
-        geoShape.value = jsonForm.geometry;
+        specifiedShape.value = jsonForm.geometry;
       } else {
-        geoShape.value = jsonForm;
+        specifiedShape.value = jsonForm;
       }
-      geoInputShape.value = geoShape.value;
     };
     const validateFile = (file: File) => {
       const reader = new FileReader();
@@ -71,7 +66,7 @@ export default defineComponent({
       useMap,
       clearShape,
       selectShape,
-      geoShape,
+      drawnShape,
       geoJsonShape,
       geoOptions,
       geoJsonString,
@@ -154,10 +149,10 @@ export default defineComponent({
         />
       </div>
       <v-text-field
-        v-if="geoShape.coordinates.length > 0"
+        v-if="drawnShape.coordinates.length > 0"
         readonly
         label="Copy search area specification"
-        :value="JSON.stringify(geoShape)"
+        :value="JSON.stringify(drawnShape)"
       />
     </v-col>
   </v-row>

@@ -3,7 +3,7 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
-  geoShape, searchResults, searchParameters, getFootPrints,
+  drawnShape, searchResults, searchParameters, updateFootPrints, geoJsonShape, specifiedShape,
 } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -34,8 +34,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const geoJsonShape = ref();
-
     const reveal = ref(false);
     const buttonText = ref('Show Results');
     const cardTitle = ref('Search');
@@ -61,12 +59,17 @@ export default defineComponent({
 
       );
       searchResults.value = res.data.results;
-      getFootPrints();
     };
 
-    watch(geoShape, () => {
-      if (geoShape.value.type) {
-        geoJsonShape.value = JSON.stringify(geoShape.value);
+    watch(drawnShape, () => {
+      if (drawnShape.value.type) {
+        geoJsonShape.value = JSON.stringify(drawnShape.value);
+      }
+    }, { deep: true });
+
+    watch(specifiedShape, () => {
+      if (specifiedShape.value.type) {
+        geoJsonShape.value = JSON.stringify(specifiedShape.value);
       }
     }, { deep: true });
     return {
@@ -76,6 +79,7 @@ export default defineComponent({
       buttonText,
       reveal,
       cardTitle,
+      updateFootPrints,
     };
   },
 });
@@ -115,7 +119,7 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults"
+      @submit.prevent="updateResults().then(updateFootPrints)"
     >
       <v-card-subtitle>
         Specify search area

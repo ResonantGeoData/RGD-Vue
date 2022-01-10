@@ -8,7 +8,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, geoShape, footPrints, geoInputShape,
+  useMap, drawnShape, footPrints, specifiedShape, searchResults,
 } from '@/store';
 
 export default defineComponent({
@@ -290,16 +290,16 @@ export default defineComponent({
             ]);
           });
           polyPoints[0].push(polyPoints[0][0]);
-          geoShape.value.type = 'Polygon';
-          geoShape.value.coordinates = polyPoints;
+          drawnShape.value.type = 'Polygon';
+          drawnShape.value.coordinates = polyPoints;
           terminateShape();
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       }
     });
 
-    watch(geoInputShape, () => {
+    watch(specifiedShape, () => {
       const uploadedFootPrint: any[] = [];
-      geoInputShape.value.coordinates[0].forEach((e: any) => {
+      specifiedShape.value.coordinates[0].forEach((e: any) => {
         uploadedFootPrint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       cesiumViewer.value.entities.add({
@@ -312,11 +312,11 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(footPrints, () => {
+    watch(searchResults, () => {
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element: { footprint: { coordinates: any } }) => {
+      footPrints.value?.forEach((element: { coordinates: any }) => {
         const cesiumPoints: any [] = [];
-        element.footprint.coordinates[0].forEach((e: any) => {
+        element.coordinates[0].forEach((e: any) => {
           cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
         });
         cesiumViewer.value.entities.add({
