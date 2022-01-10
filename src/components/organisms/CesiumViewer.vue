@@ -314,7 +314,7 @@ export default defineComponent({
 
     watch(searchResults, () => {
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element: { coordinates: any }) => {
+      footPrints.value?.forEach((element) => {
         const cesiumPoints: any [] = [];
         element.coordinates[0].forEach((e: any) => {
           cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
@@ -323,7 +323,7 @@ export default defineComponent({
           polygon: {
             hierarchy: cesiumPoints,
             material: new Cesium.ColorMaterialProperty(
-              Cesium.Color.fromRandom(),
+              Cesium.Color.fromRandom({ alpha: 0.5 }),
             ),
           },
         });

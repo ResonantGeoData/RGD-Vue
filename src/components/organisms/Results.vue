@@ -2,6 +2,7 @@
 import { defineComponent, reactive } from '@vue/composition-api';
 import { searchResults, getFootPrint, removeFootPrint } from '@/store';
 import type { DataOptions } from 'vuetify';
+import { RGDResult } from '@/store/types';
 import FilterMenu from '../molecules/Filters.vue';
 import ToolBar from '../molecules/ToolBar.vue';
 
@@ -36,7 +37,7 @@ export default defineComponent({
       return str;
     };
 
-    const toggleFootprintVisibility = (spatialId: number, value: boolean) => {
+    const toggleFootprintVisibility = (spatialId: number, value: boolean): null | RGDResult => {
       if (!searchResults.value) {
         return null;
       }
@@ -52,6 +53,7 @@ export default defineComponent({
         }
         return entry;
       });
+      return null;
     };
 
     return {

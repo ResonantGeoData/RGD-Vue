@@ -3,9 +3,13 @@ export type GeoJsonShape = {
   coordinates: Array<Array<number>>;
 }
 
-export type RGDResultList = Array<{
+export type RGDResult = {
   spatial_id: number;
   acquisition_date: string | null;
+  footprint: {
+    type: string;
+    coordinates: Array<Array<number>>;
+  };
   instrumentation: string | null;
   outline: {
     type: string;
@@ -14,7 +18,9 @@ export type RGDResultList = Array<{
   subentry_type: string;
   subentry_name: string;
   show_footprint: boolean;
-}>
+}
+
+export type RGDResultList = Array<RGDResult>
 
 export interface SearchParameters {
   predicate: string | null;
