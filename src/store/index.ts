@@ -1,5 +1,5 @@
 import { ref } from '@vue/composition-api';
-import { rgdFootprint } from '@/api/rest';
+import { rgdFootprint, rgdSearch } from '@/api/rest';
 import {
   GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter,
 } from './types';
@@ -17,6 +17,12 @@ export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const searchResults = ref<RGDResultList>();
+
+export const searchLimit = ref<number>(10);
+
+export const searchOffset = ref<number>(0);
+
+export const searchResultsTotal = ref<number>();
 
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
@@ -66,4 +72,19 @@ export const updateFootPrints = async () => {
   }
   await Promise.all(promiseList);
   footPrintFlagToggle();
+};
+
+export const updateResults = async () => {
+  const res = await rgdSearch(
+    searchLimit.value,
+    searchOffset.value,
+    geoJsonShape.value,
+    searchParameters.value.predicate,
+    searchParameters.value.acquired.startDate,
+    searchParameters.value.acquired.endDate,
+
+  );
+  searchResults.value = res.data.results;
+  searchResultsTotal.value = res.data.count;
+  updateFootPrints();
 };

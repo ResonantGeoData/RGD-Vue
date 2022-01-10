@@ -313,7 +313,6 @@ export default defineComponent({
     }, { deep: true });
 
     watch(footPrintFlag, () => {
-      console.log(footPrintFlag.value);
       // eslint-disable-next-line no-unused-expressions
       footPrints.value?.forEach((element: { coordinates: any }) => {
         const cesiumPoints: any [] = [];
@@ -324,7 +323,7 @@ export default defineComponent({
           polygon: {
             hierarchy: cesiumPoints,
             material: new Cesium.ColorMaterialProperty(
-              Cesium.Color.fromRandom(),
+              Cesium.Color.fromRandom().withAlpha(0.8),
             ),
           },
         });

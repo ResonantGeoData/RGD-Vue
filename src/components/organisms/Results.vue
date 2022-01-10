@@ -1,6 +1,10 @@
 <script lang="ts">
-import { defineComponent, reactive } from '@vue/composition-api';
-import { searchResults } from '@/store';
+import {
+  defineComponent, reactive, watch, toRefs,
+} from '@vue/composition-api';
+import {
+  searchResults, searchLimit, searchOffset, searchResultsTotal, updateResults,
+} from '@/store';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -15,22 +19,37 @@ export default defineComponent({
   setup() {
     const tableOptions = reactive({
       page: 1,
-      sortBy: ['spatial_id'],
-      sortDesc: [true],
+      itemsPerPage: 10,
     } as DataOptions);
 
     const headers = [
-      { text: 'ID-Name', value: 'id-name' },
-      { text: 'Data Type', value: 'subentry_type' },
+      { text: 'ID-Name', value: 'id-name', sortable: false },
+      { text: 'Data Type', value: 'subentry_type', sortable: false },
     ];
 
+    const itemsPerPageOptions = [5, 10, 15];
+
+    const updateOptions = () => {
+      const { page, itemsPerPage } = tableOptions;
+      searchLimit.value = itemsPerPage;
+      searchOffset.value = (page - 1) * itemsPerPage;
+      updateResults();
+    };
+
+    watch(tableOptions, updateOptions, {
+      deep: true,
+    });
+
+    // ToDo rework table for row selection instead of linking
     const baseLink = `${process.env.VUE_APP_API_ROOT}rgd/spatial_entries/`;
 
     return {
       searchResults,
-      tableOptions,
+      ...toRefs(tableOptions),
       headers,
       baseLink,
+      searchResultsTotal,
+      itemsPerPageOptions,
     };
   },
 });
@@ -43,6 +62,10 @@ export default defineComponent({
     <v-data-table
       :headers="headers"
       :items="searchResults"
+      :page.sync="page"
+      :items-per-page.sync="itemsPerPage"
+      :server-items-length="searchResultsTotal"
+      :footer-props="{ itemsPerPageOptions }"
       class="resultsTable"
       dense
     >

@@ -9,6 +9,7 @@ import {
   updateFootPrints,
   geoJsonShape,
   specifiedShape,
+  updateResults,
 } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -53,24 +54,6 @@ export default defineComponent({
       reveal.value = true;
       buttonText.value = 'Back to Search';
       cardTitle.value = 'Results';
-    };
-    // const footPrintFlagToggle = () => {
-    //   if (footPrintFlag.value === true) {
-    //     footPrintFlag.value = false;
-    //   } else {
-    //     footPrintFlag.value = true;
-    //   }
-    // };
-    const updateResults = async () => {
-      const res = await rgdSearch(
-        geoJsonShape.value,
-        searchParameters.value.predicate,
-        searchParameters.value.acquired.startDate,
-        searchParameters.value.acquired.endDate,
-
-      );
-      searchResults.value = res.data.results;
-      updateFootPrints();
     };
 
     watch(drawnShape, () => {
