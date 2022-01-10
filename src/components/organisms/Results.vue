@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@vue/composition-api';
-import { searchResults, getFootPrint, removeFootPrint } from '@/store';
+import {
+  searchResults, addFootPrint, removeFootPrint, addRasterOverlay, removeRasterOverlay,
+} from '@/store';
 import type { DataOptions } from 'vuetify';
-import { RGDResult } from '@/store/types';
 import FilterMenu from '../molecules/Filters.vue';
 import ToolBar from '../molecules/ToolBar.vue';
 
@@ -21,6 +22,7 @@ export default defineComponent({
     } as DataOptions);
 
     const headers = [
+      { text: '', value: 'show_raster', width: 1 },
       { text: 'ID-Name', value: 'id-name' },
       {
         text: 'Data Type', value: 'subentry_type', align: 'center', width: 2,
@@ -37,19 +39,29 @@ export default defineComponent({
       return str;
     };
 
-    const toggleFootprintVisibility = (spatialId: number, value: boolean): null | RGDResult => {
+    const toggleValue = (fieldName: string, spatialId: number, value: boolean) => {
+      let addFunc;
+      let removeFunc;
+      if (fieldName === 'show_footprint') {
+        addFunc = addFootPrint;
+        removeFunc = removeFootPrint;
+      } else if (fieldName === 'show_raster') {
+        addFunc = addRasterOverlay;
+        removeFunc = removeRasterOverlay;
+      }
+
       if (!searchResults.value) {
         return null;
       }
-      if (value) {
-        getFootPrint(spatialId);
-      } else {
-        removeFootPrint(spatialId);
+      if (value && addFunc) {
+        addFunc(spatialId);
+      } else if (removeFunc) {
+        removeFunc(spatialId);
       }
       searchResults.value = searchResults.value.map((entry) => {
         if (entry.spatial_id === spatialId) {
           // eslint-disable-next-line @typescript-eslint/camelcase
-          return Object.assign(entry, { show_footprint: value });
+          return Object.assign(entry, { [fieldName]: value });
         }
         return entry;
       });
@@ -61,7 +73,7 @@ export default defineComponent({
       tableOptions,
       headers,
       ellipsisText,
-      toggleFootprintVisibility,
+      toggleValue,
     };
   },
 });
@@ -77,6 +89,18 @@ export default defineComponent({
       dense
       calculate-widths
     >
+      <!-- eslint-disable-next-line -->
+      <template #item.show_raster="{item}">
+        <v-simple-checkbox
+          v-if="item.subentry_type === 'RasterMeta'"
+          v-ripple
+          dark
+          off-icon="mdi-eye-off"
+          on-icon="mdi-eye"
+          :value="item.show_raster"
+          @input="(value) => toggleValue('show_raster', item.spatial_id, value)"
+        />
+      </template>
       <!-- eslint-disable-next-line -->
       <template #item.id-name="{item}">
         <div style="max-width: 10vw;">
@@ -107,7 +131,7 @@ export default defineComponent({
           v-ripple
           dark
           :value="item.show_footprint"
-          @input="(value) => toggleFootprintVisibility(item.spatial_id, value)"
+          @input="(value) => toggleValue('show_footprint', item.spatial_id, value)"
         />
       </template>
     </v-data-table>

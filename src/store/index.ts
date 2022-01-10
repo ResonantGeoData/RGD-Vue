@@ -38,12 +38,19 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const getFootPrint = async (spatialId: number) => {
+export const addFootPrint = async (spatialId: number) => {
   const res = await rgdFootprint(spatialId);
   footPrints.value.push(res.data);
 };
 
 export const removeFootPrint = (spatialId: number) => {
-  footPrints.value = footPrints.value.filter((entry) => entry.spatial_id !== spatialId);
-  console.log(footPrints.value);
+  // TODO
+};
+
+export const addRasterOverlay = async (spatialId: number) => {
+  // TODO
+};
+
+export const removeRasterOverlay = (spatialId: number) => {
+  // TODO
 };
