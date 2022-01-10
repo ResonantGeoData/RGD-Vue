@@ -59,7 +59,6 @@ export default defineComponent({
 
       );
       searchResults.value = res.data.results;
-      getFootPrints();
     };
 
     watch(drawnShape, () => {

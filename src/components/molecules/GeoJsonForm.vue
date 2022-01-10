@@ -77,9 +77,8 @@ export default defineComponent({
       if (jsonForm.geometry) {
         geoShape.value = jsonForm.geometry;
       } else {
-        geoShape.value = jsonForm;
+        specifiedShape.value = jsonForm;
       }
-      geoInputShape.value = geoShape.value;
     };
     const validateFile = (file: File) => {
       const reader = new FileReader();
