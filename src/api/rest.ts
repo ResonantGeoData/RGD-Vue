@@ -24,18 +24,32 @@ axiosInstance.interceptors.request.use((config) => ({
   },
 }));
 export async function rgdSearch(
+  limit?: number,
+  offset?: number,
   q?: string,
   predicate?: string | null,
   acquiredAfter?: string | null,
   acquiredBefore?: string | null,
+  distanceMin? : string | null,
+  distanceMax? : string | null,
+  instrumentation?: string | null,
+  startTime?: string | null,
+  endTime?: string | null,
 
 ) {
   const response = await axiosInstance.get('rgd/search', {
     params: {
+      limit,
+      offset,
       q,
       predicate,
       acquiredAfter,
       acquiredBefore,
+      distanceMin,
+      distanceMax,
+      instrumentation,
+      startTime,
+      endTime,
     },
   });
   return response;

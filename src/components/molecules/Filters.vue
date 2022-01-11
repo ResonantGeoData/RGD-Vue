@@ -5,6 +5,10 @@ import {
   defineComponent,
 } from '@vue/composition-api';
 
+import {
+  resultsFilter, searchInstrumentation,
+  updateResults,
+} from '@/store';
 import TimeRange from '../atoms/TimeRange.vue';
 import DistanceRange from '../atoms/DistanceRange.vue';
 import Instrumentation from '../atoms/Instrumentation.vue';
@@ -15,6 +19,21 @@ export default defineComponent({
     TimeRange,
     DistanceRange,
     Instrumentation,
+  },
+  setup() {
+    const clearFilters = () => {
+      resultsFilter.value.distance.min = null;
+      resultsFilter.value.distance.max = null;
+      resultsFilter.value.instrumentation = null;
+      resultsFilter.value.time.startTime = null;
+      resultsFilter.value.time.endTime = null;
+      updateResults();
+    };
+
+    return {
+      updateResults,
+      clearFilters,
+    };
   },
 });
 
@@ -43,18 +62,42 @@ export default defineComponent({
         />
         <Instrumentation />
         <TimeRange />
-        <v-btn
-          color="#188DC8"
-          outlined
-          large
-          width="100%"
-        >
-          <div
-            class="white--text"
+        <v-row>
+          <v-col
+            cols="6"
           >
-            Apply Filters
-          </div>
-        </v-btn>
+            <v-btn
+              color="#188DC8"
+              outlined
+              large
+              width="100%"
+              @click="updateResults"
+            >
+              <div
+                class="white--text"
+              >
+                Apply Filters
+              </div>
+            </v-btn>
+          </v-col>
+          <v-col
+            cols="6"
+          >
+            <v-btn
+              color="#188DC8"
+              outlined
+              large
+              width="100%"
+              @click="clearFilters"
+            >
+              <div
+                class="white--text"
+              >
+                Clear Filters
+              </div>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>

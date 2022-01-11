@@ -62,6 +62,7 @@ export default defineComponent({
       };
       return true;
     };
+
     return {
       useMap,
       clearShape,

@@ -8,7 +8,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footPrints, specifiedShape, searchResults,
+  useMap, drawnShape, footPrints, specifiedShape, footPrintFlag,
 } from '@/store';
 import { RGDResult } from '@/store/types';
 
@@ -313,7 +313,7 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(searchResults, () => {
+    watch(footPrintFlag, () => {
       // eslint-disable-next-line no-unused-expressions
       footPrints.value?.forEach((element) => {
         const cesiumPoints: RGDResult[] = [];

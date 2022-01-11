@@ -3,9 +3,12 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
-  drawnShape, searchResults, searchParameters, geoJsonShape, specifiedShape,
+  drawnShape,
+  searchResults,
+  geoJsonShape,
+  specifiedShape,
+  updateResults,
 } from '@/store';
-import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -47,15 +50,6 @@ export default defineComponent({
       reveal.value = true;
       buttonText.value = 'Back to Search';
       cardTitle.value = 'Results';
-    };
-    const updateResults = async () => {
-      const res = await rgdSearch(
-        geoJsonShape.value,
-        searchParameters.value.predicate,
-        searchParameters.value.acquired.startDate,
-        searchParameters.value.acquired.endDate,
-      );
-      searchResults.value = res.data.results;
     };
     watch(drawnShape, () => {
       if (drawnShape.value.type) {
@@ -118,7 +112,7 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults().then(updateFootPrints)"
+      @submit.prevent="updateResults()"
     >
       <v-card-subtitle>
         Specify search area

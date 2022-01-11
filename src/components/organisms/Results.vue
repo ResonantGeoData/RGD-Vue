@@ -1,7 +1,17 @@
 <script lang="ts">
-import { defineComponent, reactive } from '@vue/composition-api';
 import {
-  searchResults, addFootPrint, removeFootPrint, addRasterOverlay, removeRasterOverlay,
+  defineComponent, reactive, watch, toRefs,
+} from '@vue/composition-api';
+import {
+  searchResults,
+  searchLimit,
+  searchOffset,
+  searchResultsTotal,
+  updateResults,
+  addFootPrint,
+  removeFootPrint,
+  addRasterOverlay,
+  removeRasterOverlay,
 } from '@/store';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
@@ -17,20 +27,41 @@ export default defineComponent({
   setup() {
     const tableOptions = reactive({
       page: 1,
-      sortBy: ['spatial_id'],
-      sortDesc: [true],
+      itemsPerPage: 10,
     } as DataOptions);
 
     const headers = [
-      { text: '', value: 'show_raster', width: 1 },
-      { text: 'ID-Name', value: 'id-name' },
       {
-        text: 'Data Type', value: 'subentry_type', align: 'center', width: 2,
+        text: '', value: 'show_raster', width: 1, sortable: false,
+      },
+      { text: 'ID-Name', value: 'id-name', sortable: false },
+      {
+        text: 'Data Type',
+        value: 'subentry_type',
+        align: 'center',
+        width: 2,
+        sortable: false,
       },
       {
-        text: 'Show Footprint', value: 'show_footprint', align: 'end', width: 1,
+        text: 'Show Footprint',
+        value: 'show_footprint',
+        align: 'end',
+        width: 1,
+        sortable: false,
       },
     ];
+    const itemsPerPageOptions = [5, 10, 15];
+
+    const updateOptions = () => {
+      const { page, itemsPerPage } = tableOptions;
+      searchLimit.value = itemsPerPage;
+      searchOffset.value = (page - 1) * itemsPerPage;
+      updateResults();
+    };
+
+    watch(tableOptions, updateOptions, {
+      deep: true,
+    });
 
     const ellipsisText = (str: string) => {
       if (str.length > 15) {
@@ -70,10 +101,12 @@ export default defineComponent({
 
     return {
       searchResults,
-      tableOptions,
+      ...toRefs(tableOptions),
       headers,
       ellipsisText,
       toggleValue,
+      searchResultsTotal,
+      itemsPerPageOptions,
     };
   },
 });
@@ -86,6 +119,10 @@ export default defineComponent({
     <v-data-table
       :headers="headers"
       :items="searchResults"
+      :page.sync="page"
+      :items-per-page.sync="itemsPerPage"
+      :server-items-length="searchResultsTotal"
+      :footer-props="{ itemsPerPageOptions }"
       dense
       calculate-widths
     >
