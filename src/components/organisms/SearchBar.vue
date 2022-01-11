@@ -67,6 +67,11 @@ export default defineComponent({
         geoJsonShape.value = JSON.stringify(specifiedShape.value);
       }
     }, { deep: true });
+    watch(searchResults, (newList, oldList) => {
+      if (oldList === undefined && newList && newList.length > 0) {
+        toggle();
+      }
+    });
     return {
       searchResults,
       updateResults,
