@@ -6,6 +6,8 @@ import {
 
 export const useMap = ref(false);
 
+export const geoJsonShape = ref();
+
 export const footPrints = ref <RGDResult[]>([]);
 
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });

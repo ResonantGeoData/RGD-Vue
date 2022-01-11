@@ -3,7 +3,7 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
-  geoShape, searchResults, searchParameters,
+  drawnShape, searchResults, searchParameters, geoJsonShape, specifiedShape,
 } from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
@@ -37,7 +37,6 @@ export default defineComponent({
     const reveal = ref(false);
     const buttonText = ref('Show Results');
     const cardTitle = ref('Search');
-
     const toggle = () => {
       if (reveal.value) {
         reveal.value = false;
@@ -49,36 +48,25 @@ export default defineComponent({
       buttonText.value = 'Back to Search';
       cardTitle.value = 'Results';
     };
-
     const updateResults = async () => {
       const res = await rgdSearch(
         geoJsonShape.value,
         searchParameters.value.predicate,
         searchParameters.value.acquired.startDate,
         searchParameters.value.acquired.endDate,
-
       );
       searchResults.value = res.data.results;
     };
-
     watch(drawnShape, () => {
       if (drawnShape.value.type) {
         geoJsonShape.value = JSON.stringify(drawnShape.value);
       }
     }, { deep: true });
-
     watch(specifiedShape, () => {
       if (specifiedShape.value.type) {
         geoJsonShape.value = JSON.stringify(specifiedShape.value);
       }
     }, { deep: true });
-
-    watch(searchResults, (newList, oldList) => {
-      if (oldList === undefined && newList && newList.length > 0) {
-        toggle();
-      }
-    });
-
     return {
       searchResults,
       updateResults,
@@ -86,7 +74,6 @@ export default defineComponent({
       buttonText,
       reveal,
       cardTitle,
-      updateFootPrints,
     };
   },
 });
