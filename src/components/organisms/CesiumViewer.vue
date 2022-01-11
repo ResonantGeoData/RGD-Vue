@@ -7,14 +7,14 @@ import {
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { useMap, geoShape, searchResults } from '@/store';
-import { rgdFootprint } from '@/api/rest';
+import {
+  useMap, drawnShape, footPrints, specifiedShape, searchResults,
+} from '@/store';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
     const polyPoints: any[] = [[]];
-    const footPrints = ref();
 
     const cesiumViewer = ref();
     onMounted(() => {
@@ -205,7 +205,7 @@ export default defineComponent({
       cesiumViewer.value.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll();
 
       cesiumViewer.value.forceResize();
-      cesiumViewer.value.camera.flyTo({
+      cesiumViewer.value.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
     });
@@ -274,6 +274,7 @@ export default defineComponent({
           floatingPoint = null;
           activeShape = null;
           activeShapePoints = [];
+          useMap.value = false;
         };
         handler.setInputAction((event: any) => {
           activeShapePoints.forEach((element) => {
@@ -289,30 +290,33 @@ export default defineComponent({
             ]);
           });
           polyPoints[0].push(polyPoints[0][0]);
-          geoShape.value.type = 'Polygon';
-          geoShape.value.coordinates = polyPoints;
+          drawnShape.value.type = 'Polygon';
+          drawnShape.value.coordinates = polyPoints;
           terminateShape();
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
       }
     });
-    const getFootPrints = async () => {
-      const resArray: any[] = [];
-      // eslint-disable-next-line no-unused-expressions
-      searchResults.value?.forEach(async (element) => {
-        const res = await rgdFootprint(element.spatial_id);
-        resArray.push(res.data);
+
+    watch(specifiedShape, () => {
+      const uploadedFootPrint: any[] = [];
+      specifiedShape.value.coordinates[0].forEach((e: any) => {
+        uploadedFootPrint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
-      footPrints.value = resArray;
-    };
-    // TODO double check footprints
-    // likely better way to call this
-    // also double check inputs
-    watch(searchResults, getFootPrints);
-    watch(footPrints, () => {
+      cesiumViewer.value.entities.add({
+        polygon: {
+          hierarchy: uploadedFootPrint,
+          material: new Cesium.ColorMaterialProperty(
+            Cesium.Color.RED,
+          ),
+        },
+      });
+    }, { deep: true });
+
+    watch(searchResults, () => {
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element: { footprint: { coordinates: any } }) => {
+      footPrints.value?.forEach((element: { coordinates: any }) => {
         const cesiumPoints: any [] = [];
-        element.footprint.coordinates[0].forEach((e: any) => {
+        element.coordinates[0].forEach((e: any) => {
           cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
         });
         cesiumViewer.value.entities.add({
@@ -325,16 +329,28 @@ export default defineComponent({
         });
       });
     }, { deep: true });
+
+    return {
+      useMap,
+    };
   },
 });
 </script>
+
 <template>
-  <div id="cesiumContainer" />
-</template>;
+  <div
+    id="cesiumContainer"
+    :class="useMap? 'draw-mode': ''"
+  />
+</template>
 
 <style>
   #cesiumContainer{
     width: 100% !important;
     height: calc(100vh - 48px) !important;
+    cursor: grab;
+  }
+  #cesiumContainer.draw-mode{
+    cursor: crosshair
   }
 </style>

@@ -36,7 +36,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-row>
+  <v-row
+    no-gutters
+    justify="center"
+  >
     <v-dialog
       v-model="searchParameters.acquired.startDateModal"
       width="600px"
@@ -44,10 +47,12 @@ export default defineComponent({
       <template v-slot:activator="{ on, attrs }">
         <v-col
           cols="6"
+          class="pr-3"
         >
           <v-text-field
             :value.sync="searchParameters.acquired.startDate"
             prepend-icon="mdi-calendar"
+            append-outer-icon="mdi-minus"
             clearable
             readonly
             dense
@@ -88,7 +93,7 @@ export default defineComponent({
     >
       <template v-slot:activator="{ on, attrs }">
         <v-col
-          cols="6"
+          cols="5"
         >
           <v-text-field
             :value.sync="searchParameters.acquired.endDate"

@@ -2,7 +2,9 @@
 import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
-import { geoShape, searchResults, searchParameters } from '@/store';
+import {
+  drawnShape, searchResults, searchParameters, updateFootPrints, geoJsonShape, specifiedShape,
+} from '@/store';
 import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
@@ -32,8 +34,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const geoJsonShape = ref();
-
     const reveal = ref(false);
     const buttonText = ref('Show Results');
     const cardTitle = ref('Search');
@@ -61,9 +61,15 @@ export default defineComponent({
       searchResults.value = res.data.results;
     };
 
-    watch(geoShape, () => {
-      if (geoShape.value.type) {
-        geoJsonShape.value = JSON.stringify(geoShape.value);
+    watch(drawnShape, () => {
+      if (drawnShape.value.type) {
+        geoJsonShape.value = JSON.stringify(drawnShape.value);
+      }
+    }, { deep: true });
+
+    watch(specifiedShape, () => {
+      if (specifiedShape.value.type) {
+        geoJsonShape.value = JSON.stringify(specifiedShape.value);
       }
     }, { deep: true });
     return {
@@ -73,6 +79,7 @@ export default defineComponent({
       buttonText,
       reveal,
       cardTitle,
+      updateFootPrints,
     };
   },
 });
@@ -112,10 +119,16 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults"
+      @submit.prevent="updateResults().then(updateFootPrints)"
     >
+      <v-card-subtitle>
+        Specify search area
+      </v-card-subtitle>
       <GeoJsonForm />
       <template>
+        <v-card-subtitle>
+          Apply search logic
+        </v-card-subtitle>
         <v-row
           justify="center"
           no-gutters
@@ -125,7 +138,7 @@ export default defineComponent({
           >
             <Predicate />
             <div>
-              Acquired
+              Acquired date range
             </div>
             <DateRange />
           </v-col>
