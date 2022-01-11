@@ -62,44 +62,7 @@ export default defineComponent({
       };
       return true;
     };
-    const selectShape = (value: string) => {
-      clearShape();
-      geoJsonShape.value = value;
-    };
 
-    const isGeoJSON = (inputText: string) => {
-      const validation = hint(inputText);
-      geoJsonErrorMessages.value = validation.map((error: {message: string}) => error.message);
-      return true;
-    };
-    const confirmGeoJSON = () => {
-      const jsonForm = JSON.parse(geoJsonString.value);
-      if (jsonForm.geometry) {
-        geoShape.value = jsonForm.geometry;
-      } else {
-        specifiedShape.value = jsonForm;
-      }
-    };
-    const validateFile = (file: File) => {
-      const reader = new FileReader();
-      reader.readAsText(file, 'UTF-8');
-      reader.onload = (readEvent) => {
-        if (readEvent.target) {
-          const { result } = readEvent.target;
-          if (result && typeof result === 'string') {
-            isGeoJSON(result);
-            if (geoJsonErrorMessages.value.length === 0) {
-              geoJsonString.value = result;
-              confirmGeoJSON();
-            }
-          }
-        }
-      };
-      reader.onerror = () => {
-        geoJsonErrorMessages.value = ['Error reading file.'];
-      };
-      return true;
-    };
     return {
       useMap,
       clearShape,
