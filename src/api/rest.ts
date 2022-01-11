@@ -62,3 +62,11 @@ export async function rgdFootprint(
 
   return response;
 }
+
+export async function rgdImagery(
+  spatialID: number,
+) {
+  const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}`);
+
+  return response;
+}

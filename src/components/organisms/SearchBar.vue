@@ -5,13 +5,11 @@ import {
 import {
   drawnShape,
   searchResults,
-  searchParameters,
-  updateFootPrints,
+  createRasterArray,
   geoJsonShape,
   specifiedShape,
   updateResults,
 } from '@/store';
-import { rgdSearch } from '@/api/rest';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -74,7 +72,7 @@ export default defineComponent({
       buttonText,
       reveal,
       cardTitle,
-      updateFootPrints,
+      createRasterArray,
     };
   },
 });
@@ -114,7 +112,7 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults()"
+      @submit.prevent="updateResults().then(createRasterArray)"
     >
       <v-card-subtitle>
         Specify search area
