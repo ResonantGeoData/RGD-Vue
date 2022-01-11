@@ -30,6 +30,11 @@ export async function rgdSearch(
   predicate?: string | null,
   acquiredAfter?: string | null,
   acquiredBefore?: string | null,
+  distanceMin? : string | null,
+  distanceMax? : string | null,
+  instrumentation?: string | null,
+  startTime?: string | null,
+  endTime?: string | null,
 
 ) {
   const response = await axiosInstance.get('rgd/search', {
@@ -40,6 +45,11 @@ export async function rgdSearch(
       predicate,
       acquiredAfter,
       acquiredBefore,
+      distanceMin,
+      distanceMax,
+      instrumentation,
+      startTime,
+      endTime,
     },
   });
   return response;

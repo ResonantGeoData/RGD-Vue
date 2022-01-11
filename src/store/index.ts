@@ -24,6 +24,8 @@ export const searchOffset = ref<number>(0);
 
 export const searchResultsTotal = ref<number>();
 
+export const searchInstrumentation = ref<string|null>('');
+
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
   acquired: {
@@ -82,6 +84,11 @@ export const updateResults = async () => {
     searchParameters.value.predicate,
     searchParameters.value.acquired.startDate,
     searchParameters.value.acquired.endDate,
+    resultsFilter.value.distance.min,
+    resultsFilter.value.distance.max,
+    resultsFilter.value.instrumentation,
+    resultsFilter.value.time.startTime,
+    resultsFilter.value.time.endTime,
 
   );
   searchResults.value = res.data.results;
