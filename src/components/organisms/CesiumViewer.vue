@@ -315,7 +315,7 @@ export default defineComponent({
 
     watch(footPrintFlag, () => {
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element) => {
+      footPrints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
         const cesiumPoints: RGDResult[] = [];
         element.footprint.coordinates[0].forEach((e: any) => {
           cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
