@@ -76,7 +76,6 @@ export const removeVisibleOverlay = (spatialId: number) => {
   visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
 };
 
-
 export const selectResultForMetadataDrawer = async (spatialId: number) => {
   if (searchResults.value) {
     searchResults.value = searchResults.value.map(
@@ -92,7 +91,6 @@ export const selectResultForMetadataDrawer = async (spatialId: number) => {
 export const clearMetaDataDrawer = (_spatialId: number) => {
   drawerContents.value = undefined;
 };
-
 
 export const updateResults = async () => {
   const res = await rgdSearch(
