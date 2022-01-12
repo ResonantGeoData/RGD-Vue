@@ -8,9 +8,11 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footprintIds, specifiedShape,
+  useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
-import { rgdFootprint } from '@/api/rest';
+import {
+  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry,
+} from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
 export default defineComponent({
@@ -359,6 +361,51 @@ export default defineComponent({
     };
 
     watch(footprintIds, updateFootprints, { deep: true });
+
+    // TODO: this logic needs to be moved to a better place, IMO the active element view as data types are checked
+    const generateTileProvider = async (imageId: number, band = 0) => {
+      const data = await rgdImageTilesMeta(imageId);
+      const extents = data.bounds;
+      const rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax);
+      const tileProvider = new Cesium.UrlTemplateImageryProvider({
+        // TODO: how do we do this with Axios?
+        url: `http://localhost:8000/api/image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}`,
+        subdomains: null, // We do not need or provide this in RGD
+        // rectangle: rectangle, // TODO: To prevent fetching tiles outside bounds of image
+      });
+      return tileProvider;
+    };
+
+    const tileLayers: any = {}; // Cesium.TileLayer
+    watch(visibleOverlayIds, () => {
+      // Purge
+      Object.keys(visibleOverlayIds).forEach(async (key: string) => {
+        const spatialId = Number(key);
+        if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
+          const entry = await rgdSpatialEntry(spatialId);
+          if (entry.subentry_type === 'RasterMeta') {
+            const layers = cesiumViewer.value.scene.imageryLayers;
+            layers.remove(tileLayers[spatialId]);
+            delete tileLayers[spatialId];
+          }
+        }
+      });
+
+      // eslint-disable-next-line no-unused-expressions
+      visibleOverlayIds.value?.forEach(async (spatialId: number) => {
+        const entry = await rgdSpatialEntry(spatialId);
+        if (entry.subentry_type === 'RasterMeta') {
+          // TODO: check if present for image ID and Band
+          const imagery = await rgdImagery(spatialId);
+          const imageId = imagery.parent_raster.image_set.images[0].id;
+          const tileProvider = await generateTileProvider(imageId);
+          const layers = cesiumViewer.value.scene.imageryLayers;
+          layers.remove(tileLayers[spatialId]);
+          const tileLayer = layers.addImageryProvider(tileProvider);
+          tileLayers[spatialId] = tileLayer;
+        }
+      });
+    }, { deep: true });
 
     return {
       useMap,

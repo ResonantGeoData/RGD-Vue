@@ -55,11 +55,17 @@ export async function rgdSearch(
   return response;
 }
 
+export async function rgdSpatialEntry(
+  spatialID: number,
+) {
+  const response = await axiosInstance.get(`rgd/spatial_entry/${spatialID}`);
+  return response.data;
+}
+
 export async function rgdFootprint(
   spatialID: number,
 ) {
   const response = await axiosInstance.get<{ footprint: { coordinates: any[][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
-
   return response.data;
 }
 
@@ -67,6 +73,12 @@ export async function rgdImagery(
   spatialID: number,
 ) {
   const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}`);
+  return response.data;
+}
 
+export async function rgdImageTilesMeta(
+  imageId: number,
+) {
+  const response = await axiosInstance.get(`/image_process/imagery/${imageId}/tiles`);
   return response.data;
 }
