@@ -15,6 +15,7 @@ import {
   selectResultForMetadataDrawer,
   clearMetaDataDrawer,
 } from '@/store';
+import { FocusedDataType } from '@/store/types';
 import { imageryBands, rgdImagery } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
@@ -30,11 +31,11 @@ export default defineComponent({
   },
 
   setup() {
-    const focusedData = ref({
-      bandsList: <any>[],
-      images: <any>[],
+    const focusedData = ref<FocusedDataType>({
+      bandsList: [],
+      images: [],
       title: '',
-      });
+    });
 
     const focusFlag = ref(false);
     const tableOptions = reactive({
@@ -126,22 +127,20 @@ export default defineComponent({
     const getFocusedData = async (item: { spatial_id: any; subentry_name: any }) => {
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
-      const imageInfo = ref({value:'', text:''})
+      const imageInfo = ref({ value: '', text: '' });
       const res = await imageryBands(item.spatial_id);
       // focusedData.value.bands = res.data;
       focusedData.value.title = item.subentry_name;
       Object.keys(res.data).forEach((key) => {
         if (res.data[key].interpretation) {
-           focusedData.value.bandsList.push(res.data[key].interpretation);
+          focusedData.value.bandsList.push(res.data[key].interpretation);
         }
       });
       const result = await rgdImagery(item.spatial_id);
-       result.data.parent_raster.image_set.images.forEach((element: { file: { id: any; name: any; }; }, index: string|number) => {
-       imageInfo.value.value= element.file.id;
-       imageInfo.value.text= element.file.name;
-       focusedData.value.images.push(imageInfo.value)
-
-
+      result.data.parent_raster.image_set.images.forEach((element: { file: { id: any; name: any } }, index: string|number) => {
+        imageInfo.value.value = element.file.id;
+        imageInfo.value.text = element.file.name;
+        focusedData.value.images.push(imageInfo.value);
       });
     };
 
@@ -240,7 +239,7 @@ export default defineComponent({
       v-if="focusFlag"
       :bands-list="focusedData.bandsList"
       :raster-title="focusedData.title"
-      :imageList="focusedData.images"
+      :image-list="focusedData.images"
     />
   </div>
 </template>

@@ -49,6 +49,12 @@ export type ImageryResult = {
   cloud_cover: number;
 }
 
+export type FocusedDataType = {
+  bandsList: Array<any>;
+  images: Array<any>;
+  title: string;
+}
+
 export type RGDResultList = Array<RGDResult>
 
 export interface SearchParameters {
