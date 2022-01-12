@@ -83,6 +83,7 @@ export default defineComponent({
   <v-card
     color="blue-grey darken-4"
     height="calc(100vh - 48px)"
+    style="z-index: 2"
   >
     <v-card-title
       class="blue-grey darken-2 text-uppercase"
