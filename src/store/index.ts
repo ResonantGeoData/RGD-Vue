@@ -10,9 +10,9 @@ export const geoJsonShape = ref();
 
 export const rasterArray = ref();
 
-export const footPrints = ref();
+export const footprints = ref();
 
-export const footPrintFlag = ref(false);
+export const footprintFlag = ref(false);
 
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
@@ -55,11 +55,11 @@ export const resultsFilter = ref<ResultsFilter>({
 export const addFootPrint = async (spatialId: number) => {
   const res = await rgdFootprint(spatialId);
 
-  if (footPrints.value === undefined) {
-    footPrints.value = [];
+  if (footprints.value === undefined) {
+    footprints.value = [];
   }
 
-  footPrints.value.push(res.data);
+  footprints.value.push(res.data);
 };
 
 export const removeFootPrint = (spatialId: number) => {
@@ -74,11 +74,11 @@ export const removeRasterOverlay = (spatialId: number) => {
   // TODO
 };
 
-const footPrintFlagToggle = () => {
-  if (footPrintFlag.value === true) {
-    footPrintFlag.value = false;
+const footprintFlagToggle = () => {
+  if (footprintFlag.value === true) {
+    footprintFlag.value = false;
   } else {
-    footPrintFlag.value = true;
+    footprintFlag.value = true;
   }
 };
 
@@ -88,7 +88,7 @@ export const updateFootPrints = async () => {
   const getFootPrints = async (current: { spatial_id: number }) => {
     const res = await rgdFootprint(current.spatial_id);
     resArray.push(res.data.footprint);
-    footPrints.value = resArray;
+    footprints.value = resArray;
   };
   if (searchResults.value) {
     for (let i = 0; i < searchResults.value?.length; i += 1) {
@@ -97,7 +97,7 @@ export const updateFootPrints = async () => {
     }
   }
   await Promise.all(promiseList);
-  footPrintFlagToggle();
+  footprintFlagToggle();
 };
 
 export const updateResults = async () => {

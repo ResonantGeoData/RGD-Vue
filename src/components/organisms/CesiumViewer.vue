@@ -8,7 +8,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footPrints, specifiedShape, footPrintFlag,
+  useMap, drawnShape, footprints, specifiedShape, footprintFlag,
 } from '@/store';
 import { RGDResult } from '@/store/types';
 
@@ -313,9 +313,9 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(footPrints, () => {
+    watch(footprints, () => {
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
+      footprints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
         const cesiumPoints: RGDResult[] = [];
         element.footprint.coordinates[0].forEach((e: any) => {
           cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
