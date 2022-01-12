@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, watch, ref } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'FocusedData',
@@ -7,33 +7,23 @@ export default defineComponent({
     imageList: {
       type: Array,
     },
-    bands: {
-      type: Object,
+    bandsList: {
+      type: Array,
     },
     rasterTitle: {
       type: String,
       required: true,
     },
   },
-  setup(props) {
-    const bandList: any[] = [];
-    const currentBand = ref();
+  setup() {
     const bandSelection = ref();
-
-    watch(props, () => {
-      currentBand.value = props.bands;
-      console.log(currentBand);
-      console.log(props.bands);
-      // eslint-disable-next-line no-unused-expressions
-      Object.keys(currentBand.value).forEach((key) => {
-        bandList.push(currentBand.value[key].interpretation);
-      });
-      console.log(bandList);
-    }, { deep: true });
+    const imageSelection = ref();
+    const opacity = ref();
 
     return {
-      bandList,
       bandSelection,
+      imageSelection,
+      opacity,
     };
   },
 
@@ -53,17 +43,28 @@ export default defineComponent({
         cols="10"
       >
         <v-select
+          v-if="imageList"
+          v-model="imageSelection"
           label="Image"
+          clearable
+          :items.sync="imageList"
           outlined
         />
         <v-select
+          v-if="bandsList && bandsList.length !==0"
           v-model="bandSelection"
           label="Bands"
-          :items.sync="bandList"
+          clearable
+          :items.sync="bandsList"
           outlined
         />
         <v-slider
+          v-model="opacity"
           label="Opacity"
+          :step=".1"
+          min="0"
+          max="1"
+          thumb-label
           track-color="#8EC13F"
         />
       </v-col>
