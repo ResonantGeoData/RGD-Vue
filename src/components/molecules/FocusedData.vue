@@ -1,9 +1,6 @@
 <script lang="ts">
-<<<<<<< HEAD
+
 import { defineComponent, ref } from '@vue/composition-api';
-=======
-import { defineComponent, watch, ref } from '@vue/composition-api';
->>>>>>> add focused data component
 
 export default defineComponent({
   name: 'FocusedData',
