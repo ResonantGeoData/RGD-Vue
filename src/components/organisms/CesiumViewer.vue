@@ -11,7 +11,8 @@ import {
   useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
 import {
-  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl, rgdTokenSignature, rgdHost,
+  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
+  rgdTokenSignature, rgdHost,
 } from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
