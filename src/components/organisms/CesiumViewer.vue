@@ -8,8 +8,9 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footprints, specifiedShape,
+  useMap, drawnShape, footprintIds, specifiedShape,
 } from '@/store';
+import { rgdFootprint } from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
 export default defineComponent({
@@ -313,23 +314,44 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(footprints, () => {
-      // eslint-disable-next-line no-unused-expressions
-      footprints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
-        const cesiumPoints: RGDResult[] = [];
-        element.footprint.coordinates[0].forEach((e: any) => {
-          cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-        });
-        cesiumViewer.value.entities.add({
-          polygon: {
-            hierarchy: cesiumPoints,
-            material: new Cesium.ColorMaterialProperty(
-              Cesium.Color.fromRandom({ alpha: 0.5 }),
-            ),
-          },
-        });
+    const addGeojson = (geojson: { coordinates: any[][] }) => {
+      const cesiumPoints: RGDResult[] = [];
+      geojson.coordinates[0].forEach((e: any) => {
+        cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
-    }, { deep: true });
+
+      const polygon = {
+        polygon: {
+          hierarchy: cesiumPoints,
+          material: new Cesium.ColorMaterialProperty(
+            Cesium.Color.fromRandom({ alpha: 0.5 }),
+          ),
+        },
+      };
+
+      cesiumViewer.value.entities.add(polygon);
+
+      return polygon;
+    };
+
+    const footprints: any = {};
+    const addFootprint = async (spatialId: number) => {
+      if (!(spatialId in footprints)) {
+        const element = await rgdFootprint(spatialId);
+        footprints[spatialId] = addGeojson(element.footprint);
+      }
+    };
+    const removeFootprint = (spatialId: number) => {
+      if (spatialId in footprints) {
+        cesiumViewer.value.entities.remove(footprints[spatialId]);
+      }
+    };
+    const updateFootprints = () => {
+      // eslint-disable-next-line no-unused-expressions
+      footprintIds.value?.forEach(addFootprint);
+    };
+
+    watch(footprintIds, updateFootprints, { deep: true });
 
     return {
       useMap,

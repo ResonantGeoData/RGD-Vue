@@ -1,5 +1,5 @@
 import { ref } from '@vue/composition-api';
-import { rgdFootprint, rgdImagery, rgdSearch } from '@/api/rest';
+import { rgdImagery, rgdSearch } from '@/api/rest';
 import {
   GeoJsonShape, RGDResult, RGDResultList, SearchParameters, ResultsFilter,
 } from './types';
@@ -10,7 +10,7 @@ export const geoJsonShape = ref();
 
 export const rasterArray = ref();
 
-export const footprints = ref();
+export const footprintIds = ref();
 
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
@@ -50,21 +50,18 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const addFootPrint = async (spatialId: number) => {
-  const res = await rgdFootprint(spatialId);
-
-  if (footprints.value === undefined) {
-    footprints.value = [];
+export const addFootPrint = (spatialId: number) => {
+  if (footprintIds.value === undefined) {
+    footprintIds.value = [];
   }
-
-  footprints.value.push(res.data);
+  footprintIds.value.push(spatialId);
 };
 
 export const removeFootPrint = (spatialId: number) => {
   // TODO
 };
 
-export const addRasterOverlay = async (spatialId: number) => {
+export const addRasterOverlay = (spatialId: number) => {
   // TODO
 };
 
