@@ -88,6 +88,15 @@ export async function rgdTokenSignature() {
   return response.data.signature;
 }
 
+export function rgdHost() {
+  const url = new URL(String(axiosInstance.defaults.baseURL));
+  return url.host;
+}
+
+export function rgdBaseUrl() {
+  return axiosInstance.defaults.baseURL;
+}
+
 export function rgdCreateUrl(path: string) {
-  return `${axiosInstance.defaults.baseURL}/${path}`;
+  return `${rgdBaseUrl()}/${path}`;
 }

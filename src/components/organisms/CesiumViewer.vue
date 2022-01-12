@@ -11,7 +11,7 @@ import {
   useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
 import {
-  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl, rgdTokenSignature,
+  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl, rgdTokenSignature, rgdHost,
 } from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
@@ -22,6 +22,13 @@ export default defineComponent({
 
     const cesiumViewer = ref();
     let tileSignature: string;
+
+    const host = rgdHost();
+    // Limit the tile requests on RGD server so that Vue app's requests aren't hung
+    // Cesium.RequestScheduler.requestsByServer = {
+    //   host: 3,
+    // };
+    Cesium.RequestScheduler.maximumRequestsPerServer = 3;
 
     onMounted(async () => {
       tileSignature = await rgdTokenSignature();
