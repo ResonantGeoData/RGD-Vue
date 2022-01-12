@@ -18,7 +18,7 @@ export type RGDResult = {
   subentry_type: string;
   subentry_name: string;
   show_footprint: boolean;
-  show_raster: boolean;
+  show_overlay: boolean;
 }
 
 export type ImageryResult = {

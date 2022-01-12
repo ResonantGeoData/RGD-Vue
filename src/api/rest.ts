@@ -55,20 +55,50 @@ export async function rgdSearch(
   return response;
 }
 
+export async function rgdSpatialEntry(
+  spatialID: number,
+) {
+  const response = await axiosInstance.get(`rgd/spatial_entry/${spatialID}`);
+  return response.data;
+}
+
 export async function rgdFootprint(
   spatialID: number,
 ) {
-  const response = await axiosInstance.get(`rgd/spatial_entry/${spatialID}/footprint`);
-
-  return response;
+  const response = await axiosInstance.get<{ footprint: { coordinates: any[][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
+  return response.data;
 }
 
 export async function rgdImagery(
   spatialID: number,
 ) {
   const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}`);
+  return response.data;
+}
 
-  return response;
+export async function rgdImageTilesMeta(
+  imageId: number,
+) {
+  const response = await axiosInstance.get(`/image_process/imagery/${imageId}/tiles`);
+  return response.data;
+}
+
+export async function rgdTokenSignature() {
+  const response = await axiosInstance.post('/signature');
+  return response.data.signature;
+}
+
+export function rgdHost() {
+  const url = new URL(String(axiosInstance.defaults.baseURL));
+  return url.host;
+}
+
+export function rgdBaseUrl() {
+  return axiosInstance.defaults.baseURL;
+}
+
+export function rgdCreateUrl(path: string) {
+  return `${rgdBaseUrl()}/${path}`;
 }
 
 export async function imageryBands(

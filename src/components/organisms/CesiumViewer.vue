@@ -8,8 +8,12 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footPrints, specifiedShape, footPrintFlag,
+  useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
+import {
+  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
+  rgdTokenSignature, rgdHost,
+} from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
 export default defineComponent({
@@ -18,7 +22,17 @@ export default defineComponent({
     const polyPoints: any[] = [[]];
 
     const cesiumViewer = ref();
-    onMounted(() => {
+    let tileSignature: string;
+
+    const host = rgdHost();
+    // Limit the tile requests on RGD server so that Vue app's requests aren't hung
+    // Cesium.RequestScheduler.requestsByServer = {
+    //   host: 3,
+    // };
+    Cesium.RequestScheduler.maximumRequestsPerServer = 3;
+
+    onMounted(async () => {
+      tileSignature = await rgdTokenSignature();
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
       const imageryViewModels = [];
@@ -299,13 +313,13 @@ export default defineComponent({
     });
 
     watch(specifiedShape, () => {
-      const uploadedFootPrint: any[] = [];
+      const uploadedFootprint: any[] = [];
       specifiedShape.value.coordinates[0].forEach((e: any) => {
-        uploadedFootPrint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+        uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       cesiumViewer.value.entities.add({
         polygon: {
-          hierarchy: uploadedFootPrint,
+          hierarchy: uploadedFootprint,
           material: new Cesium.ColorMaterialProperty(
             Cesium.Color.RED,
           ),
@@ -313,21 +327,98 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(footPrints, () => {
+    const addGeojson = (geojson: { coordinates: any[][] }) => {
+      const cesiumPoints: RGDResult[] = [];
+      geojson.coordinates[0].forEach((e: any) => {
+        cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+      });
+      return cesiumViewer.value.entities.add({
+        polygon: {
+          hierarchy: cesiumPoints,
+          material: new Cesium.ColorMaterialProperty(
+            Cesium.Color.fromRandom({ alpha: 0.5 }),
+          ),
+        },
+      });
+    };
+
+    const footprintEntities: any = {}; // Cesium.Entity
+    const addFootprint = async (spatialId: number) => {
+      if (!(spatialId in footprintEntities)) {
+        const element = await rgdFootprint(spatialId);
+        footprintEntities[spatialId] = addGeojson(element.footprint);
+      }
+    };
+    const removeFootprint = (spatialId: number) => {
+      if (spatialId in footprintEntities) {
+        cesiumViewer.value.entities.remove(footprintEntities[spatialId]);
+        delete footprintEntities[spatialId];
+      }
+    };
+    const updateFootprints = () => {
+      // Purge footprints
+      Object.keys(footprintEntities).forEach((key: string) => {
+        const spatialId = Number(key);
+        if (footprintIds.value.indexOf(spatialId) < 0) {
+          removeFootprint(spatialId);
+        }
+      });
+
+      // Add footprints
       // eslint-disable-next-line no-unused-expressions
-      footPrints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
-        const cesiumPoints: RGDResult[] = [];
-        element.footprint.coordinates[0].forEach((e: any) => {
-          cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-        });
-        cesiumViewer.value.entities.add({
-          polygon: {
-            hierarchy: cesiumPoints,
-            material: new Cesium.ColorMaterialProperty(
-              Cesium.Color.fromRandom({ alpha: 0.5 }),
-            ),
-          },
-        });
+      footprintIds.value?.forEach((spatialId: number) => {
+        addFootprint(spatialId);
+      });
+    };
+
+    watch(footprintIds, updateFootprints, { deep: true });
+
+    // TODO: this logic needs to be moved to a better place
+    const generateTileProvider = async (imageId: number, band = 0) => {
+      const data = await rgdImageTilesMeta(imageId);
+      const extents = data.bounds;
+      const rectangle = Cesium.Rectangle.fromDegrees(
+        extents.xmin, extents.ymin, extents.xmax, extents.ymax,
+      );
+      const tileProvider = new Cesium.UrlTemplateImageryProvider({
+        url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${tileSignature}`),
+        subdomains: null, // We do not need or provide this in RGD
+        rectangle,
+      });
+      return tileProvider;
+    };
+
+    const tileLayers: any = {}; // Cesium.TileLayer
+    watch(visibleOverlayIds, () => {
+      // Purge
+      Object.keys(tileLayers).forEach(async (key: string) => {
+        const spatialId = Number(key);
+        if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
+          const entry = await rgdSpatialEntry(spatialId);
+          if (entry.subentry_type === 'RasterMeta') {
+            const layers = cesiumViewer.value.scene.imageryLayers;
+            layers.remove(tileLayers[spatialId]);
+            delete tileLayers[spatialId];
+          }
+        }
+      });
+
+      // eslint-disable-next-line no-unused-expressions
+      visibleOverlayIds.value?.forEach(async (spatialId: number) => {
+        if (spatialId in tileLayers) {
+          return;
+        }
+        const entry = await rgdSpatialEntry(spatialId);
+        if (entry.subentry_type === 'RasterMeta') {
+          // TODO: check if present for image ID and Band
+          const imagery = await rgdImagery(spatialId);
+          const imageId = imagery.parent_raster.image_set.images[0].id;
+          const tileProvider = await generateTileProvider(imageId);
+          const layers = cesiumViewer.value.scene.imageryLayers;
+          layers.remove(tileLayers[spatialId]);
+          const tileLayer = layers.addImageryProvider(tileProvider);
+          tileLayers[spatialId] = tileLayer;
+        }
       });
     }, { deep: true });
 

@@ -8,10 +8,10 @@ import {
   searchOffset,
   searchResultsTotal,
   updateResults,
-  addFootPrint,
-  removeFootPrint,
-  addRasterOverlay,
-  removeRasterOverlay,
+  addFootprint,
+  removeFootprint,
+  addVisibleOverlay,
+  removeVisibleOverlay,
   selectResultForMetadataDrawer,
   clearMetaDataDrawer,
 } from '@/store';
@@ -45,7 +45,7 @@ export default defineComponent({
 
     const headers = [
       {
-        text: '', value: 'show_raster', width: 1, sortable: false,
+        text: '', value: 'show_overlay', width: 1, sortable: false,
       },
       {
         text: 'ID-Name', value: 'id-name', sortable: false,
@@ -96,11 +96,11 @@ export default defineComponent({
       let addFunc;
       let removeFunc;
       if (fieldName === 'show_footprint') {
-        addFunc = addFootPrint;
-        removeFunc = removeFootPrint;
-      } else if (fieldName === 'show_raster') {
-        addFunc = addRasterOverlay;
-        removeFunc = removeRasterOverlay;
+        addFunc = addFootprint;
+        removeFunc = removeFootprint;
+      } else if (fieldName === 'show_overlay') {
+        addFunc = addVisibleOverlay;
+        removeFunc = removeVisibleOverlay;
       } else if (fieldName === 'show_metadata') {
         addFunc = selectResultForMetadataDrawer;
         removeFunc = clearMetaDataDrawer;
@@ -175,16 +175,16 @@ export default defineComponent({
       calculate-widths
     >
       <!-- eslint-disable-next-line -->
-      <template #item.show_raster="{item}">
+      <template #item.show_overlay="{item}">
         <v-simple-checkbox
           v-if="item.subentry_type === 'RasterMeta'"
           v-ripple
           dark
           off-icon="mdi-eye-off"
           on-icon="mdi-eye"
-          :value="item.show_raster"
+          :value="item.show_overlay"
           style="padding: 0;"
-          @input="(value) => toggleValue('show_raster', item.spatial_id, value)"
+          @input="(value) => toggleValue('show_overlay', item.spatial_id, value)"
         />
       </template>
       <!-- eslint-disable-next-line -->

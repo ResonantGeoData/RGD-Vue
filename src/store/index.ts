@@ -1,5 +1,5 @@
 import { ref } from '@vue/composition-api';
-import { rgdFootprint, rgdImagery, rgdSearch } from '@/api/rest';
+import { rgdImagery, rgdSearch } from '@/api/rest';
 import {
   GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, ImageryResult,
 } from './types';
@@ -10,9 +10,9 @@ export const geoJsonShape = ref();
 
 export const rasterArray = ref();
 
-export const footPrints = ref();
+export const footprintIds = ref();
 
-export const footPrintFlag = ref(false);
+export const visibleOverlayIds = ref();
 
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
@@ -54,29 +54,26 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const addFootPrint = async (spatialId: number) => {
-  const res = await rgdFootprint(spatialId);
-
-  if (footPrints.value === undefined) {
-    footPrints.value = [];
+export const addFootprint = (spatialId: number) => {
+  if (footprintIds.value === undefined) {
+    footprintIds.value = [];
   }
-
-  footPrints.value.push(res.data);
+  footprintIds.value.push(spatialId);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const removeFootPrint = (_spatialId: number) => {
-  // TODO
+export const removeFootprint = (spatialId: number) => {
+  footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const addRasterOverlay = async (_spatialId: number) => {
-  // TODO
+export const addVisibleOverlay = (spatialId: number) => {
+  if (visibleOverlayIds.value === undefined) {
+    visibleOverlayIds.value = [];
+  }
+  visibleOverlayIds.value.push(spatialId);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const removeRasterOverlay = (_spatialId: number) => {
-  // TODO
+export const removeVisibleOverlay = (spatialId: number) => {
+  visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
 };
 
 export const selectResultForMetadataDrawer = async (spatialId: number) => {
@@ -87,38 +84,12 @@ export const selectResultForMetadataDrawer = async (spatialId: number) => {
     );
   }
   const res = await rgdImagery(spatialId);
-  drawerContents.value = res.data;
+  drawerContents.value = res;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const clearMetaDataDrawer = (_spatialId: number) => {
   drawerContents.value = undefined;
-};
-
-const footPrintFlagToggle = () => {
-  if (footPrintFlag.value === true) {
-    footPrintFlag.value = false;
-  } else {
-    footPrintFlag.value = true;
-  }
-};
-
-export const updateFootPrints = async () => {
-  const resArray: any[] = [];
-  const promiseList: Promise<unknown>[] = [];
-  const getFootPrints = async (current: { spatial_id: number }) => {
-    const res = await rgdFootprint(current.spatial_id);
-    resArray.push(res.data.footprint);
-    footPrints.value = resArray;
-  };
-  if (searchResults.value) {
-    for (let i = 0; i < searchResults.value?.length; i += 1) {
-      const currentRequest = searchResults.value[i];
-      promiseList.push(getFootPrints(currentRequest));
-    }
-  }
-  await Promise.all(promiseList);
-  footPrintFlagToggle();
 };
 
 export const updateResults = async () => {
@@ -138,7 +109,6 @@ export const updateResults = async () => {
   );
   searchResults.value = res.data.results;
   searchResultsTotal.value = res.data.count;
-  // updateFootPrints();
 };
 
 export const createRasterArray = async () => {
