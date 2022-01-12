@@ -50,14 +50,14 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const addFootPrint = (spatialId: number) => {
+export const addFootprint = (spatialId: number) => {
   if (footprintIds.value === undefined) {
     footprintIds.value = [];
   }
   footprintIds.value.push(spatialId);
 };
 
-export const removeFootPrint = (spatialId: number) => {
+export const removeFootprint = (spatialId: number) => {
   footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
 };
 

@@ -8,8 +8,8 @@ import {
   searchOffset,
   searchResultsTotal,
   updateResults,
-  addFootPrint,
-  removeFootPrint,
+  addFootprint,
+  removeFootprint,
   addRasterOverlay,
   removeRasterOverlay,
 } from '@/store';
@@ -74,8 +74,8 @@ export default defineComponent({
       let addFunc;
       let removeFunc;
       if (fieldName === 'show_footprint') {
-        addFunc = addFootPrint;
-        removeFunc = removeFootPrint;
+        addFunc = addFootprint;
+        removeFunc = removeFootprint;
       } else if (fieldName === 'show_raster') {
         addFunc = addRasterOverlay;
         removeFunc = removeRasterOverlay;

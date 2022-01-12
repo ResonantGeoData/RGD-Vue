@@ -300,13 +300,13 @@ export default defineComponent({
     });
 
     watch(specifiedShape, () => {
-      const uploadedFootPrint: any[] = [];
+      const uploadedFootprint: any[] = [];
       specifiedShape.value.coordinates[0].forEach((e: any) => {
-        uploadedFootPrint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+        uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       cesiumViewer.value.entities.add({
         polygon: {
-          hierarchy: uploadedFootPrint,
+          hierarchy: uploadedFootprint,
           material: new Cesium.ColorMaterialProperty(
             Cesium.Color.RED,
           ),
