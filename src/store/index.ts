@@ -54,6 +54,11 @@ export const resultsFilter = ref<ResultsFilter>({
 
 export const addFootPrint = async (spatialId: number) => {
   const res = await rgdFootprint(spatialId);
+
+  if (footPrints.value === undefined) {
+    footPrints.value = [];
+  }
+
   footPrints.value.push(res.data);
 };
 
@@ -112,20 +117,20 @@ export const updateResults = async () => {
   );
   searchResults.value = res.data.results;
   searchResultsTotal.value = res.data.count;
-  updateFootPrints();
+  // updateFootPrints();
 };
 
 export const createRasterArray = async () => {
-  const resArr: any[] = [];
-  const getRasterImagery = async (current: { spatial_id: number }) => {
-    const res = await rgdImagery(current.spatial_id);
-    resArr.push(res.data);
-    rasterArray.value = resArr;
-  };
-  if (searchResults.value) {
-    for (let i = 0; i < searchResults.value?.length; i += 1) {
-      const currentRequest = searchResults.value[i];
-      getRasterImagery(currentRequest);
-    }
-  }
+  // const resArr: any[] = [];
+  // const getRasterImagery = async (current: { spatial_id: number }) => {
+  //   const res = await rgdImagery(current.spatial_id);
+  //   resArr.push(res.data);
+  //   rasterArray.value = resArr;
+  // };
+  // if (searchResults.value) {
+  //   for (let i = 0; i < searchResults.value?.length; i += 1) {
+  //     const currentRequest = searchResults.value[i];
+  //     getRasterImagery(currentRequest);
+  //   }
+  // }
 };

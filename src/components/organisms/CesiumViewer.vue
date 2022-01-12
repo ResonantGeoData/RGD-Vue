@@ -313,7 +313,7 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    watch(footPrintFlag, () => {
+    watch(footPrints, () => {
       // eslint-disable-next-line no-unused-expressions
       footPrints.value?.forEach((element: { footprint: { coordinates: any[][] } }) => {
         const cesiumPoints: RGDResult[] = [];
