@@ -1,6 +1,6 @@
 <script lang="ts">
 import {
-  defineComponent, reactive, watch, toRefs,
+  defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
 import {
   searchResults,
@@ -15,18 +15,27 @@ import {
   selectResultForMetadataDrawer,
   clearMetaDataDrawer,
 } from '@/store';
+import { imageryBands } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
 import ToolBar from '../molecules/ToolBar.vue';
+import FocusedData from '../molecules/FocusedData.vue';
 
 export default defineComponent({
   name: 'Results',
   components: {
     ToolBar,
     FilterMenu,
+    FocusedData,
   },
 
   setup() {
+    const focusedData = ref({
+      bands: null,
+      images: null,
+      title: null,
+    });
+    const focusFlag = ref(false);
     const tableOptions = reactive({
       page: 1,
       itemsPerPage: 10,
@@ -113,6 +122,13 @@ export default defineComponent({
       return null;
     };
 
+    const getFocusedData = async (item: { spatial_id: any; subentry_name: any }) => {
+      const res = await imageryBands(item.spatial_id);
+      focusedData.value.bands = res.data;
+      focusedData.value.title = item.subentry_name;
+      console.log(item.spatial_id);
+    };
+
     return {
       searchResults,
       ...toRefs(tableOptions),
@@ -121,6 +137,9 @@ export default defineComponent({
       toggleValue,
       searchResultsTotal,
       itemsPerPageOptions,
+      getFocusedData,
+      focusedData,
+      focusFlag,
     };
   },
 });
@@ -155,7 +174,10 @@ export default defineComponent({
       </template>
       <!-- eslint-disable-next-line -->
       <template #item.id-name="{item}">
-        <div style="max-width: 10vw;">
+        <div
+          style="max-width: 10vw;"
+          @click="getFocusedData(item), focusFlag=true"
+        >
           {{ item.spatial_id }}
           {{ item.subentry_name ? ` - ${ellipsisText(item.subentry_name)}` : '' }}
         </div>
@@ -198,6 +220,11 @@ export default defineComponent({
         />
       </template>
     </v-data-table>
+    <FocusedData
+      v-if="focusFlag"
+      :bands="focusedData.bands"
+      :raster-title="focusedData.title"
+    />
   </div>
 </template>
 
