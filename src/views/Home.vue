@@ -7,11 +7,13 @@ import {
 import OAuthClient from '@girder/oauth-client';
 import CesiumViewer from '../components/organisms/CesiumViewer.vue';
 import SearchBar from '../components/organisms/SearchBar.vue';
+import MetadataDrawer from '../components/molecules/MetadataDrawer.vue';
 
 export default defineComponent({
   components: {
     CesiumViewer,
     SearchBar,
+    MetadataDrawer,
   },
   setup() {
     const oauthClient = inject<OAuthClient>('oauthClient');
@@ -90,6 +92,7 @@ export default defineComponent({
         <v-col
           cols="9"
         >
+          <MetadataDrawer />
           <CesiumViewer
             :location="params"
           />

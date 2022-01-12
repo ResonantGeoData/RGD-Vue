@@ -1,7 +1,7 @@
 import { ref } from '@vue/composition-api';
 import { rgdFootprint, rgdImagery, rgdSearch } from '@/api/rest';
 import {
-  GeoJsonShape, RGDResult, RGDResultList, SearchParameters, ResultsFilter,
+  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, ImageryResult,
 } from './types';
 
 export const useMap = ref(false);
@@ -17,6 +17,8 @@ export const footPrintFlag = ref(false);
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
+
+export const drawerContents = ref();
 
 export const searchResults = ref<RGDResultList>();
 
@@ -62,16 +64,35 @@ export const addFootPrint = async (spatialId: number) => {
   footPrints.value.push(res.data);
 };
 
-export const removeFootPrint = (spatialId: number) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const removeFootPrint = (_spatialId: number) => {
   // TODO
 };
 
-export const addRasterOverlay = async (spatialId: number) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const addRasterOverlay = async (_spatialId: number) => {
   // TODO
 };
 
-export const removeRasterOverlay = (spatialId: number) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const removeRasterOverlay = (_spatialId: number) => {
   // TODO
+};
+
+export const selectResultForMetadataDrawer = async (spatialId: number) => {
+  if (searchResults.value) {
+    searchResults.value = searchResults.value.map(
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      (entry) => Object.assign(entry, { show_metadata: false }),
+    );
+  }
+  const res = await rgdImagery(spatialId);
+  drawerContents.value = res.data;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const clearMetaDataDrawer = (_spatialId: number) => {
+  drawerContents.value = undefined;
 };
 
 const footPrintFlagToggle = () => {

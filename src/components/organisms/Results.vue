@@ -12,6 +12,8 @@ import {
   removeFootPrint,
   addRasterOverlay,
   removeRasterOverlay,
+  selectResultForMetadataDrawer,
+  clearMetaDataDrawer,
 } from '@/store';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
@@ -34,19 +36,28 @@ export default defineComponent({
       {
         text: '', value: 'show_raster', width: 1, sortable: false,
       },
-      { text: 'ID-Name', value: 'id-name', sortable: false },
+      {
+        text: 'ID-Name', value: 'id-name', sortable: false,
+      },
       {
         text: 'Data Type',
         value: 'subentry_type',
         align: 'center',
-        width: 2,
+        width: '1',
         sortable: false,
       },
       {
         text: 'Show Footprint',
         value: 'show_footprint',
+        align: 'center',
+        width: '1',
+        sortable: false,
+      },
+      {
+        text: '',
+        value: 'show_metadata',
         align: 'end',
-        width: 1,
+        width: '1',
         sortable: false,
       },
     ];
@@ -64,7 +75,7 @@ export default defineComponent({
     });
 
     const ellipsisText = (str: string) => {
-      if (str.length > 15) {
+      if (str.length > 20) {
         return `${str.substr(0, 10)}...${str.substr(str.length - 5, str.length)}`;
       }
       return str;
@@ -79,6 +90,9 @@ export default defineComponent({
       } else if (fieldName === 'show_raster') {
         addFunc = addRasterOverlay;
         removeFunc = removeRasterOverlay;
+      } else if (fieldName === 'show_metadata') {
+        addFunc = selectResultForMetadataDrawer;
+        removeFunc = clearMetaDataDrawer;
       }
 
       if (!searchResults.value) {
@@ -135,6 +149,7 @@ export default defineComponent({
           off-icon="mdi-eye-off"
           on-icon="mdi-eye"
           :value="item.show_raster"
+          style="padding: 0;"
           @input="(value) => toggleValue('show_raster', item.spatial_id, value)"
         />
       </template>
@@ -171,13 +186,28 @@ export default defineComponent({
           @input="(value) => toggleValue('show_footprint', item.spatial_id, value)"
         />
       </template>
+      <!-- eslint-disable-next-line -->
+      <template #item.show_metadata="{item}">
+        <v-simple-checkbox
+          v-ripple
+          dark
+          off-icon="mdi-chevron-right"
+          on-icon="mdi-chevron-left"
+          :value="item.show_metadata"
+          @input="(value) => toggleValue('show_metadata', item.spatial_id, value)"
+        />
+      </template>
     </v-data-table>
   </div>
 </template>
 
-<style scoped>
+<style>
 .data-type-icon {
   max-height: 25px;
   filter: invert(100%);
+}
+
+td {
+  padding: 0px 5px!important;
 }
 </style>
