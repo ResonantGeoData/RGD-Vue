@@ -21,7 +21,10 @@ export default defineComponent({
     const polyPoints: any[] = [[]];
 
     const cesiumViewer = ref();
-    onMounted(() => {
+    let tileSignature: string;
+
+    onMounted(async () => {
+      tileSignature = await rgdTokenSignature();
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
       const imageryViewModels = [];
@@ -369,10 +372,8 @@ export default defineComponent({
       const rectangle = Cesium.Rectangle.fromDegrees(
         extents.xmin, extents.ymin, extents.xmax, extents.ymax,
       );
-      const signature = await rgdTokenSignature();
       const tileProvider = new Cesium.UrlTemplateImageryProvider({
-        // TODO: how do we do this with Axios?
-        url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${signature}`),
+        url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${tileSignature}`),
         subdomains: null, // We do not need or provide this in RGD
         rectangle,
       });
@@ -396,6 +397,9 @@ export default defineComponent({
 
       // eslint-disable-next-line no-unused-expressions
       visibleOverlayIds.value?.forEach(async (spatialId: number) => {
+        if (spatialId in tileLayers) {
+          return;
+        }
         const entry = await rgdSpatialEntry(spatialId);
         if (entry.subentry_type === 'RasterMeta') {
           // TODO: check if present for image ID and Band
