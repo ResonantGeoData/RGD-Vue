@@ -362,11 +362,13 @@ export default defineComponent({
 
     watch(footprintIds, updateFootprints, { deep: true });
 
-    // TODO: this logic needs to be moved to a better place, IMO the active element view as data types are checked
+    // TODO: this logic needs to be moved to a better place
     const generateTileProvider = async (imageId: number, band = 0) => {
       const data = await rgdImageTilesMeta(imageId);
       const extents = data.bounds;
-      const rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax);
+      const rectangle = Cesium.Rectangle.fromDegrees(
+        extents.xmin, extents.ymin, extents.xmax, extents.ymax,
+      );
       const signature = await rgdTokenSignature();
       const tileProvider = new Cesium.UrlTemplateImageryProvider({
         // TODO: how do we do this with Axios?
