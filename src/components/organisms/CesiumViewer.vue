@@ -8,7 +8,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footprints, specifiedShape, footprintFlag,
+  useMap, drawnShape, footprints, specifiedShape,
 } from '@/store';
 import { RGDResult } from '@/store/types';
 

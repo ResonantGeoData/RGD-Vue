@@ -12,8 +12,6 @@ export const rasterArray = ref();
 
 export const footprints = ref();
 
-export const footprintFlag = ref(false);
-
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
@@ -74,32 +72,6 @@ export const removeRasterOverlay = (spatialId: number) => {
   // TODO
 };
 
-const footprintFlagToggle = () => {
-  if (footprintFlag.value === true) {
-    footprintFlag.value = false;
-  } else {
-    footprintFlag.value = true;
-  }
-};
-
-export const updateFootPrints = async () => {
-  const resArray: any[] = [];
-  const promiseList: Promise<unknown>[] = [];
-  const getFootPrints = async (current: { spatial_id: number }) => {
-    const res = await rgdFootprint(current.spatial_id);
-    resArray.push(res.data.footprint);
-    footprints.value = resArray;
-  };
-  if (searchResults.value) {
-    for (let i = 0; i < searchResults.value?.length; i += 1) {
-      const currentRequest = searchResults.value[i];
-      promiseList.push(getFootPrints(currentRequest));
-    }
-  }
-  await Promise.all(promiseList);
-  footprintFlagToggle();
-};
-
 export const updateResults = async () => {
   const res = await rgdSearch(
     searchLimit.value,
@@ -117,7 +89,6 @@ export const updateResults = async () => {
   );
   searchResults.value = res.data.results;
   searchResultsTotal.value = res.data.count;
-  // updateFootPrints();
 };
 
 export const createRasterArray = async () => {
