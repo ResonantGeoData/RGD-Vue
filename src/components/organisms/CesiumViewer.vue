@@ -11,7 +11,7 @@ import {
   useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
 import {
-  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry,
+  rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl, rgdTokenSignature,
 } from '@/api/rest';
 import { RGDResult } from '@/store/types';
 
@@ -367,9 +367,10 @@ export default defineComponent({
       const data = await rgdImageTilesMeta(imageId);
       const extents = data.bounds;
       const rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax);
+      const signature = await rgdTokenSignature();
       const tileProvider = new Cesium.UrlTemplateImageryProvider({
         // TODO: how do we do this with Axios?
-        url: `http://localhost:8000/api/image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}`,
+        url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${signature}`),
         subdomains: null, // We do not need or provide this in RGD
         // rectangle: rectangle, // TODO: To prevent fetching tiles outside bounds of image
       });
@@ -379,7 +380,7 @@ export default defineComponent({
     const tileLayers: any = {}; // Cesium.TileLayer
     watch(visibleOverlayIds, () => {
       // Purge
-      Object.keys(visibleOverlayIds).forEach(async (key: string) => {
+      Object.keys(tileLayers).forEach(async (key: string) => {
         const spatialId = Number(key);
         if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
           const entry = await rgdSpatialEntry(spatialId);

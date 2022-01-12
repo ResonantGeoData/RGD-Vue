@@ -82,3 +82,12 @@ export async function rgdImageTilesMeta(
   const response = await axiosInstance.get(`/image_process/imagery/${imageId}/tiles`);
   return response.data;
 }
+
+export async function rgdTokenSignature() {
+  const response = await axiosInstance.post('/signature');
+  return response.data.signature;
+}
+
+export function rgdCreateUrl(path: string) {
+  return `${axiosInstance.defaults.baseURL}/${path}`;
+}
