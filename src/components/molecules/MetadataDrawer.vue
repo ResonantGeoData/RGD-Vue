@@ -1,7 +1,7 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import {
-  defineComponent,
+  defineComponent, watch, ref,
 } from '@vue/composition-api';
 
 import { drawerContents } from '@/store';
@@ -37,26 +37,36 @@ export default defineComponent({
       return JSON.stringify(value, null, ' ');
     };
 
-    const headers = [
-      { text: 'Field name', value: 'key' },
-      { text: 'Value', value: 'value' },
-    ];
-    const metadata = Object.entries(fieldsShown).map(([keyName, label]) => {
-      if (drawerContents.value[keyName]) {
-        return {
-          key: label,
-          value: modifyValueByKey(drawerContents.value[keyName], keyName),
-        };
-      } if (drawerContents.value[keyName] === null) {
-        return {
-          key: label,
-          value: 'None',
-        };
-      }
-      return undefined;
-    }).filter((row) => row !== undefined);
+    const showDrawer = ref(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const headers = ref<Record<string, any>[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const metadata = ref<(Record<string, any> | undefined)[]>([]);
+
+    watch(drawerContents, () => {
+      showDrawer.value = drawerContents.value !== undefined;
+      headers.value = [
+        { text: 'Field name', value: 'key' },
+        { text: 'Value', value: 'value' },
+      ];
+      metadata.value = Object.entries(fieldsShown).map(([keyName, label]) => {
+        if (drawerContents.value[keyName]) {
+          return {
+            key: label,
+            value: modifyValueByKey(drawerContents.value[keyName], keyName),
+          };
+        } if (drawerContents.value[keyName] === null) {
+          return {
+            key: label,
+            value: 'None',
+          };
+        }
+        return undefined;
+      }).filter((row) => row !== undefined);
+    });
 
     return {
+      showDrawer,
       drawerContents,
       headers,
       metadata,
@@ -68,9 +78,10 @@ export default defineComponent({
 
 <template>
   <v-navigation-drawer
+    v-if="showDrawer"
     class="drawer"
     width="500px"
-    :value="drawerContents !== undefined"
+    :value="showDrawer"
   >
     Metadata for {{ drawerContents.subentry_name }}
     <v-data-table
