@@ -56,6 +56,11 @@ export const resultsFilter = ref<ResultsFilter>({
 
 export const addFootPrint = async (spatialId: number) => {
   const res = await rgdFootprint(spatialId);
+
+  if (footPrints.value === undefined) {
+    footPrints.value = [];
+  }
+
   footPrints.value.push(res.data);
 };
 
@@ -136,7 +141,7 @@ export const updateResults = async () => {
   );
   searchResults.value = res.data.results;
   searchResultsTotal.value = res.data.count;
-  updateFootPrints();
+  // updateFootPrints();
 };
 
 export const createRasterArray = async () => {
