@@ -82,6 +82,7 @@ export default defineComponent({
     class="drawer"
     width="500px"
     :value="showDrawer"
+    color="blue-grey darken-4"
   >
     Metadata for {{ drawerContents.subentry_name }}
     <v-data-table
