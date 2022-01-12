@@ -79,18 +79,15 @@ export const removeRasterOverlay = (_spatialId: number) => {
   // TODO
 };
 
-export const selectResultForMetadataDrawer = (spatialId: number) => {
+export const selectResultForMetadataDrawer = async (spatialId: number) => {
   if (searchResults.value) {
     searchResults.value = searchResults.value.map(
       // eslint-disable-next-line @typescript-eslint/camelcase
       (entry) => Object.assign(entry, { show_metadata: false }),
     );
   }
-  // eslint-disable-next-line prefer-destructuring
-  const metadata = rasterArray.value.filter(
-    (imgData: ImageryResult) => imgData.spatial_id === spatialId,
-  )[0];
-  drawerContents.value = metadata;
+  const res = await rgdImagery(spatialId);
+  drawerContents.value = res.data;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -145,16 +142,16 @@ export const updateResults = async () => {
 };
 
 export const createRasterArray = async () => {
-  const resArr: ImageryResult[] = [];
-  const getRasterImagery = async (current: { spatial_id: number }) => {
-    const res = await rgdImagery(current.spatial_id);
-    resArr.push(res.data);
-    rasterArray.value = resArr;
-  };
-  if (searchResults.value) {
-    for (let i = 0; i < searchResults.value?.length; i += 1) {
-      const currentRequest = searchResults.value[i];
-      getRasterImagery(currentRequest);
-    }
-  }
+  // const resArr: any[] = [];
+  // const getRasterImagery = async (current: { spatial_id: number }) => {
+  //   const res = await rgdImagery(current.spatial_id);
+  //   resArr.push(res.data);
+  //   rasterArray.value = resArr;
+  // };
+  // if (searchResults.value) {
+  //   for (let i = 0; i < searchResults.value?.length; i += 1) {
+  //     const currentRequest = searchResults.value[i];
+  //     getRasterImagery(currentRequest);
+  //   }
+  // }
 };
