@@ -319,36 +319,43 @@ export default defineComponent({
       geojson.coordinates[0].forEach((e: any) => {
         cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
-
-      const polygon = {
+      return cesiumViewer.value.entities.add({
         polygon: {
           hierarchy: cesiumPoints,
           material: new Cesium.ColorMaterialProperty(
             Cesium.Color.fromRandom({ alpha: 0.5 }),
           ),
         },
-      };
-
-      cesiumViewer.value.entities.add(polygon);
-
-      return polygon;
+      });
     };
 
-    const footprints: any = {};
+    const footprintEntities: any = {}; // Cesium.Entity
     const addFootprint = async (spatialId: number) => {
-      if (!(spatialId in footprints)) {
+      if (!(spatialId in footprintEntities)) {
         const element = await rgdFootprint(spatialId);
-        footprints[spatialId] = addGeojson(element.footprint);
+        footprintEntities[spatialId] = addGeojson(element.footprint);
       }
     };
     const removeFootprint = (spatialId: number) => {
-      if (spatialId in footprints) {
-        cesiumViewer.value.entities.remove(footprints[spatialId]);
+      if (spatialId in footprintEntities) {
+        cesiumViewer.value.entities.remove(footprintEntities[spatialId]);
+        delete footprintEntities[spatialId];
       }
     };
     const updateFootprints = () => {
+      // Purge footprints
+      Object.keys(footprintEntities).forEach((key: string) => {
+        const spatialId = Number(key);
+        if (footprintIds.value.indexOf(spatialId) < 0) {
+          removeFootprint(spatialId);
+        }
+      });
+
+      // Add footprints
       // eslint-disable-next-line no-unused-expressions
-      footprintIds.value?.forEach(addFootprint);
+      footprintIds.value?.forEach((spatialId: number) => {
+        addFootprint(spatialId);
+      });
     };
 
     watch(footprintIds, updateFootprints, { deep: true });

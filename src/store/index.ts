@@ -58,7 +58,7 @@ export const addFootPrint = (spatialId: number) => {
 };
 
 export const removeFootPrint = (spatialId: number) => {
-  // TODO
+  footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
 };
 
 export const addRasterOverlay = (spatialId: number) => {
