@@ -1,12 +1,10 @@
-// break up other params and import here.
-// wrap in expandable menu
 <script lang="ts">
 import {
   defineComponent,
 } from '@vue/composition-api';
 
 import {
-  resultsFilter, searchInstrumentation,
+  resultsFilter,
   updateResults,
 } from '@/store';
 import TimeRange from '../atoms/TimeRange.vue';
