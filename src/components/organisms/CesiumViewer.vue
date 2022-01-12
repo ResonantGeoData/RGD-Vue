@@ -374,7 +374,7 @@ export default defineComponent({
         // TODO: how do we do this with Axios?
         url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${signature}`),
         subdomains: null, // We do not need or provide this in RGD
-        // rectangle: rectangle, // TODO: To prevent fetching tiles outside bounds of image
+        rectangle,
       });
       return tileProvider;
     };
