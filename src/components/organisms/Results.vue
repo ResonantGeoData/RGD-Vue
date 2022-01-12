@@ -10,8 +10,8 @@ import {
   updateResults,
   addFootprint,
   removeFootprint,
-  addRasterOverlay,
-  removeRasterOverlay,
+  addVisibleOverlay,
+  removeVisibleOverlay,
 } from '@/store';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
@@ -32,7 +32,7 @@ export default defineComponent({
 
     const headers = [
       {
-        text: '', value: 'show_raster', width: 1, sortable: false,
+        text: '', value: 'show_overlay', width: 1, sortable: false,
       },
       { text: 'ID-Name', value: 'id-name', sortable: false },
       {
@@ -76,9 +76,9 @@ export default defineComponent({
       if (fieldName === 'show_footprint') {
         addFunc = addFootprint;
         removeFunc = removeFootprint;
-      } else if (fieldName === 'show_raster') {
-        addFunc = addRasterOverlay;
-        removeFunc = removeRasterOverlay;
+      } else if (fieldName === 'show_overlay') {
+        addFunc = addVisibleOverlay;
+        removeFunc = removeVisibleOverlay;
       }
 
       if (!searchResults.value) {
@@ -127,15 +127,15 @@ export default defineComponent({
       calculate-widths
     >
       <!-- eslint-disable-next-line -->
-      <template #item.show_raster="{item}">
+      <template #item.show_overlay="{item}">
         <v-simple-checkbox
           v-if="item.subentry_type === 'RasterMeta'"
           v-ripple
           dark
           off-icon="mdi-eye-off"
           on-icon="mdi-eye"
-          :value="item.show_raster"
-          @input="(value) => toggleValue('show_raster', item.spatial_id, value)"
+          :value="item.show_overlay"
+          @input="(value) => toggleValue('show_overlay', item.spatial_id, value)"
         />
       </template>
       <!-- eslint-disable-next-line -->

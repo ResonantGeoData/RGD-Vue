@@ -12,6 +12,8 @@ export const rasterArray = ref();
 
 export const footprintIds = ref();
 
+export const visibleOverlayIds = ref();
+
 export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
@@ -61,12 +63,15 @@ export const removeFootprint = (spatialId: number) => {
   footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
 };
 
-export const addRasterOverlay = (spatialId: number) => {
-  // TODO
+export const addVisibleOverlay = (spatialId: number) => {
+  if (visibleOverlayIds.value === undefined) {
+    visibleOverlayIds.value = [];
+  }
+  visibleOverlayIds.value.push(spatialId);
 };
 
-export const removeRasterOverlay = (spatialId: number) => {
-  // TODO
+export const removeVisibleOverlay = (spatialId: number) => {
+  visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
 };
 
 export const updateResults = async () => {
