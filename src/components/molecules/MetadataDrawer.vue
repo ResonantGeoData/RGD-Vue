@@ -14,6 +14,7 @@ export default defineComponent({
       subentry_type: 'Data type',
       acquisition_date: 'Date Acquired',
       modified: 'Date Last Modified',
+      created: 'Date Created in Database',
       parent_raster: 'Parent Raster ID',
       area: 'Area (km)',
       instrumentation: 'Instrumentation',
@@ -29,7 +30,7 @@ export default defineComponent({
     const modifyValueByKey = (value: any, key: string) => {
       if (key === 'parent_raster') {
         return value.id;
-      } if (Date.parse(value)) {
+      } if (['acquisition_date', 'modified', 'created'].includes(key)) {
         return new Date(Date.parse(value)).toDateString();
       } if (typeof value === 'string') {
         return value;
