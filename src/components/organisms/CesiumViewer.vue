@@ -247,11 +247,9 @@ export default defineComponent({
             polygon: {
               hierarchy: positionData,
               outline: true,
-              fill: false,
-              outlineColor: new Cesium.ColorMaterialProperty(
-                Cesium.Color.RED,
-              ),
+              outlineColor: Cesium.Color.RED,
               outlineWidth: 3,
+              fill: false,
             },
           });
           return shape;
@@ -324,9 +322,10 @@ export default defineComponent({
       cesiumViewer.value.entities.add({
         polygon: {
           hierarchy: uploadedFootprint,
-          material: new Cesium.ColorMaterialProperty(
-            Cesium.Color.RED,
-          ),
+          outline: true,
+          outlineColor: Cesium.Color.RED,
+          outlineWidth: 3,
+          fill: false,
         },
       });
     }, { deep: true });
