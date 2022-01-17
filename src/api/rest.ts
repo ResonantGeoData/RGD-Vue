@@ -108,11 +108,3 @@ export async function imageryBands(
 
   return response;
 }
-
-export async function imageryBands(
-  spatialID: number,
-) {
-  const response = await axiosInstance.get(`/image_process/imagery/${spatialID}/bands`);
-
-  return response;
-}

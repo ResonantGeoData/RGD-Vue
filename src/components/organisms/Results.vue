@@ -137,7 +137,7 @@ export default defineComponent({
         }
       });
       const result = await rgdImagery(item.spatial_id);
-      result.data.parent_raster.image_set.images.forEach(
+      result.parent_raster.image_set.images.forEach(
         (element: { file: { id: any; name: any } }, index: string|number) => {
           focusedData.value.images.push(element.file);
         },
