@@ -30,6 +30,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - run: yarn
-      - run: yarn lint --no-fix
+      - run: yarn lint --no-fix | grep "error:"
+      - run: yarn lint --no-fix --max-warnings 0
       - run: yarn test:unit
       - run: yarn build
