@@ -48,7 +48,11 @@ export default defineComponent({
           v-model="imageSelection"
           label="Image"
           clearable
-          :items.sync="imageList"
+          :items="imageList"
+          :item-value="'id'"
+          :item-text="'name'"
+          item-disabled="disabled"
+          return-object
           outlined
         />
         <v-select
