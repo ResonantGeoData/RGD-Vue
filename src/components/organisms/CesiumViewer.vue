@@ -12,19 +12,21 @@ import {
 } from '@/store';
 import {
   rgdFootprint, rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
-  rgdTokenSignature, rgdHost,
+  rgdTokenSignature,
 } from '@/api/rest';
 import { RGDResult } from '@/store/types';
+import { Entity } from 'cesium';
+import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    const polyPoints: any[] = [[]];
+    const polyPoints: number[][][] = [[]];
 
     const cesiumViewer = ref();
     let tileSignature: string;
 
-    const host = rgdHost();
+    // const host = rgdHost();
     // Limit the tile requests on RGD server so that Vue app's requests aren't hung
     // Cesium.RequestScheduler.requestsByServer = {
     //   host: 3,
@@ -230,7 +232,7 @@ export default defineComponent({
         cesiumViewer.value.cesiumWidget.screenSpaceEventHandler.removeInputAction(
           Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
         );
-        const createPoint = (worldPosition: any) => {
+        const createPoint = (worldPosition: number): Entity => {
           const point = cesiumViewer.value.entities.add({
             position: worldPosition,
             point: {
@@ -241,7 +243,7 @@ export default defineComponent({
           });
           return point;
         };
-        const drawShape = (positionData: any[]) => {
+        const drawShape = (positionData: number[]) => {
           const shape = cesiumViewer.value.entities.add({
             polygon: {
               hierarchy: positionData,
@@ -253,11 +255,11 @@ export default defineComponent({
           return shape;
         };
 
-        let activeShapePoints: any[] = [];
-        let activeShape: any;
-        let floatingPoint: any;
+        let activeShapePoints: number[] = [];
+        let activeShape: number | null;
+        let floatingPoint: Entity | null;
         const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.canvas);
-        handler.setInputAction((event: { position: any }) => {
+        handler.setInputAction((event: { position: number }) => {
           const earthPosition = cesiumViewer.value.camera.pickEllipsoid(event.position);
           if (Cesium.defined(earthPosition)) {
             if (activeShapePoints.length === 0) {
@@ -271,11 +273,11 @@ export default defineComponent({
             createPoint(earthPosition);
           }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        handler.setInputAction((event: { endPosition: any }) => {
+        handler.setInputAction((event: { endPosition: number }) => {
           if (Cesium.defined(floatingPoint)) {
             const newPosition = cesiumViewer.value.camera.pickEllipsoid(event.endPosition);
-            if (Cesium.defined(newPosition)) {
-              floatingPoint.position.setValue(newPosition);
+            if (floatingPoint?.position && Cesium.defined(newPosition)) {
+              (floatingPoint.position as ConstantPositionProperty).setValue(newPosition);
               activeShapePoints.pop();
               activeShapePoints.push(newPosition);
             }
@@ -291,7 +293,7 @@ export default defineComponent({
           activeShapePoints = [];
           useMap.value = false;
         };
-        handler.setInputAction((event: any) => {
+        handler.setInputAction(() => {
           activeShapePoints.forEach((element) => {
             polyPoints[0].push([
               Cesium.Math.toDegrees(
@@ -313,8 +315,8 @@ export default defineComponent({
     });
 
     watch(specifiedShape, () => {
-      const uploadedFootprint: any[] = [];
-      specifiedShape.value.coordinates[0].forEach((e: any) => {
+      const uploadedFootprint: number[] = [];
+      specifiedShape.value.coordinates[0].forEach((e: number[]) => {
         uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       cesiumViewer.value.entities.add({
@@ -327,9 +329,9 @@ export default defineComponent({
       });
     }, { deep: true });
 
-    const addGeojson = (geojson: { coordinates: any[][] }) => {
+    const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
       const cesiumPoints: RGDResult[] = [];
-      geojson.coordinates[0].forEach((e: any) => {
+      geojson.coordinates[0].forEach((e: number[]) => {
         cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       return cesiumViewer.value.entities.add({
@@ -342,7 +344,7 @@ export default defineComponent({
       });
     };
 
-    const footprintEntities: any = {}; // Cesium.Entity
+    const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
     const addFootprint = async (spatialId: number) => {
       if (!(spatialId in footprintEntities)) {
         const element = await rgdFootprint(spatialId);
@@ -388,7 +390,7 @@ export default defineComponent({
       return tileProvider;
     };
 
-    const tileLayers: any = {}; // Cesium.TileLayer
+    const tileLayers: Record<string, number> = {}; // Cesium.TileLayer
     watch(visibleOverlayIds, () => {
       // Purge
       Object.keys(tileLayers).forEach(async (key: string) => {

@@ -124,7 +124,9 @@ export default defineComponent({
       return null;
     };
 
-    const getFocusedData = async (item: { spatial_id: any; subentry_name: any }) => {
+    const getFocusedData = async (
+      item: { spatial_id: number; subentry_name: string },
+    ) => {
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
       const imageInfo = ref({ value: '', text: '' });
@@ -137,11 +139,13 @@ export default defineComponent({
         }
       });
       const result = await rgdImagery(item.spatial_id);
-      result.data.parent_raster.image_set.images.forEach((element: { file: { id: any; name: any } }, index: string|number) => {
-        imageInfo.value.value = element.file.id;
-        imageInfo.value.text = element.file.name;
-        focusedData.value.images.push(imageInfo.value);
-      });
+      result.data.parent_raster.image_set.images.forEach(
+        (element: { file: { id: string; name: string } }) => {
+          imageInfo.value.value = element.file.id;
+          imageInfo.value.text = element.file.name;
+          focusedData.value.images.push(imageInfo.value);
+        },
+      );
     };
 
     return {
