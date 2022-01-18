@@ -65,7 +65,7 @@ export async function rgdSpatialEntry(
 export async function rgdFootprint(
   spatialID: number,
 ) {
-  const response = await axiosInstance.get<{ footprint: { coordinates: number[][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
+  const response = await axiosInstance.get<{ footprint: { coordinates: number[][][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
   return response.data;
 }
 
