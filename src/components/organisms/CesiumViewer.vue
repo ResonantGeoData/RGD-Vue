@@ -224,6 +224,7 @@ export default defineComponent({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
     });
+
     watch(useMap, (val) => {
       if (!val) { return; }
       {
@@ -245,9 +246,10 @@ export default defineComponent({
           const shape = cesiumViewer.value.entities.add({
             polygon: {
               hierarchy: positionData,
-              material: new Cesium.ColorMaterialProperty(
-                Cesium.Color.RED.withAlpha(0.7),
-              ),
+              outline: true,
+              outlineColor: Cesium.Color.RED,
+              outlineWidth: 3,
+              fill: false,
             },
           });
           return shape;
@@ -320,9 +322,10 @@ export default defineComponent({
       cesiumViewer.value.entities.add({
         polygon: {
           hierarchy: uploadedFootprint,
-          material: new Cesium.ColorMaterialProperty(
-            Cesium.Color.RED,
-          ),
+          outline: true,
+          outlineColor: Cesium.Color.RED,
+          outlineWidth: 3,
+          fill: false,
         },
       });
     }, { deep: true });
