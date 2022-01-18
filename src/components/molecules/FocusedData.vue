@@ -19,7 +19,7 @@ export default defineComponent({
   setup() {
     const bandSelection = ref();
     const imageSelection = ref();
-    const opacity = ref();
+    const opacity = ref(1);
 
     return {
       bandSelection,
