@@ -1,4 +1,5 @@
 <script lang="ts">
+
 import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
@@ -18,7 +19,7 @@ export default defineComponent({
   setup() {
     const bandSelection = ref();
     const imageSelection = ref();
-    const opacity = ref();
+    const opacity = ref(1);
 
     return {
       bandSelection,
@@ -47,7 +48,11 @@ export default defineComponent({
           v-model="imageSelection"
           label="Image"
           clearable
-          :items.sync="imageList"
+          :items="imageList"
+          :item-value="'id'"
+          :item-text="'name'"
+          item-disabled="disabled"
+          return-object
           outlined
         />
         <v-select
