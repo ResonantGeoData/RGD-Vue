@@ -1,7 +1,7 @@
 import { ref } from '@vue/composition-api';
 import { rgdImagery, rgdSearch } from '@/api/rest';
 import {
-  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, ImageryResult,
+  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter,
 } from './types';
 
 export const useMap = ref(false);

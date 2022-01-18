@@ -1,6 +1,6 @@
 export type GeoJsonShape = {
   type: string;
-  coordinates: Array<Array<number>>;
+  coordinates: Array<Array<Array<number>>>;
 }
 
 export type RGDResult = {
@@ -50,8 +50,8 @@ export type ImageryResult = {
 }
 
 export type FocusedDataType = {
-  bandsList: Array<any>;
-  images: Array<any>;
+  bandsList: Array<string>;
+  images: Array<Record<string, string>>;
   title: string;
 }
 
