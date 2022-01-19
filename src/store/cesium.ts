@@ -6,6 +6,7 @@ import {
 import {
   visibleOverlayIds,
 } from '@/store';
+import { TileParamsType } from '@/store/types';
 import { ref, watch }
   from '@vue/composition-api';
 
@@ -17,9 +18,9 @@ Cesium.RequestScheduler.maximumRequestsPerServer = 3;
 
 export const cesiumViewer = ref();
 
-export const tileImageParams: Record<string, any> = {};
+export const tileImageParams: Record<string, TileParamsType> = {};
 
-export const tileLayers: Record<string, any> = {}; // Cesium.TileLayer
+export const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
 
 export const generateTileProvider = async (imageId: number, band = 0) => {
   const data = await rgdImageTilesMeta(imageId);
@@ -90,7 +91,6 @@ watch(visibleOverlayIds, () => {
     if (!(spatialId in tileImageParams)) {
       const result = await rgdImagery(spatialId);
       tileImageParams[spatialId] = {
-        name: result.parent_raster.image_set.images[0].file.name as string,
         id: result.parent_raster.image_set.images[0].id as unknown as number,
         index: 0,
       };

@@ -81,3 +81,8 @@ export interface ResultsFilter {
     endTimeModal?: boolean;
   };
 }
+
+export type TileParamsType = {
+  index: number;
+  id: number;
+}
