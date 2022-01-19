@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { defineComponent, ref, watch } from '@vue/composition-api';
-import { updateTileLayer, updateTileLayerOpacity } from '@/store/cesium';
+import { updateTileLayer, updateTileLayerOpacity, tileImageParams } from '@/store/cesium';
 import { FocusedDataType } from '@/store/types';
 
 export default defineComponent({
@@ -27,8 +27,6 @@ export default defineComponent({
     const update = () => {
       updateTileLayer(
         props.focusedData.spatialId,
-        dataInfo.value.imageSelection.id,
-        dataInfo.value.bandSelection.index,
       );
     };
 
@@ -36,16 +34,11 @@ export default defineComponent({
       updateTileLayerOpacity(props.focusedData.spatialId, dataInfo.value.opacity);
     };
 
-    watch(props, () => {
-      dataInfo.value.imageSelection.name = props.focusedData.images[0].name as string;
-      dataInfo.value.imageSelection.id = props.focusedData.images[0].id as unknown as number;
-      update();
-    }, { deep: true });
-
     return {
       dataInfo,
       update,
       updateOpacity,
+      tileImageParams,
     };
   },
 
@@ -66,9 +59,8 @@ export default defineComponent({
       >
         <v-select
           v-if="focusedData.images"
-          v-model="dataInfo.imageSelection"
+          v-model="tileImageParams[focusedData.spatialId]"
           label="Image"
-          clearable
           :items="focusedData.images"
           :item-value="'id'"
           :item-text="'name'"
@@ -79,7 +71,7 @@ export default defineComponent({
         />
         <v-select
           v-if="focusedData.bandsList && focusedData.bandsList.length !==0"
-          v-model="dataInfo.bandSelection"
+          v-model="tileImageParams[focusedData.spatialId]"
           label="Bands"
           clearable
           :items.sync="focusedData.bandsList"
@@ -97,7 +89,7 @@ export default defineComponent({
           max="1"
           thumb-label
           track-color="#8EC13F"
-          @input="update()"
+          @input="updateOpacity()"
         />
       </v-col>
     </v-row>
