@@ -1,6 +1,6 @@
 <script lang="ts">
 
-import { defineComponent, ref, watch } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import { updateTileLayer, updateTileLayerOpacity, tileImageParams } from '@/store/cesium';
 import { FocusedDataType } from '@/store/types';
 

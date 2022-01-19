@@ -2,13 +2,12 @@
 import {
   defineComponent,
   onMounted,
-  ref,
   watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import {
-  useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
+  useMap, drawnShape, footprintIds, specifiedShape,
 } from '@/store';
 import { cesiumViewer } from '@/store/cesium';
 import {
