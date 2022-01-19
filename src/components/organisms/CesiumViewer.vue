@@ -10,7 +10,7 @@ import Cesium from '@/plugins/cesium';
 import {
   useMap, drawnShape, footprintIds, specifiedShape, visibleOverlayIds,
 } from '@/store';
-import { cesiumViewer, updateTileLayers } from '@/store/cesium';
+import { cesiumViewer } from '@/store/cesium';
 import {
   rgdFootprint,
 } from '@/api/rest';
@@ -366,8 +366,6 @@ export default defineComponent({
     };
 
     watch(footprintIds, updateFootprints, { deep: true });
-
-    watch(visibleOverlayIds, updateTileLayers, { deep: true });
 
     return {
       useMap,

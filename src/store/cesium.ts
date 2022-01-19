@@ -1,6 +1,6 @@
 import Cesium from '@/plugins/cesium';
 import {
-  rgdImagery, rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
+  rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
   rgdTokenSignature,
 } from '@/api/rest';
 import {
@@ -17,7 +17,7 @@ Cesium.RequestScheduler.maximumRequestsPerServer = 3;
 
 export const cesiumViewer = ref();
 
-export const tileLayers: Record<string, number> = {}; // Cesium.TileLayer
+export const tileLayers: Record<string, any> = {}; // Cesium.TileLayer
 
 export const generateTileProvider = async (imageId: number, band = 0) => {
   const data = await rgdImageTilesMeta(imageId);
@@ -34,36 +34,37 @@ export const generateTileProvider = async (imageId: number, band = 0) => {
   return tileProvider;
 };
 
-export const updateTileLayers = () => {
-  // Purge
-  Object.keys(tileLayers).forEach(async (key: string) => {
-    const spatialId = Number(key);
-    if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
-      const entry = await rgdSpatialEntry(spatialId);
-      if (entry.subentry_type === 'RasterMeta') {
-        const layers = cesiumViewer.value.scene.imageryLayers;
-        layers.remove(tileLayers[spatialId]);
-        delete tileLayers[spatialId];
-      }
-    }
-  });
-
-  // eslint-disable-next-line no-unused-expressions
-  visibleOverlayIds.value?.forEach(async (spatialId: number) => {
-    if (spatialId in tileLayers) {
-      return;
-    }
+export const updateTileLayer = async (spatialId: number, imageId: number, band: number) => {
+  // Purge existing tile layer for this ID
+  if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
     const entry = await rgdSpatialEntry(spatialId);
     if (entry.subentry_type === 'RasterMeta') {
-      // TODO: check if present for image ID and Band
-      const imagery = await rgdImagery(spatialId);
-      const imageId = imagery.parent_raster.image_set.images[0].id;
-      const band = 0; // TODO: get band
-      const tileProvider = await generateTileProvider(imageId, band);
       const layers = cesiumViewer.value.scene.imageryLayers;
       layers.remove(tileLayers[spatialId]);
-      const tileLayer = layers.addImageryProvider(tileProvider);
-      tileLayers[spatialId] = tileLayer;
+      delete tileLayers[spatialId];
     }
-  });
+  }
+
+  // Update tile layer for this ID - given imageId and band
+  if (visibleOverlayIds.value.indexOf(spatialId) >= 0) {
+    console.log('ooooooh yeah');
+    const tileProvider = await generateTileProvider(imageId, band);
+    const layers = cesiumViewer.value.scene.imageryLayers;
+    layers.remove(tileLayers[spatialId]);
+    const tileLayer = layers.addImageryProvider(tileProvider);
+    tileLayers[spatialId] = tileLayer;
+  }
+};
+
+export const updateTileLayerOpacity = (spatialId: number, value: number) => {
+  const tileLayer = tileLayers[spatialId];
+  tileLayer.alpha = value;
+};
+
+export const updateVisibleOverlay = async (spatialId: number) => {
+  const entry = await rgdSpatialEntry(spatialId);
+  if (entry.subentry_type === 'RasterMeta') {
+    // updateVisibleOverlay
+  }
+  // TODO: hanlde other types
 };
