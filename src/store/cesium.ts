@@ -2,11 +2,14 @@ import Cesium from '@/plugins/cesium';
 import {
   rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
+
+  rgdFootprint,
 } from '@/api/rest';
 import {
   visibleOverlayIds,
+  footprintIds,
 } from '@/store';
-import { TileParamsType } from '@/store/types';
+import { TileParamsType, RGDResult } from '@/store/types';
 import { ref, watch }
   from '@vue/composition-api';
 
@@ -98,3 +101,49 @@ watch(visibleOverlayIds, () => {
     }
   });
 }, { deep: true });
+
+const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
+  const cesiumPoints: RGDResult[] = [];
+  geojson.coordinates[0].forEach((e: number[]) => {
+    cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+  });
+  return cesiumViewer.value.entities.add({
+    polygon: {
+      hierarchy: cesiumPoints,
+      material: new Cesium.ColorMaterialProperty(
+        Cesium.Color.fromRandom({ alpha: 0.5 }),
+      ),
+    },
+  });
+};
+
+const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
+const addFootprint = async (spatialId: number) => {
+  if (!(spatialId in footprintEntities)) {
+    const element = await rgdFootprint(spatialId);
+    footprintEntities[spatialId] = addGeojson(element.footprint);
+  }
+};
+const removeFootprint = (spatialId: number) => {
+  if (spatialId in footprintEntities) {
+    cesiumViewer.value.entities.remove(footprintEntities[spatialId]);
+    delete footprintEntities[spatialId];
+  }
+};
+const updateFootprints = () => {
+  // Purge footprints
+  Object.keys(footprintEntities).forEach((key: string) => {
+    const spatialId = Number(key);
+    if (footprintIds.value.indexOf(spatialId) < 0) {
+      removeFootprint(spatialId);
+    }
+  });
+
+  // Add footprints
+  // eslint-disable-next-line no-unused-expressions
+  footprintIds.value?.forEach((spatialId: number) => {
+    addFootprint(spatialId);
+  });
+};
+
+watch(footprintIds, updateFootprints, { deep: true });
