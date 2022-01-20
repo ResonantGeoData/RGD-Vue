@@ -25,9 +25,7 @@ export default defineComponent({
     });
 
     const update = () => {
-      updateTileLayer(
-        props.focusedData.spatialId,
-      );
+      updateTileLayer(props.focusedData.spatialId);
     };
 
     const updateOpacity = () => {

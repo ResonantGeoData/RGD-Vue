@@ -27,7 +27,7 @@ const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
 
 const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
 
-const generateTileProvider = async (imageId: number, band = 0) => {
+const generateTileProvider = async (imageId: number, index = 0) => {
   const data = await rgdImageTilesMeta(imageId);
   const tileSignature = await rgdTokenSignature(); // may need await
   const extents = data.bounds;
@@ -35,7 +35,7 @@ const generateTileProvider = async (imageId: number, band = 0) => {
     extents.xmin, extents.ymin, extents.xmax, extents.ymax,
   );
   const tileProvider = new Cesium.UrlTemplateImageryProvider({
-    url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${band}&signature=${tileSignature}`),
+    url: rgdCreateUrl(`image_process/imagery/${imageId}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&band=${index}&signature=${tileSignature}`),
     subdomains: null, // We do not need or provide this in RGD
     rectangle,
   });
