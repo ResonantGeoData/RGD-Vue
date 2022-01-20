@@ -1,6 +1,6 @@
 import Cesium from '@/plugins/cesium';
 import {
-  rgdImageTilesMeta, rgdSpatialEntry, rgdCreateUrl,
+  rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
 
   rgdFootprint,
@@ -23,9 +23,11 @@ export const cesiumViewer = ref();
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
-export const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
+const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
 
-export const generateTileProvider = async (imageId: number, band = 0) => {
+const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
+
+const generateTileProvider = async (imageId: number, band = 0) => {
   const data = await rgdImageTilesMeta(imageId);
   const tileSignature = await rgdTokenSignature(); // may need await
   const extents = data.bounds;
@@ -70,14 +72,6 @@ export const updateTileLayerOpacity = (spatialId: number, value: number) => {
   tileLayer.alpha = value;
 };
 
-export const updateVisibleOverlay = async (spatialId: number) => {
-  const entry = await rgdSpatialEntry(spatialId);
-  if (entry.subentry_type === 'RasterMeta') {
-    // updateVisibleOverlay
-  }
-  // TODO: hanlde other types
-};
-
 watch(visibleOverlayIds, () => {
   // Remove layers not supposed to be visible
   Object.keys(tileImageParams).forEach((key: string) => {
@@ -102,7 +96,7 @@ watch(visibleOverlayIds, () => {
   });
 }, { deep: true });
 
-const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
+export const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
   const cesiumPoints: RGDResult[] = [];
   geojson.coordinates[0].forEach((e: number[]) => {
     cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
@@ -117,7 +111,6 @@ const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
   });
 };
 
-const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
 const addFootprint = async (spatialId: number) => {
   if (!(spatialId in footprintEntities)) {
     const element = await rgdFootprint(spatialId);
@@ -130,7 +123,8 @@ const removeFootprint = (spatialId: number) => {
     delete footprintEntities[spatialId];
   }
 };
-const updateFootprints = () => {
+
+watch(footprintIds, () => {
   // Purge footprints
   Object.keys(footprintEntities).forEach((key: string) => {
     const spatialId = Number(key);
@@ -144,6 +138,4 @@ const updateFootprints = () => {
   footprintIds.value?.forEach((spatialId: number) => {
     addFootprint(spatialId);
   });
-};
-
-watch(footprintIds, updateFootprints, { deep: true });
+}, { deep: true });
