@@ -1,4 +1,5 @@
 import Cesium from '@/plugins/cesium';
+import { Entity } from 'cesium';
 import {
   rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
@@ -51,6 +52,9 @@ const removeTileLayer = (spatialId: number) => {
 export const updateTileLayer = async (spatialId: number) => {
   const imageId = tileImageParams[spatialId].id;
   const { index } = tileImageParams[spatialId];
+
+  console.log('here');
+  console.log(tileImageParams[spatialId]);
 
   // Purge existing tile layer for this ID
   if (visibleOverlayIds.value.indexOf(spatialId) < 0) {
