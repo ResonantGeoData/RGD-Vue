@@ -12,9 +12,11 @@ import {
 import { cesiumViewer } from '@/store/cesium';
 import { Entity } from 'cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
+import DrawingMenu from '../molecules/DrawingMenu.vue';
 
 export default defineComponent({
   name: 'CesiumViewer',
+  components: {DrawingMenu,},
   setup() {
     const polyPoints: number[][][] = [[]];
 
@@ -324,10 +326,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <div
-    id="cesiumContainer"
-    :class="useMap? 'draw-mode': ''"
-  />
+  <div id="cesiumContainer"
+       :class="useMap? 'draw-mode': ''">
+    <DrawingMenu />
+  </div>
 </template>
 
 <style>
