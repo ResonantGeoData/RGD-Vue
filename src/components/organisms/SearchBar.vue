@@ -5,7 +5,6 @@ import {
 import {
   drawnShape,
   searchResults,
-  createRasterArray,
   geoJsonShape,
   specifiedShape,
   updateResults,
@@ -74,7 +73,6 @@ export default defineComponent({
       buttonText,
       reveal,
       cardTitle,
-      createRasterArray,
     };
   },
 });
@@ -115,7 +113,7 @@ export default defineComponent({
     />
     <v-form
       v-if="!reveal"
-      @submit.prevent="updateResults().then(createRasterArray)"
+      @submit.prevent="updateResults()"
     >
       <v-card-subtitle>
         Specify search area

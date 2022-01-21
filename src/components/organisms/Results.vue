@@ -135,7 +135,7 @@ export default defineComponent({
       focusedData.value.title = item.subentry_name;
       Object.keys(res.data).forEach((key) => {
         if (res.data[key].interpretation) {
-          focusedData.value.bandsList.push({ index: key, name: res.data[key].interpretation });
+          focusedData.value.bandsList.push({ index: key, bandName: res.data[key].interpretation });
         }
       });
       const result = await rgdImagery(item.spatial_id);

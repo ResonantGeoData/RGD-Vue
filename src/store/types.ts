@@ -83,6 +83,10 @@ export interface ResultsFilter {
 }
 
 export type TileParamsType = {
-  index: number;
+  index?: number;
+  image: {
   id: number;
+  name?: string;
+  };
+  opacity?: number;
 }

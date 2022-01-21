@@ -50,7 +50,7 @@ const removeTileLayer = (spatialId: number) => {
 };
 
 export const updateTileLayer = async (spatialId: number) => {
-  const imageId = tileImageParams[spatialId].id;
+  const imageId = tileImageParams[spatialId].image.id;
   const { index } = tileImageParams[spatialId];
 
   // Purge existing tile layer for this ID
@@ -89,8 +89,12 @@ watch(visibleOverlayIds, () => {
     if (!(spatialId in tileImageParams)) {
       const result = await rgdImagery(spatialId);
       tileImageParams[spatialId] = {
-        id: result.parent_raster.image_set.images[0].id as unknown as number,
+        image: {
+          id: result.parent_raster.image_set.images[0].id as unknown as number,
+          name: result.parent_raster.image_set.images[0].file.name,
+        },
         index: 0,
+        opacity: 1,
       };
       updateTileLayer(spatialId);
     }
