@@ -35,6 +35,7 @@ export default defineComponent({
       bandsList: [],
       images: [],
       title: '',
+      spatialId: 0,
     });
 
     const focusFlag = ref(false);
@@ -129,17 +130,18 @@ export default defineComponent({
     ) => {
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
+      focusedData.value.spatialId = item.spatial_id;
       const res = await imageryBands(item.spatial_id);
       focusedData.value.title = item.subentry_name;
       Object.keys(res.data).forEach((key) => {
         if (res.data[key].interpretation) {
-          focusedData.value.bandsList.push(res.data[key].interpretation);
+          focusedData.value.bandsList.push({ index: key, bandName: res.data[key].interpretation });
         }
       });
       const result = await rgdImagery(item.spatial_id);
       result.parent_raster.image_set.images.forEach(
-        (element: { file: { id: string; name: string } }) => {
-          focusedData.value.images.push(element.file);
+        (element: { file: { id: string; name: string }; id: string }) => {
+          focusedData.value.images.push({ id: element.id, name: element.file.name });
         },
       );
     };
@@ -191,7 +193,12 @@ export default defineComponent({
       <template #item.id-name="{item}">
         <div
           style="max-width: 10vw;"
-          @click="getFocusedData(item), focusFlag=true"
+          @click="getFocusedData(item),
+                  focusFlag=true,
+                  toggleValue(
+                    'show_overlay',
+                    item.spatial_id, true
+                  )"
         >
           {{ item.spatial_id }}
           {{ item.subentry_name ? ` - ${ellipsisText(item.subentry_name)}` : '' }}
@@ -237,9 +244,7 @@ export default defineComponent({
     </v-data-table>
     <FocusedData
       v-if="focusFlag"
-      :bands-list="focusedData.bandsList"
-      :raster-title="focusedData.title"
-      :image-list="focusedData.images"
+      :focused-data="focusedData"
     />
   </div>
 </template>

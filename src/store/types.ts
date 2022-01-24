@@ -50,9 +50,10 @@ export type ImageryResult = {
 }
 
 export type FocusedDataType = {
-  bandsList: Array<string>;
+  bandsList: Array<Record<string, string>>;
   images: Array<Record<string, string>>;
   title: string;
+  spatialId: number;
 }
 
 export type RGDResultList = Array<RGDResult>
@@ -79,4 +80,13 @@ export interface ResultsFilter {
     startTimeModal?: boolean;
     endTimeModal?: boolean;
   };
+}
+
+export type TileParamsType = {
+  index?: number;
+  image: {
+  id: number;
+  name?: string;
+  };
+  opacity?: number;
 }
