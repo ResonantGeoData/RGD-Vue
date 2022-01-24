@@ -29,13 +29,22 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-select
-    v-model="searchParameters.predicate"
-    :items="predicate"
-    label="Predicate"
-    outlined
-    dense
-    value=""
-    @input="$emit('input', searchParameters)"
-  />
+  <v-row
+    no-gutters
+    justify="center"
+  >
+    <v-col
+      cols="11"
+    >
+      <v-select
+        v-model="searchParameters.predicate"
+        :items="predicate"
+        label="Predicate"
+        outlined
+        dense
+        value=""
+        @input="$emit('input', searchParameters)"
+      />
+    </v-col>
+  </v-row>
 </template>
