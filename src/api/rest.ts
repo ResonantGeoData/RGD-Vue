@@ -133,7 +133,6 @@ export async function basicRegionList(
       predicate,
       startDate: acquiredAfter,
       endDate: acquiredBefore,
-      // Swagger says the distance min/max is one parameter?
       distanceMin,
       distanceMax,
       regionId,

@@ -60,49 +60,53 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const addFootprint = (spatialId: number) => {
+export const addFootprint = (spatialId: number, region?: boolean) => {
   if (footprintIds.value === undefined) {
     footprintIds.value = [];
   }
   footprintIds.value.push(spatialId);
 };
 
-export const removeFootprint = (spatialId: number) => {
+export const removeFootprint = (spatialId: number, region?: boolean) => {
   footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
 };
 
-export const addVisibleOverlay = (spatialId: number) => {
+export const addVisibleOverlay = (spatialId: number, region?: boolean) => {
   if (visibleOverlayIds.value === undefined) {
     visibleOverlayIds.value = [];
   }
   visibleOverlayIds.value.push(spatialId);
 };
 
-export const removeVisibleOverlay = (spatialId: number) => {
+export const removeVisibleOverlay = (spatialId: number, region?: boolean) => {
   visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
 };
 
-export const selectResultForMetadataDrawer = async (spatialId: number) => {
+export const selectResultForMetadataDrawer = async (spatialId: number, region?: boolean) => {
   if (searchResults.value) {
     searchResults.value = searchResults.value.map(
       // eslint-disable-next-line @typescript-eslint/camelcase
       (entry) => Object.assign(entry, { show_metadata: false }),
     );
-    const res = await rgdImagery(spatialId);
-    drawerContents.value = res;
+    if (!region) {
+      const res = await rgdImagery(spatialId);
+      drawerContents.value = res;
+    }
   } if (regionsList.value) {
     regionsList.value = regionsList.value.map(
       // eslint-disable-next-line @typescript-eslint/camelcase
       (entry) => Object.assign(entry, { show_metadata: false }),
     );
-    drawerContents.value = regionsList.value.filter(
-      (entry) => entry.id === spatialId,
-    )[0].properties;
+    if (region) {
+      drawerContents.value = regionsList.value.filter(
+        (entry) => entry.id === spatialId,
+      )[0].properties;
+    }
   }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const clearMetaDataDrawer = (_spatialId: number) => {
+export const clearMetaDataDrawer = (_spatialId: number, _region?: boolean) => {
   drawerContents.value = undefined;
 };
 

@@ -84,7 +84,7 @@ export default defineComponent({
   <v-navigation-drawer
     v-if="showDrawer"
     class="drawer"
-    width="500px"
+    width="300px"
     :value="showDrawer"
     color="blue-grey darken-4"
   >

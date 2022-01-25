@@ -50,9 +50,11 @@ export default defineComponent({
         geoJsonShape.value = JSON.stringify(specifiedShape.value);
       }
     }, { deep: true });
-    watch(searchResults, () => {
-      reveal.value = true;
-      selectedTab.value = 'results';
+    watch(searchResults, (newValue, oldValue) => {
+      if (oldValue?.length !== newValue?.length) {
+        reveal.value = true;
+        selectedTab.value = 'results';
+      }
     });
 
     // call updateRegions immediately so the list is ready

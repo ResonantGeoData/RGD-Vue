@@ -130,9 +130,9 @@ export default defineComponent({
       }
 
       if (value && addFunc) {
-        addFunc(spatialId);
+        addFunc(spatialId, props.regions);
       } else if (removeFunc) {
-        removeFunc(spatialId);
+        removeFunc(spatialId, props.regions);
       }
 
       if (!props.regions) {
@@ -207,6 +207,7 @@ export default defineComponent({
 
 <template>
   <div>
+    <!-- TODO: put FilterMenu back -->
     <FilterMenu v-if="!props.regions" />
     <v-data-table
       :headers="headers"
