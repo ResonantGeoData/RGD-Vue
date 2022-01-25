@@ -3,14 +3,14 @@ import { Entity } from 'cesium';
 import {
   rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
-
   rgdFootprint,
 } from '@/api/rest';
 import {
   visibleOverlayIds,
   footprintIds,
+  visibleFootprints,
 } from '@/store';
-import { TileParamsType, RGDResult } from '@/store/types';
+import { TileParamsType, RGDResult, GeoJsonShape } from '@/store/types';
 import { ref, watch }
   from '@vue/composition-api';
 
@@ -101,7 +101,7 @@ watch(visibleOverlayIds, () => {
   });
 }, { deep: true });
 
-export const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
+export const addGeojson = (geojson: GeoJsonShape): Entity => {
   const cesiumPoints: RGDResult[] = [];
   geojson.coordinates[0].forEach((e: number[]) => {
     cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
@@ -116,31 +116,24 @@ export const addGeojson = (geojson: { coordinates: number[][][] }): Entity => {
   });
 };
 
-const addFootprint = async (spatialId: number) => {
-  if (!(spatialId in footprintEntities)) {
-    const element = await rgdFootprint(spatialId);
-    footprintEntities[spatialId] = addGeojson(element.footprint);
-  }
-};
-const removeFootprint = (spatialId: number) => {
-  if (spatialId in footprintEntities) {
-    cesiumViewer.value.entities.remove(footprintEntities[spatialId]);
-    delete footprintEntities[spatialId];
-  }
-};
-
-watch(footprintIds, () => {
-  // Purge footprints
-  Object.keys(footprintEntities).forEach((key: string) => {
-    const spatialId = Number(key);
-    if (footprintIds.value.indexOf(spatialId) < 0) {
-      removeFootprint(spatialId);
-    }
-  });
-
-  // Add footprints
-  // eslint-disable-next-line no-unused-expressions
-  footprintIds.value?.forEach((spatialId: number) => {
-    addFootprint(spatialId);
-  });
-}, { deep: true });
+watch(visibleFootprints, (newFootprints, oldFootprints) => {
+  Object.entries(oldFootprints).forEach(
+    ([key]) => {
+      if (!Object.keys(newFootprints).includes(key)) {
+        // remove footprint
+        if (key in footprintEntities) {
+          cesiumViewer.value.entities.remove(footprintEntities[key]);
+          delete footprintEntities[key];
+        }
+      }
+    },
+  );
+  Object.entries(newFootprints).forEach(
+    ([key, footprint]) => {
+      if (!Object.keys(oldFootprints).includes(key)) {
+        // add footprint
+        footprintEntities[key] = addGeojson(footprint);
+      }
+    },
+  );
+});

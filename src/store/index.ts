@@ -1,5 +1,8 @@
 import { ref } from '@vue/composition-api';
-import { rgdImagery, rgdSearch, basicRegionList } from '@/api/rest';
+import {
+  rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
+} from '@/api/rest';
+import Vue from 'vue';
 import {
   GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, RegionResult,
 } from './types';
@@ -13,6 +16,8 @@ export const geoJsonShape = ref();
 export const rasterArray = ref();
 
 export const footprintIds = ref();
+
+export const visibleFootprints = ref<Record<string, GeoJsonShape>>({});
 
 export const visibleOverlayIds = ref();
 
@@ -60,17 +65,36 @@ export const resultsFilter = ref<ResultsFilter>({
   },
 });
 
-export const addFootprint = (spatialId: number, region?: boolean) => {
-  if (footprintIds.value === undefined) {
-    footprintIds.value = [];
+export const addFootprint = async (spatialId: number, region?: boolean) => {
+  let key;
+  let footprint;
+  if (!region) {
+    footprint = (await rgdFootprint(spatialId)).footprint;
+    key = `result_${spatialId}`;
+  } else {
+    footprint = regionsList.value?.find((reg) => reg.id === spatialId)?.footprint;
+    key = `region_${spatialId}`;
   }
-  footprintIds.value.push(spatialId);
+  if (key && footprint) {
+    visibleFootprints.value = { [key]: footprint, ...visibleFootprints.value };
+  }
 };
 
 export const removeFootprint = (spatialId: number, region?: boolean) => {
-  footprintIds.value = footprintIds.value.filter((obj: number) => obj !== spatialId);
+  let key: string;
+  if (!region) {
+    key = `result_${spatialId}`;
+  } else {
+    key = `region_${spatialId}`;
+  }
+  if (visibleFootprints.value[key]) {
+    visibleFootprints.value = Object.fromEntries(
+      Object.entries(visibleFootprints.value).filter(([k]) => k !== key),
+    );
+  }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const addVisibleOverlay = (spatialId: number, region?: boolean) => {
   if (visibleOverlayIds.value === undefined) {
     visibleOverlayIds.value = [];
@@ -78,6 +102,7 @@ export const addVisibleOverlay = (spatialId: number, region?: boolean) => {
   visibleOverlayIds.value.push(spatialId);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const removeVisibleOverlay = (spatialId: number, region?: boolean) => {
   visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
 };
