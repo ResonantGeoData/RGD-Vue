@@ -11,7 +11,6 @@ import {
   updateRegions,
   regionsList,
   regionsTotal,
-  searchByRegion,
   addFootprint,
   removeFootprint,
   addVisibleOverlay,
@@ -189,7 +188,6 @@ export default defineComponent({
       searchResults,
       regionsList,
       regionsTotal,
-      searchByRegion,
       ...toRefs(tableOptions),
       headers,
       ellipsisText,
@@ -250,9 +248,7 @@ export default defineComponent({
       </template>
       <!-- eslint-disable-next-line -->
       <template #item.region_id="{item}">
-        <div
-          @click="searchByRegion(item)"
-        >
+        <div>
           {{ item.region_id }}
         </div>
       </template>

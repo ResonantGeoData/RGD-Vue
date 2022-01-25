@@ -3,11 +3,9 @@ import { Entity } from 'cesium';
 import {
   rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
-  rgdFootprint,
 } from '@/api/rest';
 import {
   visibleOverlayIds,
-  footprintIds,
   visibleFootprints,
 } from '@/store';
 import { TileParamsType, RGDResult, GeoJsonShape } from '@/store/types';

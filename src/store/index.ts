@@ -2,7 +2,6 @@ import { ref } from '@vue/composition-api';
 import {
   rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
 } from '@/api/rest';
-import Vue from 'vue';
 import {
   GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, RegionResult,
 } from './types';
@@ -158,10 +157,4 @@ export const updateRegions = async () => {
   const res = await basicRegionList();
   regionsList.value = res.results;
   regionsTotal.value = res.count;
-};
-
-export const searchByRegion = async (region: RegionResult) => {
-  console.log('SEARCH BY', region);
-  await updateResults();
-  selectedTab.value = 'results';
 };
