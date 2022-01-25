@@ -108,3 +108,39 @@ export async function imageryBands(
 
   return response;
 }
+
+// --- WATCH-SPECIFIC ---
+export async function basicRegionList(
+  limit?: number,
+  offset?: number,
+  q?: string,
+  predicate?: string | null,
+  acquiredAfter?: string | null,
+  acquiredBefore?: string | null,
+  distanceMin? : string | null,
+  distanceMax? : string | null,
+  regionId? : string | null,
+  // instrumentation?: string | null,
+  // startTime?: string | null,
+  // endTime?: string | null,
+
+) {
+  const response = await axiosInstance.get('/watch/basic/region', {
+    params: {
+      limit,
+      offset,
+      q,
+      predicate,
+      startDate: acquiredAfter,
+      endDate: acquiredBefore,
+      // Swagger says the distance min/max is one parameter?
+      distanceMin,
+      distanceMax,
+      regionId,
+      // instrumentation,
+      // startTime,
+      // endTime,
+    },
+  });
+  return response.data;
+}

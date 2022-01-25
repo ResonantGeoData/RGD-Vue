@@ -3,11 +3,13 @@ import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
 import {
+  selectedTab,
   drawnShape,
   searchResults,
   geoJsonShape,
   specifiedShape,
   updateResults,
+  updateRegions,
 } from '@/store';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
@@ -37,7 +39,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const selectedTab = ref('search');
     const reveal = ref(false);
     watch(drawnShape, () => {
       if (drawnShape.value.type) {
@@ -53,6 +54,11 @@ export default defineComponent({
       reveal.value = true;
       selectedTab.value = 'results';
     });
+
+    // call updateRegions immediately so the list is ready
+    // and no delay is introduced  when the regions tab is selected
+    updateRegions();
+
     return {
       selectedTab,
       searchResults,
@@ -93,9 +99,9 @@ export default defineComponent({
       <v-tab-item
         value="regions"
       >
-        <v-card
-          flat
-        />
+        <v-card flat>
+          <Results regions />
+        </v-card>
       </v-tab-item>
       <v-tab-item
         value="search"

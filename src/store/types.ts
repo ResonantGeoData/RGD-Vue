@@ -49,6 +49,28 @@ export type ImageryResult = {
   cloud_cover: number;
 }
 
+export type RegionResult = {
+  created: string;
+  end_date: string;
+  footprint: GeoJsonShape;
+  id: number;
+  modified: string;
+  outline: GeoJsonShape;
+  properties: {
+    comments: string[];
+    end_date: string;
+    mgrs: string;
+    model_content: string;
+    originator: string;
+    region_id: string;
+    start_date: string;
+    type: string;
+    version: string;
+  };
+  region_id: string;
+  strat_date: string;
+}
+
 export type FocusedDataType = {
   bandsList: Array<Record<string, string>>;
   images: Array<Record<string, string>>;

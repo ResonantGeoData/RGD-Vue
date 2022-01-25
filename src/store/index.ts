@@ -1,8 +1,10 @@
 import { ref } from '@vue/composition-api';
-import { rgdImagery, rgdSearch } from '@/api/rest';
+import { rgdImagery, rgdSearch, basicRegionList } from '@/api/rest';
 import {
-  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter,
+  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, RegionResult,
 } from './types';
+
+export const selectedTab = ref('search');
 
 export const useMap = ref(false);
 
@@ -19,6 +21,10 @@ export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
 
 export const drawerContents = ref();
+
+export const regionsList = ref<RegionResult[]>();
+
+export const regionsTotal = ref<number>();
 
 export const searchResults = ref<RGDResultList>();
 
@@ -82,9 +88,17 @@ export const selectResultForMetadataDrawer = async (spatialId: number) => {
       // eslint-disable-next-line @typescript-eslint/camelcase
       (entry) => Object.assign(entry, { show_metadata: false }),
     );
+    const res = await rgdImagery(spatialId);
+    drawerContents.value = res;
+  } if (regionsList.value) {
+    regionsList.value = regionsList.value.map(
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      (entry) => Object.assign(entry, { show_metadata: false }),
+    );
+    drawerContents.value = regionsList.value.filter(
+      (entry) => entry.id === spatialId,
+    )[0].properties;
   }
-  const res = await rgdImagery(spatialId);
-  drawerContents.value = res;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -109,4 +123,16 @@ export const updateResults = async () => {
   );
   searchResults.value = res.data.results;
   searchResultsTotal.value = res.data.count;
+};
+
+export const updateRegions = async () => {
+  const res = await basicRegionList();
+  regionsList.value = res.results;
+  regionsTotal.value = res.count;
+};
+
+export const searchByRegion = async (region: RegionResult) => {
+  console.log('SEARCH BY', region);
+  await updateResults();
+  selectedTab.value = 'results';
 };
