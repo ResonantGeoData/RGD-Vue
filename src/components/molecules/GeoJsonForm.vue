@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import {
-  useMap, drawnShape, specifiedShape, geoJsonShape,
+  useMap, drawnShape, specifiedShape, geometryInputSelection,
 } from '@/store';
 import { hint } from 'geojsonhint';
 
@@ -26,7 +26,7 @@ export default defineComponent({
     };
     const selectShape = (value: string) => {
       clearShape();
-      geoJsonShape.value = value;
+      geometryInputSelection.value = value;
     };
 
     const isGeoJSON = (inputText: string) => {
@@ -68,7 +68,7 @@ export default defineComponent({
       clearShape,
       selectShape,
       drawnShape,
-      geoJsonShape,
+      geometryInputSelection,
       geoOptions,
       geoJsonString,
       geoJsonErrorMessages,
@@ -90,18 +90,18 @@ export default defineComponent({
       cols="11"
     >
       <v-select
-        v-model="geoJsonShape"
+        v-model="geometryInputSelection"
         :items="geoOptions"
         label="Search area"
         messages="Select a method of specifying a geographical area."
-        :hide-details="geoJsonShape !== undefined"
+        :hide-details="geometryInputSelection !== undefined"
         outlined
         clearable
         @click:clear="clearShape"
         @change="selectShape"
       />
       <v-btn
-        v-if="geoJsonShape === geoOptions[0]"
+        v-if="geometryInputSelection === geoOptions[0] && !useMap"
         color="#188DC8"
         block
         class="mt-3"
@@ -109,12 +109,12 @@ export default defineComponent({
       >
         Draw polygon on map
       </v-btn>
-      <div v-if="geoJsonShape === geoOptions[0] && useMap">
+      <div v-if="geometryInputSelection === geoOptions[0] && useMap">
         Click on the map to draw points of a polygon.
         Double click to complete the polygon selection.
       </div>
       <div
-        v-if="geoJsonShape === geoOptions[1]"
+        v-if="geometryInputSelection === geoOptions[1]"
       >
         Paste GeoJSON contents below.
         <v-spacer />
@@ -135,7 +135,7 @@ export default defineComponent({
           Confirm GeoJSON search area
         </v-btn>
       </div>
-      <div v-if="geoJsonShape === geoOptions[2]">
+      <div v-if="geometryInputSelection === geoOptions[2]">
         <v-file-input
           accept=".json,.txt"
           autofocus

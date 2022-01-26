@@ -2,6 +2,7 @@ import { ref } from '@vue/composition-api';
 import {
   rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
 } from '@/api/rest';
+// eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';
 import {
   RGDResultList, SearchParameters, ResultsFilter, RegionResult,
@@ -11,7 +12,7 @@ export const selectedTab = ref('search');
 
 export const useMap = ref(false);
 
-export const geoJsonShape = ref();
+export const geometryInputSelection = ref();
 
 export const rasterArray = ref();
 
@@ -139,7 +140,7 @@ export const updateResults = async () => {
   const res = await rgdSearch(
     searchLimit.value,
     searchOffset.value,
-    geoJsonShape.value,
+    specifiedShape.value,
     searchParameters.value.predicate,
     searchParameters.value.acquired.startDate,
     searchParameters.value.acquired.endDate,

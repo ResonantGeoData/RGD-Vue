@@ -6,7 +6,6 @@ import {
   selectedTab,
   drawnShape,
   searchResults,
-  geoJsonShape,
   specifiedShape,
   updateResults,
   updateRegions,
@@ -42,12 +41,7 @@ export default defineComponent({
     const reveal = ref(false);
     watch(drawnShape, () => {
       if (drawnShape.value.type) {
-        geoJsonShape.value = JSON.stringify(drawnShape.value);
-      }
-    }, { deep: true });
-    watch(specifiedShape, () => {
-      if (specifiedShape.value.type) {
-        geoJsonShape.value = JSON.stringify(specifiedShape.value);
+        specifiedShape.value = drawnShape.value;
       }
     }, { deep: true });
     watch(searchResults, (newValue, oldValue) => {

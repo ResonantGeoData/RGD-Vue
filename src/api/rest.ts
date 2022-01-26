@@ -27,7 +27,7 @@ axiosInstance.interceptors.request.use((config) => ({
 export async function rgdSearch(
   limit?: number,
   offset?: number,
-  q?: string,
+  q?: Polygon | MultiPolygon,
   predicate?: string | null,
   acquiredAfter?: string | null,
   acquiredBefore?: string | null,
