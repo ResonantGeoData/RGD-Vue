@@ -210,6 +210,7 @@ export default defineComponent({
       cesiumViewer.value.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
+      Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
     });
 
     watch(useMap, (val) => {

@@ -149,6 +149,12 @@ watch(visibleFootprints, (newFootprints, oldFootprints) => {
       if (!Object.keys(oldFootprints).includes(key)) {
         // add footprint
         footprintEntities[key] = addGeojson(footprint);
+        cesiumViewer.value.flyTo(footprintEntities[key], {
+          offset: new Cesium.HeadingPitchRange(
+            Cesium.Math.toRadians(0),
+            Cesium.Math.toRadians(-90.0),
+          ),
+        });
       }
     },
   );
