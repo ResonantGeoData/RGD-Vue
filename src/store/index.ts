@@ -154,7 +154,8 @@ export const updateResults = async () => {
 };
 
 export const updateRegions = async () => {
-  const res = await basicRegionList();
+  const res = await basicRegionList(searchLimit.value,
+    searchOffset.value);
   regionsList.value = res.results;
   regionsTotal.value = res.count;
 };
