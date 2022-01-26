@@ -14,7 +14,7 @@ Visit our production instance at: https://gui.resonantgeodata.com/
 * Build an instance of RGD according to the [developer documentation](https://github.com/ResonantGeoData/ResonantGeoData/blob/main/DEVELOPMENT.md)
 * In your RGD instance, navigate to the Admin Area, scroll to "Applications" and create new
 * The settings for your new application should match as follows: 
-  * Redirect URLs: http://localhost:8080
+  * Redirect URLs: http://localhost:8080/ (trailing slash matters)
   * Client type: Public
   * Authorization grant type: Authorization code
   * Client Secret: empty
