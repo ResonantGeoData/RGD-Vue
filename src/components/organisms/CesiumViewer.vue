@@ -11,12 +11,13 @@ import {
 } from '@/store';
 import { cesiumViewer } from '@/store/cesium';
 import { Entity } from 'cesium';
+import { Position } from 'geojson';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    const polyPoints: number[][][] = [[]];
+    const polyPoints: number[][][] = [];
 
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
@@ -281,7 +282,7 @@ export default defineComponent({
         };
         handler.setInputAction(() => {
           activeShapePoints.forEach((element) => {
-            polyPoints[0].push([
+            polyPoints.push([
               Cesium.Math.toDegrees(
                 (Cesium.Cartographic.fromCartesian(element)
                 ).longitude,
@@ -292,7 +293,7 @@ export default defineComponent({
               ),
             ]);
           });
-          polyPoints[0].push(polyPoints[0][0]);
+          polyPoints.push(polyPoints[0]);
           drawnShape.value.type = 'Polygon';
           drawnShape.value.coordinates = polyPoints;
           terminateShape();
@@ -302,7 +303,9 @@ export default defineComponent({
 
     watch(specifiedShape, () => {
       const uploadedFootprint: number[] = [];
-      specifiedShape.value.coordinates[0].forEach((e: number[]) => {
+      specifiedShape.value.coordinates[0].forEach((e) => {
+        // TODO: fix typing issue here
+        console.log(typeof (e));
         uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
       });
       cesiumViewer.value.entities.add({

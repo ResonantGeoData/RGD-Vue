@@ -1,7 +1,4 @@
-export type GeoJsonShape = {
-  type: string;
-  coordinates: Array<Array<Array<number>>>;
-}
+import { Polygon, MultiPolygon } from 'geojson';
 
 export type RGDResult = {
   spatial_id: number;
@@ -52,10 +49,10 @@ export type ImageryResult = {
 export type RegionResult = {
   created: string;
   end_date: string;
-  footprint: GeoJsonShape;
+  footprint: Polygon | MultiPolygon;
   id: number;
   modified: string;
-  outline: GeoJsonShape;
+  outline: Polygon | MultiPolygon;
   properties: {
     comments: string[];
     end_date: string;

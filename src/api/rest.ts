@@ -1,5 +1,6 @@
 import axios from 'axios';
 import OauthClient from '@girder/oauth-client';
+import { Polygon, MultiPolygon } from 'geojson';
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
@@ -65,8 +66,8 @@ export async function rgdSpatialEntry(
 export async function rgdFootprint(
   spatialID: number,
 ) {
-  const response = await axiosInstance.get<{ footprint: { type: string; coordinates: number[][][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
-  return response.data;
+  const response = await axiosInstance.get<{ footprint: Polygon | MultiPolygon }>(`rgd/spatial_entry/${spatialID}/footprint`);
+  return response.data.footprint;
 }
 
 export async function rgdImagery(

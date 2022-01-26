@@ -19,7 +19,7 @@ export default defineComponent({
 
     const clearShape = () => {
       drawnShape.value = {
-        type: '',
+        type: 'Polygon',
         coordinates: [],
       };
       geoJsonErrorMessages.value = [];

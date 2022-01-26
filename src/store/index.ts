@@ -2,8 +2,9 @@ import { ref } from '@vue/composition-api';
 import {
   rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
 } from '@/api/rest';
+import { Polygon, MultiPolygon } from 'geojson';
 import {
-  GeoJsonShape, RGDResultList, SearchParameters, ResultsFilter, RegionResult,
+  RGDResultList, SearchParameters, ResultsFilter, RegionResult,
 } from './types';
 
 export const selectedTab = ref('search');
@@ -16,13 +17,13 @@ export const rasterArray = ref();
 
 export const footprintIds = ref();
 
-export const visibleFootprints = ref<Record<string, GeoJsonShape>>({});
+export const visibleFootprints = ref<Record<string, Polygon | MultiPolygon>>({});
 
 export const visibleOverlayIds = ref();
 
-export const specifiedShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
+export const specifiedShape = ref<Polygon | MultiPolygon>({ type: 'Polygon', coordinates: [] });
 
-export const drawnShape = ref<GeoJsonShape>({ type: '', coordinates: [] });
+export const drawnShape = ref<Polygon | MultiPolygon>({ type: 'Polygon', coordinates: [] });
 
 export const drawerContents = ref();
 
@@ -68,7 +69,7 @@ export const addFootprint = async (spatialId: number, region?: boolean) => {
   let key;
   let footprint;
   if (!region) {
-    footprint = (await rgdFootprint(spatialId)).footprint;
+    footprint = (await rgdFootprint(spatialId));
     key = `result_${spatialId}`;
   } else {
     footprint = regionsList.value?.find((reg) => reg.id === spatialId)?.footprint;

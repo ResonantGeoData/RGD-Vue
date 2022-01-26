@@ -8,7 +8,8 @@ import {
   visibleOverlayIds,
   visibleFootprints,
 } from '@/store';
-import { TileParamsType, RGDResult, GeoJsonShape } from '@/store/types';
+import { TileParamsType, RGDResult } from '@/store/types';
+import { Polygon, MultiPolygon, Position } from 'geojson';
 import { ref, watch }
   from '@vue/composition-api';
 
@@ -22,7 +23,7 @@ export const cesiumViewer = ref();
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
-const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
+const footprintEntities: Record<string, Array<Entity>> = {}; // Cesium.Entity
 
 const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
 
@@ -99,19 +100,34 @@ watch(visibleOverlayIds, () => {
   });
 }, { deep: true });
 
-export const addGeojson = (geojson: GeoJsonShape): Entity => {
-  const cesiumPoints: RGDResult[] = [];
-  geojson.coordinates[0].forEach((e: number[]) => {
-    cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-  });
-  return cesiumViewer.value.entities.add({
-    polygon: {
-      hierarchy: cesiumPoints,
-      material: new Cesium.ColorMaterialProperty(
-        Cesium.Color.fromRandom({ alpha: 0.5 }),
-      ),
-    },
-  });
+export const addGeojson = (geojson: Polygon | MultiPolygon): Entity[] => {
+  const makeEntity = (
+    coordinates: Position[][],
+    parent: Entity | undefined = undefined,
+  ): Entity => {
+    const cesiumPoints: RGDResult[] = [];
+    coordinates[0].forEach((e: Position) => {
+      cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
+    });
+    return cesiumViewer.value.entities.add({
+      polygon: {
+        hierarchy: cesiumPoints,
+        parent,
+        material: new Cesium.ColorMaterialProperty(
+          Cesium.Color.fromRandom({ alpha: 0.5 }),
+        ),
+      },
+    });
+  };
+  if (geojson.type === 'MultiPolygon') {
+    const entities: Entity[] = [];
+    geojson.coordinates.forEach((a: Position[][]) => {
+      entities.push(makeEntity(a));
+    });
+    return entities;
+  }
+  // geojson.type === 'Polygon'
+  return [makeEntity(geojson.coordinates)];
 };
 
 watch(visibleFootprints, (newFootprints, oldFootprints) => {
@@ -120,7 +136,9 @@ watch(visibleFootprints, (newFootprints, oldFootprints) => {
       if (!Object.keys(newFootprints).includes(key)) {
         // remove footprint
         if (key in footprintEntities) {
-          cesiumViewer.value.entities.remove(footprintEntities[key]);
+          footprintEntities[key].forEach((entity: Entity) => {
+            cesiumViewer.value.entities.remove(entity);
+          });
           delete footprintEntities[key];
         }
       }
