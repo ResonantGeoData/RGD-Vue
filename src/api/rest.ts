@@ -38,16 +38,22 @@ export async function rgdSearch(
   endTime?: string | null,
 
 ) {
+  let geometry;
   if (q?.coordinates.length === 0) {
     // Catch if empty geometry is given (the default value for type sanity)
     // eslint-disable-next-line no-param-reassign
-    q = undefined;
+    geometry = undefined;
+  } else {
+    // HACK: we need to fix this
+    geometry = q;
+    // eslint-disable-next-line
+    // geometry?.coordinates = [q?.coordinates];
   }
   const response = await axiosInstance.get('rgd/search', {
     params: {
       limit,
       offset,
-      q,
+      q: encodeURIComponent(JSON.stringify(geometry)),
       predicate,
       acquiredAfter,
       acquiredBefore,
