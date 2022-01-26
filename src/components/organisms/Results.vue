@@ -205,8 +205,7 @@ export default defineComponent({
 
 <template>
   <div>
-    <!-- TODO: put FilterMenu back -->
-    <FilterMenu v-if="!props.regions" />
+    <FilterMenu />
     <v-data-table
       :headers="headers"
       :items="!props.regions ?searchResults :regionsList"

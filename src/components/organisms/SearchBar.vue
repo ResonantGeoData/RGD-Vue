@@ -74,6 +74,7 @@ export default defineComponent({
   <v-card
     color="blue-grey darken-4"
     height="calc(100vh - 48px)"
+    class="overflow-auto"
   >
     <v-tabs
       v-model="selectedTab"
@@ -115,15 +116,15 @@ export default defineComponent({
           <v-form
             @submit.prevent="updateResults()"
           >
-            <v-card-subtitle>Specify search area</v-card-subtitle>
-            <GeoJsonForm />
-            <v-card-subtitle>Apply search logic</v-card-subtitle>
-            <Predicate />
-            <v-card-subtitle>Acquired date range</v-card-subtitle>
-            <DateRange />
-
             <v-row justify="center">
               <v-col cols="11">
+                <v-card-subtitle>Specify search area</v-card-subtitle>
+                <GeoJsonForm />
+                <v-card-subtitle>Apply search logic</v-card-subtitle>
+                <Predicate />
+                <v-card-subtitle>Acquired date range</v-card-subtitle>
+                <DateRange />
+
                 <v-btn
                   color="primary"
                   block
