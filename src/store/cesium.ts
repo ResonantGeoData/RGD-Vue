@@ -9,7 +9,7 @@ import {
   visibleFootprints,
 } from '@/store';
 import { TileParamsType, RGDResult } from '@/store/types';
-import { Polygon, MultiPolygon, Position } from 'geojson';
+import { Polygon, MultiPolygon, Position } from 'geojson';  // eslint-disable-line
 import { ref, watch }
   from '@vue/composition-api';
 

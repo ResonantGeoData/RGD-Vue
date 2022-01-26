@@ -1,4 +1,4 @@
-import { Polygon, MultiPolygon } from 'geojson';
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 
 export type RGDResult = {
   spatial_id: number;

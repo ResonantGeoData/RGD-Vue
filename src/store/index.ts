@@ -3,7 +3,7 @@ import {
   rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
-import { Polygon, MultiPolygon } from 'geojson';
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import {
   RGDResultList, SearchParameters, ResultsFilter, RegionResult,
 } from './types';

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import OauthClient from '@girder/oauth-client';
-import { Polygon, MultiPolygon } from 'geojson';
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
