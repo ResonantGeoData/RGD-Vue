@@ -8,9 +8,9 @@ import {
 import Cesium from '@/plugins/cesium';
 import { Cartesian3 } from 'cesium';
 import {
-  useMap, specifiedShape,
+  specifiedShape,
 } from '@/store';
-import { cesiumViewer } from '@/store/cesium';
+import { cesiumViewer, useMap } from '@/store/cesium';
 
 export default defineComponent({
   name: 'CesiumViewer',

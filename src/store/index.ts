@@ -10,8 +10,6 @@ import {
 
 export const selectedTab = ref('search');
 
-export const useMap = ref(false);
-
 export const geometryInputSelection = ref();
 
 export const rasterArray = ref();

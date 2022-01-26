@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import {
-  useMap, drawnShape, specifiedShape, geometryInputSelection,
+  drawnShape, specifiedShape, geometryInputSelection,
 } from '@/store';
+import { useMap } from '@/store/cesium';
 import { hint } from 'geojsonhint';
 
 export default defineComponent({

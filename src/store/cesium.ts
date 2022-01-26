@@ -8,7 +8,6 @@ import {
 import {
   visibleOverlayIds,
   visibleFootprints,
-  useMap,
   drawnShape,
 } from '@/store';
 import { TileParamsType, RGDResult } from '@/store/types';
@@ -23,6 +22,8 @@ import { ref, watch }
 Cesium.RequestScheduler.maximumRequestsPerServer = 3;
 
 export const cesiumViewer = ref();
+
+export const useMap = ref(false);
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
