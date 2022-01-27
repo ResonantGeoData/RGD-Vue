@@ -27,7 +27,7 @@ export const useMap = ref(false);
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
-const footprintEntities: Record<string, Array<Entity>> = {}; // Cesium.Entity
+const footprintEntities: Record<string, Entity[]> = {}; // Cesium.Entity
 
 const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
 
@@ -109,10 +109,9 @@ export const addGeojson = (geojson: Polygon | MultiPolygon): Entity[] => {
     coordinates: Position[][],
     parent: Entity | undefined = undefined,
   ): Entity => {
-    const cesiumPoints: RGDResult[] = [];
-    coordinates[0].forEach((e: Position) => {
-      cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-    });
+    const cesiumPoints: RGDResult[] = coordinates[0].map(
+      (e: Position) => Cesium.Cartesian3.fromDegrees(e[0], e[1]),
+    );
     return cesiumViewer.value.entities.add({
       polygon: {
         hierarchy: cesiumPoints,
@@ -124,10 +123,9 @@ export const addGeojson = (geojson: Polygon | MultiPolygon): Entity[] => {
     });
   };
   if (geojson.type === 'MultiPolygon') {
-    const entities: Entity[] = [];
-    geojson.coordinates.forEach((a: Position[][]) => {
-      entities.push(makeEntity(a));
-    });
+    const entities: Entity[] = geojson.coordinates.map(
+      (a: Position[][]) => makeEntity(a),
+    );
     return entities;
   }
   // geojson.type === 'Polygon'
