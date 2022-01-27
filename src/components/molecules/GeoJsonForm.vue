@@ -68,6 +68,7 @@ export default defineComponent({
       clearShape,
       selectShape,
       drawnShape,
+      specifiedShape,
       geometryInputSelection,
       geoOptions,
       geoJsonString,
@@ -82,79 +83,73 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-row
-    no-gutters
-    justify="center"
-  >
-    <v-col
-      cols="11"
+  <div>
+    <v-select
+      v-model="geometryInputSelection"
+      :items="geoOptions"
+      label="Search area"
+      messages="Select a method of specifying a geographical area."
+      :hide-details="geometryInputSelection !== undefined"
+      outlined
+      clearable
+      dense
+      @click:clear="clearShape"
+      @change="selectShape"
+    />
+    <v-btn
+      v-if="geometryInputSelection === geoOptions[0] && !useMap"
+      color="#188DC8"
+      block
+      class="mt-3"
+      @click="useMap = true"
     >
-      <v-select
-        v-model="geometryInputSelection"
-        :items="geoOptions"
-        label="Search area"
-        messages="Select a method of specifying a geographical area."
-        :hide-details="geometryInputSelection !== undefined"
-        outlined
+      Draw polygon on map
+    </v-btn>
+    <div v-if="geometryInputSelection === geoOptions[0] && useMap">
+      Click on the map to draw points of a polygon.
+      Double click to complete the polygon selection.
+    </div>
+    <div
+      v-if="geometryInputSelection === geoOptions[1]"
+    >
+      Paste GeoJSON contents below.
+      <v-spacer />
+      <v-textarea
+        v-model="geoJsonString"
+        autofocus
         clearable
-        @click:clear="clearShape"
-        @change="selectShape"
+        :rules="[isGeoJSON]"
+        :messages="geoJsonErrorMessages"
       />
       <v-btn
-        v-if="geometryInputSelection === geoOptions[0] && !useMap"
+        v-if="geoJsonErrorMessages.length === 0"
         color="#188DC8"
         block
         class="mt-3"
-        @click="useMap = true"
+        @click="confirmGeoJSON"
       >
-        Draw polygon on map
+        Confirm GeoJSON search area
       </v-btn>
-      <div v-if="geometryInputSelection === geoOptions[0] && useMap">
-        Click on the map to draw points of a polygon.
-        Double click to complete the polygon selection.
-      </div>
-      <div
-        v-if="geometryInputSelection === geoOptions[1]"
-      >
-        Paste GeoJSON contents below.
-        <v-spacer />
-        <v-textarea
-          v-model="geoJsonString"
-          autofocus
-          clearable
-          :rules="[isGeoJSON]"
-          :messages="geoJsonErrorMessages"
-        />
-        <v-btn
-          v-if="geoJsonErrorMessages.length === 0"
-          color="#188DC8"
-          block
-          class="mt-3"
-          @click="confirmGeoJSON"
-        >
-          Confirm GeoJSON search area
-        </v-btn>
-      </div>
-      <div v-if="geometryInputSelection === geoOptions[2]">
-        <v-file-input
-          accept=".json,.txt"
-          autofocus
-          chips
-          clearable
-          dense
-          full-width
-          hint="Provide GeoJSON file"
-          persistent-hint
-          :rules="[validateFile]"
-          :messages="geoJsonErrorMessages"
-        />
-      </div>
-      <v-text-field
-        v-if="drawnShape.coordinates.length > 0"
-        readonly
-        label="Copy search area specification"
-        :value="JSON.stringify(drawnShape)"
+    </div>
+    <div v-if="geometryInputSelection === geoOptions[2]">
+      <v-file-input
+        accept=".json,.txt"
+        autofocus
+        chips
+        clearable
+        dense
+        full-width
+        hint="Provide GeoJSON file"
+        persistent-hint
+        :rules="[validateFile]"
+        :messages="geoJsonErrorMessages"
       />
-    </v-col>
-  </v-row>
+    </div>
+    <v-text-field
+      v-if="drawnShape.coordinates.length > 0"
+      readonly
+      label="Copy search area specification"
+      :value="JSON.stringify(drawnShape)"
+    />
+  </div>
 </template>
