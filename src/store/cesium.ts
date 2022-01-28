@@ -1,6 +1,6 @@
 import Cesium from '@/plugins/cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
-import { Entity, Cartesian3 } from 'cesium';
+import { Entity, Cartesian3, GeoJsonDataSource } from 'cesium';
 import {
   rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
@@ -10,7 +10,7 @@ import {
   visibleFootprints,
   drawnShape,
 } from '@/store';
-import { TileParamsType, RGDResult } from '@/store/types';
+import { TileParamsType } from '@/store/types';
 import { Polygon, MultiPolygon, Position } from 'geojson';  // eslint-disable-line
 import { ref, watch }
   from '@vue/composition-api';
@@ -27,7 +27,7 @@ export const useMap = ref(false);
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
-const footprintEntities: Record<string, Entity[]> = {}; // Cesium.Entity
+const footprintSources: Record<string, GeoJsonDataSource> = {};
 
 const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
 
@@ -104,32 +104,14 @@ watch(visibleOverlayIds, () => {
   });
 }, { deep: true });
 
-export const addGeojson = (geojson: Polygon | MultiPolygon): Entity[] => {
-  const makeEntity = (
-    coordinates: Position[][],
-    parent: Entity | undefined = undefined,
-  ): Entity => {
-    const cesiumPoints: RGDResult[] = coordinates[0].map(
-      (e: Position) => Cesium.Cartesian3.fromDegrees(e[0], e[1]),
-    );
-    return cesiumViewer.value.entities.add({
-      polygon: {
-        hierarchy: cesiumPoints,
-        parent,
-        material: new Cesium.ColorMaterialProperty(
-          Cesium.Color.fromRandom({ alpha: 0.5 }),
-        ),
-      },
-    });
-  };
-  if (geojson.type === 'MultiPolygon') {
-    const entities: Entity[] = geojson.coordinates.map(
-      (a: Position[][]) => makeEntity(a),
-    );
-    return entities;
-  }
-  // geojson.type === 'Polygon'
-  return [makeEntity(geojson.coordinates)];
+export const addGeojson = async (geojson: Polygon | MultiPolygon): Promise<GeoJsonDataSource> => {
+  // cesiumViewer.value.dataSources.remove(source);
+  const source = await cesiumViewer.value.dataSources.add(
+    Cesium.GeoJsonDataSource.load(geojson, {
+      stroke: Cesium.Color.fromRandom({ alpha: 0.5 }),
+    }),
+  );
+  return source;
 };
 
 watch(visibleFootprints, (newFootprints, oldFootprints) => {
@@ -137,21 +119,19 @@ watch(visibleFootprints, (newFootprints, oldFootprints) => {
     ([key]) => {
       if (!Object.keys(newFootprints).includes(key)) {
         // remove footprint
-        if (key in footprintEntities) {
-          footprintEntities[key].forEach((entity: Entity) => {
-            cesiumViewer.value.entities.remove(entity);
-          });
-          delete footprintEntities[key];
+        if (key in footprintSources) {
+          cesiumViewer.value.dataSources.remove(footprintSources[key]);
+          delete footprintSources[key];
         }
       }
     },
   );
   Object.entries(newFootprints).forEach(
-    ([key, footprint]) => {
+    async ([key, footprint]) => {
       if (!Object.keys(oldFootprints).includes(key)) {
         // add footprint
-        footprintEntities[key] = addGeojson(footprint);
-        cesiumViewer.value.flyTo(footprintEntities[key], {
+        footprintSources[key] = await addGeojson(footprint);
+        cesiumViewer.value.flyTo(footprintSources[key], {
           offset: new Cesium.HeadingPitchRange(
             Cesium.Math.toRadians(0),
             Cesium.Math.toRadians(-90.0),
