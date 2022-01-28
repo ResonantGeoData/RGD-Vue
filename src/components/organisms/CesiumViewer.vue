@@ -6,7 +6,7 @@ import {
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { Cartesian3 } from 'cesium';
+import { GeoJsonDataSource } from 'cesium';
 import {
   specifiedShape,
 } from '@/store';
@@ -15,6 +15,7 @@ import { cesiumViewer, useMap } from '@/store/cesium';
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
+    let source: GeoJsonDataSource;
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -209,21 +210,13 @@ export default defineComponent({
       Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
     });
 
-    watch(specifiedShape, () => {
-      const uploadedFootprint: Cartesian3[] = [];
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      specifiedShape.value.coordinates.forEach((e: any) => {
-        uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-      });
-      cesiumViewer.value.entities.add({
-        polygon: {
-          hierarchy: uploadedFootprint,
-          outline: true,
-          outlineColor: Cesium.Color.RED,
-          outlineWidth: 3,
-          fill: false,
-        },
-      });
+    watch(specifiedShape, async () => {
+      cesiumViewer.value.dataSources.remove(source);
+      source = await cesiumViewer.value.dataSources.add(
+        Cesium.GeoJsonDataSource.load(specifiedShape.value, {
+          stroke: Cesium.Color.HOTPINK,
+        }),
+      );
     }, { deep: true });
 
     return {
