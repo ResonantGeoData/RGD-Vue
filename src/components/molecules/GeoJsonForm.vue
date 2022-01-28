@@ -31,8 +31,12 @@ export default defineComponent({
     };
 
     const isGeoJSON = (inputText: string) => {
-      const validation = hint(inputText);
-      geoJsonErrorMessages.value = validation.map((error: {message: string}) => error.message);
+      try {
+        JSON.parse(inputText);
+        geoJsonErrorMessages.value = [];
+      } catch (e) {
+        geoJsonErrorMessages.value = ['Not a valid GeoJSON Polygon or MultiPolygon'];
+      }
       return true;
     };
     const confirmGeoJSON = () => {
