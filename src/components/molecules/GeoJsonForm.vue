@@ -4,7 +4,6 @@ import {
   drawnShape, specifiedShape, geometryInputSelection,
 } from '@/store';
 import { useMap } from '@/store/cesium';
-import { hint } from 'geojsonhint';
 
 export default defineComponent({
   name: 'GeoJsonForm',
