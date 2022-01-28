@@ -243,7 +243,8 @@ watch(useMap, () => {
       });
       polyPoints.push(polyPoints[0]);
       drawnShape.value.type = 'Polygon';
-      drawnShape.value.coordinates = polyPoints;
+      // This is super duper important!!!!
+      drawnShape.value.coordinates[0] = polyPoints;
       terminateShape();
     }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   }
