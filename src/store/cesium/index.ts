@@ -14,9 +14,18 @@ export const cesiumViewer = ref();
 export const addGeojson = async (geojson: Polygon | MultiPolygon): Promise<GeoJsonDataSource> => {
   // cesiumViewer.value.dataSources.remove(source);
   const source = await cesiumViewer.value.dataSources.add(
-    Cesium.GeoJsonDataSource.load(geojson, {
-      stroke: Cesium.Color.fromRandom({ alpha: 0.5 }),
-    }),
+    Cesium.GeoJsonDataSource.load(geojson),
   );
+  // Change display properties for all entities in data source
+  /* eslint-disable no-param-reassign */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  source.entities.values.forEach((entity: {polygon: any}) => {
+    entity.polygon.outline = true;
+    entity.polygon.fill = false;
+    entity.polygon.outlineColor = Cesium.Color.fromRandom({ alpha: 0.5 });
+    entity.polygon.outlineWidth = 3; // WebGL issue - doesn't do anything
+  });
+  /* eslint-enable no-param-reassign */
+
   return source;
 };
