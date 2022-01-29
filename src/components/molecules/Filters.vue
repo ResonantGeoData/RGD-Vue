@@ -63,21 +63,21 @@ export default defineComponent({
         color="blue-grey darken-3"
       >
         <GeoJsonForm
-          v-if="selectedTab=='regions'"
+          v-if="selectedTab==='regions'"
         />
         <Predicate
-          v-if="selectedTab=='regions'"
+          v-if="selectedTab==='regions'"
           class="mt-3"
         />
         <DistanceRange
-          v-if="selectedTab=='results'"
+          v-if="selectedTab==='results'"
         />
         <Instrumentation />
         <DateRange
-          v-if="selectedTab=='regions'"
+          v-if="selectedTab==='regions'"
         />
         <TimeRange
-          v-if="selectedTab=='results'"
+          v-if="selectedTab==='results'"
         />
         <v-row>
           <v-col
