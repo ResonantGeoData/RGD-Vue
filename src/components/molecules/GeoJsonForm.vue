@@ -3,7 +3,7 @@ import { defineComponent, ref } from '@vue/composition-api';
 import {
   drawnShape, specifiedShape, geometryInputSelection,
 } from '@/store';
-import { useMap } from '@/store/cesium';
+import { useMap } from '@/store/cesium/search';
 
 export default defineComponent({
   name: 'GeoJsonForm',

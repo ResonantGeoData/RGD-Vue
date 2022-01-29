@@ -1,6 +1,6 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdFootprint, rgdSearch, basicRegionList,
+  rgdImagery, rgdSearch, basicRegionList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
@@ -11,14 +11,6 @@ import {
 export const selectedTab = ref('search');
 
 export const geometryInputSelection = ref();
-
-export const rasterArray = ref();
-
-export const footprintIds = ref();
-
-export const visibleFootprints = ref<Record<string, Polygon | MultiPolygon>>({});
-
-export const visibleOverlayIds = ref();
 
 export const specifiedShape = ref<Polygon | MultiPolygon>({ type: 'Polygon', coordinates: [] });
 
@@ -63,48 +55,6 @@ export const resultsFilter = ref<ResultsFilter>({
     endTimeModal: false,
   },
 });
-
-export const addFootprint = async (spatialId: number, region?: boolean) => {
-  let key;
-  let footprint;
-  if (!region) {
-    footprint = (await rgdFootprint(spatialId));
-    key = `result_${spatialId}`;
-  } else {
-    footprint = regionsList.value?.find((reg) => reg.id === spatialId)?.footprint;
-    key = `region_${spatialId}`;
-  }
-  if (key && footprint) {
-    visibleFootprints.value = { [key]: footprint, ...visibleFootprints.value };
-  }
-};
-
-export const removeFootprint = (spatialId: number, region?: boolean) => {
-  let key: string;
-  if (!region) {
-    key = `result_${spatialId}`;
-  } else {
-    key = `region_${spatialId}`;
-  }
-  if (visibleFootprints.value[key]) {
-    visibleFootprints.value = Object.fromEntries(
-      Object.entries(visibleFootprints.value).filter(([k]) => k !== key),
-    );
-  }
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const addVisibleOverlay = (spatialId: number, region?: boolean) => {
-  if (visibleOverlayIds.value === undefined) {
-    visibleOverlayIds.value = [];
-  }
-  visibleOverlayIds.value.push(spatialId);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const removeVisibleOverlay = (spatialId: number, region?: boolean) => {
-  visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
-};
 
 export const selectResultForMetadataDrawer = async (spatialId: number, region?: boolean) => {
   if (searchResults.value) {

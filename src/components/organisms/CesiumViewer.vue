@@ -2,20 +2,15 @@
 import {
   defineComponent,
   onMounted,
-  watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { GeoJsonDataSource } from 'cesium';
-import {
-  specifiedShape,
-} from '@/store';
-import { cesiumViewer, useMap } from '@/store/cesium';
+import { cesiumViewer } from '@/store/cesium';
+import { useMap } from '@/store/cesium/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    let source: GeoJsonDataSource;
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -209,15 +204,6 @@ export default defineComponent({
       });
       Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
     });
-
-    watch(specifiedShape, async () => {
-      cesiumViewer.value.dataSources.remove(source);
-      source = await cesiumViewer.value.dataSources.add(
-        Cesium.GeoJsonDataSource.load(specifiedShape.value, {
-          stroke: Cesium.Color.HOTPINK,
-        }),
-      );
-    }, { deep: true });
 
     return {
       useMap,

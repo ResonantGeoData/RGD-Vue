@@ -11,13 +11,17 @@ import {
   updateRegions,
   regionsList,
   regionsTotal,
-  addFootprint,
-  removeFootprint,
-  addVisibleOverlay,
-  removeVisibleOverlay,
   selectResultForMetadataDrawer,
   clearMetaDataDrawer,
 } from '@/store';
+import {
+  addFootprint,
+  removeFootprint,
+} from '@/store/cesium/footprints';
+import {
+  addVisibleOverlay,
+  removeVisibleOverlay,
+} from '@/store/cesium/layers';
 import { FocusedDataType } from '@/store/types';
 import { imageryBands, rgdImagery } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
