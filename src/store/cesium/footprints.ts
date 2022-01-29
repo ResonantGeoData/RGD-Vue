@@ -19,7 +19,7 @@ export const addFootprint = async (spatialId: number, region?: boolean) => {
     key = `region_${spatialId}`;
   }
   if (key && footprint) {
-    visibleFootprints.value = { [key]: footprint, ...visibleFootprints.value };
+    visibleFootprints.value = { ...visibleFootprints.value, [key]: footprint };
   }
 };
 
