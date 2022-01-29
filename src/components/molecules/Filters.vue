@@ -2,12 +2,11 @@
 import {
   defineComponent,
 } from '@vue/composition-api';
-
+import { selectedTab } from '@/store';
 import {
   resultsFilter,
   updateResults,
-  selectedTab,
-} from '@/store';
+} from '@/store/search';
 import TimeRange from '../atoms/TimeRange.vue';
 import DistanceRange from '../atoms/DistanceRange.vue';
 import Instrumentation from '../atoms/Instrumentation.vue';

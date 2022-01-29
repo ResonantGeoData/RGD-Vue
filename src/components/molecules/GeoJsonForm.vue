@@ -2,7 +2,7 @@
 import { defineComponent, ref } from '@vue/composition-api';
 import {
   drawnShape, specifiedShape, geometryInputSelection,
-} from '@/store';
+} from '@/store/search';
 import { useMap } from '@/store/cesium/search';
 
 export default defineComponent({

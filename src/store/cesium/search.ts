@@ -1,7 +1,7 @@
 import Cesium from '@/plugins/cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
 import { Entity, Cartesian3, GeoJsonDataSource } from 'cesium';
-import { drawnShape, specifiedShape } from '@/store';
+import { drawnShape, specifiedShape } from '@/store/search';
 import { ref, watch } from '@vue/composition-api';
 import { cesiumViewer } from '@/store/cesium';
 

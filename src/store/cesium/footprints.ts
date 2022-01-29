@@ -4,7 +4,7 @@ import { ref, watch } from '@vue/composition-api';
 import { cesiumViewer, addGeojson } from '@/store/cesium';
 import { rgdFootprint } from '@/api/rest';
 import { Polygon, MultiPolygon, Position } from 'geojson';  // eslint-disable-line
-import { regionsList } from '@/store';
+import { regionsList } from '@/store/search';
 
 export const visibleFootprints = ref<Record<string, Polygon | MultiPolygon>>({});
 

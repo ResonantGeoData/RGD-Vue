@@ -2,14 +2,14 @@
 import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
+import { selectedTab } from '@/store';
 import {
-  selectedTab,
   drawnShape,
   searchResults,
   specifiedShape,
   updateResults,
   updateRegions,
-} from '@/store';
+} from '@/store/search';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';

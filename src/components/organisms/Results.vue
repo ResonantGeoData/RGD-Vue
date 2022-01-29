@@ -2,18 +2,18 @@
 import {
   defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
+import { clearMetaDataDrawer } from '@/store';
 import {
   searchResults,
   searchLimit,
   searchOffset,
   searchResultsTotal,
   updateResults,
+  selectResultForMetadataDrawer,
   updateRegions,
   regionsList,
   regionsTotal,
-  selectResultForMetadataDrawer,
-  clearMetaDataDrawer,
-} from '@/store';
+} from '@/store/search';
 import {
   addFootprint,
   removeFootprint,
