@@ -2,35 +2,46 @@
 import {
   defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
+import { clearMetaDataDrawer } from '@/store';
 import {
   searchResults,
   searchLimit,
   searchOffset,
   searchResultsTotal,
   updateResults,
+  selectResultForMetadataDrawer,
+  updateRegions,
+  regionsList,
+  regionsTotal,
+} from '@/store/search';
+import {
   addFootprint,
   removeFootprint,
+} from '@/store/cesium/footprints';
+import {
   addVisibleOverlay,
   removeVisibleOverlay,
-  selectResultForMetadataDrawer,
-  clearMetaDataDrawer,
-} from '@/store';
+} from '@/store/cesium/layers';
 import { FocusedDataType } from '@/store/types';
 import { imageryBands, rgdImagery } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
-import ToolBar from '../molecules/ToolBar.vue';
 import FocusedData from '../molecules/FocusedData.vue';
 
 export default defineComponent({
   name: 'Results',
+  props: {
+    regions: {
+      type: Boolean,
+      required: false,
+    },
+  },
   components: {
-    ToolBar,
     FilterMenu,
     FocusedData,
   },
 
-  setup() {
+  setup(props) {
     const focusedData = ref<FocusedDataType>({
       bandsList: [],
       images: [],
@@ -44,12 +55,19 @@ export default defineComponent({
       itemsPerPage: 10,
     } as DataOptions);
 
-    const headers = [
+    let headers = [
       {
         text: '', value: 'show_overlay', width: 1, sortable: false,
       },
       {
-        text: 'ID-Name', value: 'id-name', sortable: false,
+        text: 'ID-Name',
+        value: 'id-name',
+        sortable: false,
+      },
+      {
+        text: 'Name',
+        value: 'region_id',
+        sortable: false,
       },
       {
         text: 'Data Type',
@@ -73,13 +91,20 @@ export default defineComponent({
         sortable: false,
       },
     ];
+    if (props.regions) {
+      headers = headers.filter((header) => ['region_id', 'show_footprint', 'show_metadata'].includes(header.value));
+    }
     const itemsPerPageOptions = [5, 10, 15];
 
     const updateOptions = () => {
       const { page, itemsPerPage } = tableOptions;
       searchLimit.value = itemsPerPage;
       searchOffset.value = (page - 1) * itemsPerPage;
-      updateResults();
+      if (props.regions) {
+        updateRegions();
+      } else {
+        updateResults();
+      }
     };
 
     watch(tableOptions, updateOptions, {
@@ -107,27 +132,43 @@ export default defineComponent({
         removeFunc = clearMetaDataDrawer;
       }
 
-      if (!searchResults.value) {
-        return null;
-      }
       if (value && addFunc) {
-        addFunc(spatialId);
+        addFunc(spatialId, props.regions);
       } else if (removeFunc) {
-        removeFunc(spatialId);
+        removeFunc(spatialId, props.regions);
       }
-      searchResults.value = searchResults.value.map((entry) => {
-        if (entry.spatial_id === spatialId) {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          return Object.assign(entry, { [fieldName]: value });
-        }
-        return entry;
-      });
+
+      if (!props.regions) {
+        if (!searchResults.value) return null;
+        searchResults.value = searchResults.value.map(
+          (entry) => {
+            if (entry.spatial_id === spatialId) {
+              return { ...entry, [fieldName]: value };
+            }
+            return entry;
+          },
+        );
+      } else {
+        if (!regionsList.value) return null;
+        regionsList.value = regionsList.value.map(
+          (entry) => {
+            if (entry.id === spatialId) {
+              return { ...entry, [fieldName]: value };
+            }
+            return entry;
+          },
+        );
+      }
+
       return null;
     };
 
     const getFocusedData = async (
       item: { spatial_id: number; subentry_name: string },
     ) => {
+      if (props.regions) {
+        return;
+      }
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
       focusedData.value.spatialId = item.spatial_id;
@@ -147,7 +188,10 @@ export default defineComponent({
     };
 
     return {
+      props,
       searchResults,
+      regionsList,
+      regionsTotal,
       ...toRefs(tableOptions),
       headers,
       ellipsisText,
@@ -168,11 +212,12 @@ export default defineComponent({
     <FilterMenu />
     <v-data-table
       :headers="headers"
-      :items="searchResults"
+      :items="!props.regions ?searchResults :regionsList"
       :page.sync="page"
       :items-per-page.sync="itemsPerPage"
-      :server-items-length="searchResultsTotal"
+      :server-items-length="!props.regions ?searchResultsTotal :regionsTotal"
       :footer-props="{ itemsPerPageOptions }"
+      :class="props.regions ? 'px-5' : ''"
       dense
       calculate-widths
     >
@@ -205,6 +250,12 @@ export default defineComponent({
         </div>
       </template>
       <!-- eslint-disable-next-line -->
+      <template #item.region_id="{item}">
+        <div>
+          {{ item.region_id }}
+        </div>
+      </template>
+      <!-- eslint-disable-next-line -->
       <template #item.subentry_type="{item}">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -227,7 +278,7 @@ export default defineComponent({
           v-ripple
           dark
           :value="item.show_footprint"
-          @input="(value) => toggleValue('show_footprint', item.spatial_id, value)"
+          @input="(value) => toggleValue('show_footprint', item.spatial_id || item.id, value)"
         />
       </template>
       <!-- eslint-disable-next-line -->
@@ -238,12 +289,12 @@ export default defineComponent({
           off-icon="mdi-chevron-right"
           on-icon="mdi-chevron-left"
           :value="item.show_metadata"
-          @input="(value) => toggleValue('show_metadata', item.spatial_id, value)"
+          @input="(value) => toggleValue('show_metadata', item.spatial_id || item.id, value)"
         />
       </template>
     </v-data-table>
     <FocusedData
-      v-if="focusFlag"
+      v-if="focusFlag && !props.regions"
       :focused-data="focusedData"
     />
   </div>

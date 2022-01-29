@@ -1,7 +1,4 @@
-export type GeoJsonShape = {
-  type: string;
-  coordinates: Array<Array<Array<number>>>;
-}
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 
 export type RGDResult = {
   spatial_id: number;
@@ -47,6 +44,28 @@ export type ImageryResult = {
   resolution: number[];
   transform: number[];
   cloud_cover: number;
+}
+
+export type RegionResult = {
+  created: string;
+  end_date: string;
+  footprint: Polygon | MultiPolygon;
+  id: number;
+  modified: string;
+  outline: Polygon | MultiPolygon;
+  properties: {
+    comments: string[];
+    end_date: string;
+    mgrs: string;
+    model_content: string;
+    originator: string;
+    region_id: string;
+    start_date: string;
+    type: string;
+    version: string;
+  };
+  region_id: string;
+  strat_date: string;
 }
 
 export type FocusedDataType = {

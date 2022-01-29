@@ -3,7 +3,7 @@ import {
   defineComponent, ref,
 } from '@vue/composition-api';
 
-import { searchParameters } from '@/store';
+import { searchParameters } from '@/store/search';
 
 export default defineComponent({
   name: 'DateRange',
@@ -39,6 +39,7 @@ export default defineComponent({
   <v-row
     no-gutters
     justify="center"
+    class="px-5"
   >
     <v-dialog
       v-model="searchParameters.acquired.startDateModal"

@@ -2,22 +2,15 @@
 import {
   defineComponent,
   onMounted,
-  watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import {
-  useMap, drawnShape, specifiedShape,
-} from '@/store';
 import { cesiumViewer } from '@/store/cesium';
-import { Entity } from 'cesium';
-import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
+import { useMap } from '@/store/cesium/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    const polyPoints: number[][][] = [[]];
-
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -209,112 +202,8 @@ export default defineComponent({
       cesiumViewer.value.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
+      Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
     });
-
-    watch(useMap, (val) => {
-      if (!val) { return; }
-      {
-        cesiumViewer.value.cesiumWidget.screenSpaceEventHandler.removeInputAction(
-          Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
-        );
-        const createPoint = (worldPosition: number): Entity => {
-          const point = cesiumViewer.value.entities.add({
-            position: worldPosition,
-            point: {
-              color: Cesium.Color.GREY,
-              pixelSize: 10,
-              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            },
-          });
-          return point;
-        };
-        const drawShape = (positionData: number[]) => {
-          const shape = cesiumViewer.value.entities.add({
-            polygon: {
-              hierarchy: positionData,
-              outline: true,
-              outlineColor: Cesium.Color.RED,
-              outlineWidth: 3,
-              fill: false,
-            },
-          });
-          return shape;
-        };
-
-        let activeShapePoints: number[] = [];
-        let activeShape: number | null;
-        let floatingPoint: Entity | null;
-        const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.canvas);
-        handler.setInputAction((event: { position: number }) => {
-          const earthPosition = cesiumViewer.value.camera.pickEllipsoid(event.position);
-          if (Cesium.defined(earthPosition)) {
-            if (activeShapePoints.length === 0) {
-              floatingPoint = createPoint(earthPosition);
-              activeShapePoints.push(earthPosition);
-              // eslint-disable-next-line max-len
-              const dynamicPositions = new Cesium.CallbackProperty((() => new Cesium.PolygonHierarchy(activeShapePoints)), false);
-              activeShape = drawShape(dynamicPositions);
-            }
-            activeShapePoints.push(earthPosition);
-            createPoint(earthPosition);
-          }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        handler.setInputAction((event: { endPosition: number }) => {
-          if (Cesium.defined(floatingPoint)) {
-            const newPosition = cesiumViewer.value.camera.pickEllipsoid(event.endPosition);
-            if (floatingPoint?.position && Cesium.defined(newPosition)) {
-              (floatingPoint.position as ConstantPositionProperty).setValue(newPosition);
-              activeShapePoints.pop();
-              activeShapePoints.push(newPosition);
-            }
-          }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        const terminateShape = () => {
-          activeShapePoints.pop();
-          drawShape(activeShapePoints);
-          cesiumViewer.value.entities.remove(floatingPoint);
-          cesiumViewer.value.entities.remove(activeShape);
-          floatingPoint = null;
-          activeShape = null;
-          activeShapePoints = [];
-          useMap.value = false;
-        };
-        handler.setInputAction(() => {
-          activeShapePoints.forEach((element) => {
-            polyPoints[0].push([
-              Cesium.Math.toDegrees(
-                (Cesium.Cartographic.fromCartesian(element)
-                ).longitude,
-              ),
-              Cesium.Math.toDegrees(
-                (Cesium.Cartographic.fromCartesian(element)
-                ).latitude,
-              ),
-            ]);
-          });
-          polyPoints[0].push(polyPoints[0][0]);
-          drawnShape.value.type = 'Polygon';
-          drawnShape.value.coordinates = polyPoints;
-          terminateShape();
-        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-      }
-    });
-
-    watch(specifiedShape, () => {
-      const uploadedFootprint: number[] = [];
-      specifiedShape.value.coordinates[0].forEach((e: number[]) => {
-        uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-      });
-      cesiumViewer.value.entities.add({
-        polygon: {
-          hierarchy: uploadedFootprint,
-          outline: true,
-          outlineColor: Cesium.Color.RED,
-          outlineWidth: 3,
-          fill: false,
-        },
-      });
-    }, { deep: true });
 
     return {
       useMap,
