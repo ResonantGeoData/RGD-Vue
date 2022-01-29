@@ -153,7 +153,7 @@ export default defineComponent({
         regionsList.value = regionsList.value.map(
           (entry) => {
             if (entry.id === spatialId) {
-              return Object.assign(entry, { [fieldName]: value });
+              return { ...entry, [fieldName]: value };
             }
             return entry;
           },
