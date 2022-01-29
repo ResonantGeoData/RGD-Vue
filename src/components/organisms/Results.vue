@@ -217,7 +217,7 @@ export default defineComponent({
       :items-per-page.sync="itemsPerPage"
       :server-items-length="!props.regions ?searchResultsTotal :regionsTotal"
       :footer-props="{ itemsPerPageOptions }"
-      :class="props.regions && 'px-5'"
+      :class="props.regions ? 'px-5' : ''"
       dense
       calculate-widths
     >
