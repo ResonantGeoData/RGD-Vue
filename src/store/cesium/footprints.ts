@@ -40,8 +40,8 @@ export const removeFootprint = (spatialId: number, region?: boolean) => {
 const footprintSources: Record<string, GeoJsonDataSource> = {};
 
 watch(visibleFootprints, (newFootprints, oldFootprints) => {
-  Object.entries(oldFootprints).forEach(
-    ([key]) => {
+  Object.keys(oldFootprints).forEach(
+    (key) => {
       if (!Object.keys(newFootprints).includes(key)) {
         // remove footprint
         if (key in footprintSources) {
