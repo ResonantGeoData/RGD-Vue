@@ -143,7 +143,7 @@ export default defineComponent({
         searchResults.value = searchResults.value.map(
           (entry) => {
             if (entry.spatial_id === spatialId) {
-              return {...entry, [fieldName]: value };
+              return { ...entry, [fieldName]: value };
             }
             return entry;
           },
