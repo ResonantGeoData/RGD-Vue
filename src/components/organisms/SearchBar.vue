@@ -2,15 +2,14 @@
 import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
+import { selectedTab } from '@/store';
 import {
-  selectedTab,
   drawnShape,
   searchResults,
-  geoJsonShape,
   specifiedShape,
   updateResults,
   updateRegions,
-} from '@/store';
+} from '@/store/search';
 import ToolBar from '../molecules/ToolBar.vue';
 import TabToolBar from '../molecules/TabToolBar.vue';
 import GeoJsonForm from '../molecules/GeoJsonForm.vue';
@@ -42,12 +41,7 @@ export default defineComponent({
     const reveal = ref(false);
     watch(drawnShape, () => {
       if (drawnShape.value.type) {
-        geoJsonShape.value = JSON.stringify(drawnShape.value);
-      }
-    }, { deep: true });
-    watch(specifiedShape, () => {
-      if (specifiedShape.value.type) {
-        geoJsonShape.value = JSON.stringify(specifiedShape.value);
+        specifiedShape.value = drawnShape.value;
       }
     }, { deep: true });
     watch(searchResults, (newValue, oldValue) => {

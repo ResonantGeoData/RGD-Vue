@@ -3,7 +3,7 @@ import {
   defineComponent, ref,
 } from '@vue/composition-api';
 
-import { searchParameters } from '@/store';
+import { searchParameters } from '@/store/search';
 
 export default defineComponent({
   name: 'DateRange',

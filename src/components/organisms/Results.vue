@@ -2,22 +2,26 @@
 import {
   defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
+import { clearMetaDataDrawer } from '@/store';
 import {
   searchResults,
   searchLimit,
   searchOffset,
   searchResultsTotal,
   updateResults,
+  selectResultForMetadataDrawer,
   updateRegions,
   regionsList,
   regionsTotal,
+} from '@/store/search';
+import {
   addFootprint,
   removeFootprint,
+} from '@/store/cesium/footprints';
+import {
   addVisibleOverlay,
   removeVisibleOverlay,
-  selectResultForMetadataDrawer,
-  clearMetaDataDrawer,
-} from '@/store';
+} from '@/store/cesium/layers';
 import { FocusedDataType } from '@/store/types';
 import { imageryBands, rgdImagery } from '@/api/rest';
 import type { DataOptions } from 'vuetify';

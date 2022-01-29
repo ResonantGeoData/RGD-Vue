@@ -1,30 +1,31 @@
 import Cesium from '@/plugins/cesium';
-import { Entity } from 'cesium';
 import {
   rgdImageTilesMeta, rgdCreateUrl,
   rgdTokenSignature, rgdImagery,
 } from '@/api/rest';
-import {
-  visibleOverlayIds,
-  visibleFootprints,
-} from '@/store';
-import { TileParamsType, RGDResult, GeoJsonShape } from '@/store/types';
-import { ref, watch }
-  from '@vue/composition-api';
+import { TileParamsType } from '@/store/types';
+import { ref, watch } from '@vue/composition-api';
 
-// Limit the tile requests on RGD server so that Vue app's requests aren't hung
-// Cesium.RequestScheduler.requestsByServer = {
-//   host: 3,
-// };
-Cesium.RequestScheduler.maximumRequestsPerServer = 3;
+import { cesiumViewer } from '@/store/cesium';
 
-export const cesiumViewer = ref();
+export const visibleOverlayIds = ref();
 
 export const tileImageParams: Record<string, TileParamsType> = {};
 
-const footprintEntities: Record<string, Entity> = {}; // Cesium.Entity
-
 const tileLayers: Record<string, {alpha: number}> = {}; // Cesium.TileLayer
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const addVisibleOverlay = (spatialId: number, region?: boolean) => {
+  if (visibleOverlayIds.value === undefined) {
+    visibleOverlayIds.value = [];
+  }
+  visibleOverlayIds.value.push(spatialId);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const removeVisibleOverlay = (spatialId: number, region?: boolean) => {
+  visibleOverlayIds.value = visibleOverlayIds.value.filter((obj: number) => obj !== spatialId);
+};
 
 const generateTileProvider = async (imageId: number, index = 0) => {
   const data = await rgdImageTilesMeta(imageId);
@@ -98,40 +99,3 @@ watch(visibleOverlayIds, () => {
     }
   });
 }, { deep: true });
-
-export const addGeojson = (geojson: GeoJsonShape): Entity => {
-  const cesiumPoints: RGDResult[] = [];
-  geojson.coordinates[0].forEach((e: number[]) => {
-    cesiumPoints.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-  });
-  return cesiumViewer.value.entities.add({
-    polygon: {
-      hierarchy: cesiumPoints,
-      material: new Cesium.ColorMaterialProperty(
-        Cesium.Color.fromRandom({ alpha: 0.5 }),
-      ),
-    },
-  });
-};
-
-watch(visibleFootprints, (newFootprints, oldFootprints) => {
-  Object.entries(oldFootprints).forEach(
-    ([key]) => {
-      if (!Object.keys(newFootprints).includes(key)) {
-        // remove footprint
-        if (key in footprintEntities) {
-          cesiumViewer.value.entities.remove(footprintEntities[key]);
-          delete footprintEntities[key];
-        }
-      }
-    },
-  );
-  Object.entries(newFootprints).forEach(
-    ([key, footprint]) => {
-      if (!Object.keys(oldFootprints).includes(key)) {
-        // add footprint
-        footprintEntities[key] = addGeojson(footprint);
-      }
-    },
-  );
-});

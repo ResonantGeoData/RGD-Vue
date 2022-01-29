@@ -1,5 +1,6 @@
 import axios from 'axios';
 import OauthClient from '@girder/oauth-client';
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
@@ -26,7 +27,7 @@ axiosInstance.interceptors.request.use((config) => ({
 export async function rgdSearch(
   limit?: number,
   offset?: number,
-  q?: string,
+  q?: Polygon | MultiPolygon,
   predicate?: string | null,
   acquiredAfter?: string | null,
   acquiredBefore?: string | null,
@@ -37,11 +38,18 @@ export async function rgdSearch(
   endTime?: string | null,
 
 ) {
+  let geometry;
+  if (q?.coordinates.length === 0) {
+    // Catch if empty geometry is given (the default value for type sanity)
+    geometry = undefined;
+  } else {
+    geometry = q;
+  }
   const response = await axiosInstance.get('rgd/search', {
     params: {
       limit,
       offset,
-      q,
+      q: geometry,
       predicate,
       acquiredAfter,
       acquiredBefore,
@@ -65,8 +73,8 @@ export async function rgdSpatialEntry(
 export async function rgdFootprint(
   spatialID: number,
 ) {
-  const response = await axiosInstance.get<{ footprint: { type: string; coordinates: number[][][] } }>(`rgd/spatial_entry/${spatialID}/footprint`);
-  return response.data;
+  const response = await axiosInstance.get<{ footprint: Polygon | MultiPolygon }>(`rgd/spatial_entry/${spatialID}/footprint`);
+  return response.data.footprint;
 }
 
 export async function rgdImagery(
