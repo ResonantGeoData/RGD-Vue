@@ -1,17 +1,19 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdSearch, basicRegionList,
+  rgdImagery, rgdSearch, basicRegionList, basicSiteList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import { drawerContents } from '@/store';
 import {
-  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter,
+  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter, SitesResult,
 } from './types';
 
 export const regionsList = ref<RegionResult[]>();
 
 export const regionsTotal = ref<number>();
+
+export const siteList = ref<SitesResult[]>();
 
 export const geometryInputSelection = ref();
 
@@ -28,8 +30,6 @@ export const searchOffset = ref<number>(0);
 export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
-
-export const sitesFilter = ref<SitesFilter>();
 
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
@@ -79,6 +79,24 @@ export const updateRegions = async () => {
     searchOffset.value);
   regionsList.value = res.results;
   regionsTotal.value = res.count;
+};
+
+export const sitesFilter = ref<SitesFilter>({
+  q: null,
+  instrumentation: null,
+  predicate: null,
+  regionID: null,
+  date: '',
+  originator: '',
+});
+
+export const updateSites = async () => {
+  const res = await basicSiteList(
+    sitesFilter.value.q,
+    sitesFilter.value.regionID,
+    sitesFilter.value.date, sitesFilter.value.originator,
+  );
+  siteList.value = res.results;
 };
 
 export const selectResultForMetadataDrawer = async (spatialId: number, region?: boolean) => {

@@ -101,11 +101,25 @@ export interface ResultsFilter {
   };
 }
 
+export interface SitesResult{
+  id: number;
+  outline: string;
+  footprint: string;
+  created: string;
+  modified: string;
+  site_id: string;
+  start_date: string;
+  end_date: string;
+  parent_region: number;
+}
+
 export interface SitesFilter {
-  q: Polygon | MultiPolygon;
-  regionID: number;
-  date: string;
-  originator: string;
+  q: Polygon | MultiPolygon | null;
+  instrumentation: string | null;
+  predicate: string | null;
+  regionID: number | null;
+  date: string | null;
+  originator: string | null;
 }
 
 export type TileParamsType = {

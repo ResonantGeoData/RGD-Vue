@@ -6,6 +6,8 @@ import { selectedTab } from '@/store';
 import {
   resultsFilter,
   updateResults,
+  sitesFilter,
+  updateSites,
 } from '@/store/search';
 import TimeRange from '../atoms/TimeRange.vue';
 import DistanceRange from '../atoms/DistanceRange.vue';
@@ -31,13 +33,16 @@ export default defineComponent({
       resultsFilter.value.instrumentation = null;
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
-      updateResults();
+      // eslint-disable-next-line no-unused-expressions
+      (selectedTab.value === 'results') ? updateResults() : updateSites();
     };
 
     return {
       updateResults,
       clearFilters,
       selectedTab,
+      sitesFilter,
+      updateSites,
     };
   },
 });
@@ -69,12 +74,20 @@ export default defineComponent({
           v-if="selectedTab==='regions'"
           class="mt-3"
         />
+        <v-text-field
+          v-if="selectedTab==='regions'"
+          v-model="sitesFilter.regionID"
+          label="Region ID"
+          outlined
+          dense
+          @input="$emit('input', sitesFilter)"
+        />
         <DistanceRange
           v-if="selectedTab==='results'"
         />
         <Instrumentation />
         <DateRange
-          v-if="selectedTab==='regions'"
+          v-if="selectedTab==='results'"
         />
         <TimeRange
           v-if="selectedTab==='results'"
@@ -88,7 +101,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="updateResults"
+              @click="selectedTab==='results'? updateResults : updateSites"
             >
               <div
                 class="white--text"

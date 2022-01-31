@@ -158,3 +158,20 @@ export async function rgdRegionSites(
   const response = await axiosInstance.get<GeoJSON>(`watch/region/${regionId}/sites`);
   return response.data;
 }
+
+export async function basicSiteList(
+  q?: Polygon | MultiPolygon | null,
+  regionID?: number| null,
+  date?: string | null,
+  originator?: string | null,
+) {
+  const response = await axiosInstance.get('/watch/basic/site', {
+    params: {
+      q,
+      regionID,
+      date,
+      originator,
+    },
+  });
+  return response.data;
+}

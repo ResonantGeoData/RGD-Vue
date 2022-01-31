@@ -3,7 +3,8 @@ import {
   defineComponent,
 } from '@vue/composition-api';
 
-import { searchParameters } from '@/store/search';
+import { searchParameters, sitesFilter } from '@/store/search';
+import { selectedTab } from '@/store';
 
 export default defineComponent({
   name: 'Predicate',
@@ -19,8 +20,11 @@ export default defineComponent({
       'touches',
     ];
 
+    const value = selectedTab.value === 'search' ? searchParameters.value.predicate : sitesFilter.value.predicate;
+
     return {
       predicate,
+      value,
       searchParameters,
     };
   },
@@ -30,12 +34,12 @@ export default defineComponent({
 
 <template>
   <v-select
-    v-model="searchParameters.predicate"
+    v-model="value"
     :items="predicate"
     label="Predicate"
     outlined
     dense
     value=""
-    @input="$emit('input', searchParameters)"
+    @input="selectedTab==='search' ? $emit('input', searchParameters) : $emit('input', sitesFilter)"
   />
 </template>

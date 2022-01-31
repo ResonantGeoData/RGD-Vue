@@ -3,13 +3,17 @@ import {
   defineComponent,
 } from '@vue/composition-api';
 
-import { resultsFilter } from '@/store/search';
+import { selectedTab } from '@/store';
+import { resultsFilter, sitesFilter } from '@/store/search';
 
 export default defineComponent({
   name: 'Instrumentation',
   setup() {
+    const value = selectedTab.value === 'results' ? resultsFilter.value.instrumentation : sitesFilter.value.instrumentation;
     return {
+      value,
       resultsFilter,
+      sitesFilter,
     };
   },
 });
@@ -18,10 +22,10 @@ export default defineComponent({
 
 <template>
   <v-text-field
-    v-model="resultsFilter.instrumentation"
+    v-model="value"
     label="Instrumentation"
     outlined
     dense
-    @input="$emit('input', resultsFilter)"
+    @input="selectedTab==='results' ? $emit('input', resultsFilter) : $emit('input', sitesFilter)"
   />
 </template>
