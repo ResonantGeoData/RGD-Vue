@@ -6,7 +6,7 @@ import {
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import { drawerContents } from '@/store';
 import {
-  RGDResultList, SearchParameters, ResultsFilter, RegionResult,
+  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter,
 } from './types';
 
 export const regionsList = ref<RegionResult[]>();
@@ -29,6 +29,18 @@ export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
 
+export const sitesFilter = ref<SitesFilter>();
+
+export const searchParameters = ref<SearchParameters>({
+  predicate: 'intersects',
+  acquired: {
+    startDate: null,
+    endDate: null,
+    startDateModal: false,
+    endDateModal: false,
+  },
+});
+
 export const resultsFilter = ref<ResultsFilter>({
   distance: {
     min: null,
@@ -40,16 +52,6 @@ export const resultsFilter = ref<ResultsFilter>({
     endTime: null,
     startTimeModal: false,
     endTimeModal: false,
-  },
-});
-
-export const searchParameters = ref<SearchParameters>({
-  predicate: 'intersects',
-  acquired: {
-    startDate: null,
-    endDate: null,
-    startDateModal: false,
-    endDateModal: false,
   },
 });
 

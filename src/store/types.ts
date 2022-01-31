@@ -65,7 +65,7 @@ export type RegionResult = {
     version: string;
   };
   region_id: string;
-  strat_date: string;
+  start_date: string;
 }
 
 export type FocusedDataType = {
@@ -99,6 +99,13 @@ export interface ResultsFilter {
     startTimeModal?: boolean;
     endTimeModal?: boolean;
   };
+}
+
+export interface SitesFilter {
+  q: Polygon | MultiPolygon;
+  regionID: number;
+  date: string;
+  originator: string;
 }
 
 export type TileParamsType = {
