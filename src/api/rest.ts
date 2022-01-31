@@ -151,3 +151,10 @@ export async function basicRegionList(
   });
   return response.data;
 }
+
+export async function rgdRegionSites(
+  regionId: number,
+): Promise<GeoJSON> {
+  const response = await axiosInstance.get<GeoJSON>(`watch/region/${regionId}/sites`);
+  return response.data;
+}
