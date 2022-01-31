@@ -13,6 +13,8 @@ import {
   updateRegions,
   regionsList,
   regionsTotal,
+  sitesFilter,
+  updateSites,
 } from '@/store/search';
 import {
   addFootprint,
@@ -42,6 +44,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    const originatorOptions = ['te', 'kitware'];
     const focusedData = ref<FocusedDataType>({
       bandsList: [],
       images: [],
@@ -77,6 +80,13 @@ export default defineComponent({
         sortable: false,
       },
       {
+        text: '',
+        value: 'select_originator',
+        align: 'center',
+        width: '30%',
+        sortable: false,
+      },
+      {
         text: 'Show Footprint',
         value: 'show_footprint',
         align: 'center',
@@ -92,7 +102,7 @@ export default defineComponent({
       },
     ];
     if (props.regions) {
-      headers = headers.filter((header) => ['region_id', 'show_footprint', 'show_metadata'].includes(header.value));
+      headers = headers.filter((header) => ['region_id', 'select_originator', 'show_footprint', 'show_metadata'].includes(header.value));
     }
     const itemsPerPageOptions = [5, 10, 15];
 
@@ -201,6 +211,9 @@ export default defineComponent({
       getFocusedData,
       focusedData,
       focusFlag,
+      originatorOptions,
+      sitesFilter,
+      updateSites,
     };
   },
 });
@@ -209,7 +222,9 @@ export default defineComponent({
 
 <template>
   <div>
-    <FilterMenu />
+    <FilterMenu
+      v-if="selectedTab==='results'"
+    />
     <v-data-table
       :headers="headers"
       :items="!props.regions ?searchResults :regionsList"
@@ -273,7 +288,23 @@ export default defineComponent({
         </v-tooltip>
       </template>
       <!-- eslint-disable-next-line -->
-      <template #item.show_footprint="{item}">
+      <template #item.select_originator="{item}">
+        <v-select
+          v-if="item.show_footprint"
+          v-model="sitesFilter.originator"
+          value=""
+          label="Originator"
+          :items="originatorOptions"
+          small-chips
+          dense
+          single-line
+          @input="$emit('input', sitesFilter),
+                  $emit('input', sitesFilter.regionID=item.region_id),
+                  updateSites()"
+        />
+      </template>
+      <!-- eslint-disable-next-line -->
+      <template #item.show_footprint="{item, expand, isExpanded}">
         <v-simple-checkbox
           v-ripple
           dark
