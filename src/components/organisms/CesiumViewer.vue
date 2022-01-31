@@ -5,7 +5,7 @@ import {
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { cesiumViewer } from '@/store/cesium';
+import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
 import { useMap } from '@/store/cesium/search';
 
 export default defineComponent({
@@ -203,6 +203,22 @@ export default defineComponent({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
       Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+
+      // Tooltip handler for showing an entity's properties
+      const handlerToolTips = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.scene.canvas);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handlerToolTips.setInputAction((movement: any) => {
+        const selectedEntity = getSelectedEntityFromPoint(movement.endPosition);
+
+        if (selectedEntity != null) {
+          // var obj = document.getElementById('cesiumContainer');
+          // obj.title = SelectedObj;
+          console.log(selectedEntity.properties.getValue(Cesium.JulianDate.now()));
+        } else {
+          // var obj = document.getElementById('cesiumContainer');
+          // obj.title = '';
+        }
+      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     });
 
     return {

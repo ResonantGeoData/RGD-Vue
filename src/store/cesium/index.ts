@@ -52,3 +52,15 @@ export const addGeojson = async (geojson: GeoJSON): Promise<GeoJsonDataSource> =
 
   return source;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getSelectedEntityFromPoint = (Position: any) => {
+  const pickedObject = cesiumViewer.value.scene.pick(Position);
+  // const pickedObjects = cesiumViewer.value.scene.drillPick(Position);
+  // let picked = pickedObjects[0];
+
+  if (!Cesium.defined(pickedObject)) {
+    return null;
+  }
+  return pickedObject.id; // id -> Entity object
+};
