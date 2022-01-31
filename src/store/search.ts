@@ -89,7 +89,6 @@ export const sitesFilter = ref<SitesFilter>({
 
 export const updateSites = async () => {
   const res = await basicSiteList(
-    sitesFilter.value.q,
     sitesFilter.value.regionID,
     sitesFilter.value.date, sitesFilter.value.originator,
   );
