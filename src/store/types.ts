@@ -114,9 +114,6 @@ export interface SitesResult{
 }
 
 export interface SitesFilter {
-  q: Polygon | MultiPolygon | null;
-  instrumentation: string | null;
-  predicate: string | null;
   regionID: number | null;
   date: string | null;
   originator: string | null;

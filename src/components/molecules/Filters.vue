@@ -67,21 +67,6 @@ export default defineComponent({
       <v-expansion-panel-content
         color="blue-grey darken-3"
       >
-        <GeoJsonForm
-          v-if="selectedTab==='regions'"
-        />
-        <Predicate
-          v-if="selectedTab==='regions'"
-          class="mt-3"
-        />
-        <v-text-field
-          v-if="selectedTab==='regions'"
-          v-model="sitesFilter.regionID"
-          label="Region ID"
-          outlined
-          dense
-          @input="$emit('input', sitesFilter)"
-        />
         <DistanceRange
           v-if="selectedTab==='results'"
         />
@@ -101,7 +86,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="selectedTab==='results'? updateResults : updateSites"
+              @click="selectedTab==='results'? updateResults() : updateSites()"
             >
               <div
                 class="white--text"

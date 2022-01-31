@@ -1,10 +1,9 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import {
-  drawnShape, specifiedShape, geometryInputSelection, sitesFilter,
+  drawnShape, specifiedShape, geometryInputSelection,
 } from '@/store/search';
 import { useMap } from '@/store/cesium/search';
-import { selectedTab } from '@/store';
 
 export default defineComponent({
   name: 'GeoJsonForm',
@@ -42,19 +41,9 @@ export default defineComponent({
     const confirmGeoJSON = () => {
       const jsonForm = JSON.parse(geoJsonString.value);
       if (jsonForm.geometry) {
-        if (selectedTab.value === 'search') {
-          specifiedShape.value = jsonForm.geometry;
-        }
-        if (selectedTab.value === 'regions') {
-          sitesFilter.value.q = jsonForm.geometry;
-        }
+        specifiedShape.value = jsonForm.geometry;
       } else {
-        if (selectedTab.value === 'search') {
-          specifiedShape.value = jsonForm;
-        }
-        if (selectedTab.value === 'regions') {
-          sitesFilter.value.q = jsonForm;
-        }
+        specifiedShape.value = jsonForm;
       }
     };
     const validateFile = (file: File) => {

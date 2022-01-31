@@ -160,14 +160,12 @@ export async function rgdRegionSites(
 }
 
 export async function basicSiteList(
-  q?: Polygon | MultiPolygon | null,
   regionID?: number| null,
   date?: string | null,
   originator?: string | null,
 ) {
   const response = await axiosInstance.get('/watch/basic/site', {
     params: {
-      q,
       regionID,
       date,
       originator,

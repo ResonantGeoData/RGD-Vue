@@ -82,9 +82,6 @@ export const updateRegions = async () => {
 };
 
 export const sitesFilter = ref<SitesFilter>({
-  q: null,
-  instrumentation: null,
-  predicate: null,
   regionID: null,
   date: '',
   originator: '',
