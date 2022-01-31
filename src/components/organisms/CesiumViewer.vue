@@ -211,12 +211,11 @@ export default defineComponent({
         const selectedEntity = getSelectedEntityFromPoint(movement.endPosition);
 
         if (selectedEntity != null) {
-          // var obj = document.getElementById('cesiumContainer');
-          // obj.title = SelectedObj;
-          console.log(selectedEntity.properties.getValue(Cesium.JulianDate.now()));
+          const properties = selectedEntity.properties.getValue(Cesium.JulianDate.now());
+          console.log(properties);
+          // show pop up tooltip with table of properties
         } else {
-          // var obj = document.getElementById('cesiumContainer');
-          // obj.title = '';
+          // hide popup tooltip
         }
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     });
