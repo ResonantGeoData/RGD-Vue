@@ -2,11 +2,10 @@ import Cesium from '@/plugins/cesium';
 import { GeoJsonDataSource } from 'cesium';
 import { ref, watch } from '@vue/composition-api';
 import { cesiumViewer, addGeojson } from '@/store/cesium';
-import { rgdFootprint } from '@/api/rest';
-import { Polygon, MultiPolygon, Position } from 'geojson';  // eslint-disable-line
-import { regionsList } from '@/store/search';
+import { rgdFootprint, rgdRegionSites } from '@/api/rest';
+import { GeoJSON } from 'geojson';  // eslint-disable-line
 
-export const visibleFootprints = ref<Record<string, Polygon | MultiPolygon>>({});
+export const visibleFootprints = ref<Record<string, GeoJSON >>({});
 
 export const addFootprint = async (spatialId: number, region?: boolean) => {
   let key;
@@ -15,7 +14,7 @@ export const addFootprint = async (spatialId: number, region?: boolean) => {
     footprint = (await rgdFootprint(spatialId));
     key = `result_${spatialId}`;
   } else {
-    footprint = regionsList.value?.find((reg) => reg.id === spatialId)?.footprint;
+    footprint = await rgdRegionSites(spatialId);
     key = `region_${spatialId}`;
   }
   if (key && footprint) {

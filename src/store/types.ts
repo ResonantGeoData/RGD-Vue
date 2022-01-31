@@ -1,4 +1,4 @@
-import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
+import { GeoJSON } from 'geojson';  // eslint-disable-line
 
 export type RGDResult = {
   spatial_id: number;
@@ -49,10 +49,10 @@ export type ImageryResult = {
 export type RegionResult = {
   created: string;
   end_date: string;
-  footprint: Polygon | MultiPolygon;
+  footprint: GeoJSON;
   id: number;
   modified: string;
-  outline: Polygon | MultiPolygon;
+  outline: GeoJSON;
   properties: {
     comments: string[];
     end_date: string;
