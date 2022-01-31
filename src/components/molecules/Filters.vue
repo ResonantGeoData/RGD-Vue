@@ -33,8 +33,7 @@ export default defineComponent({
       resultsFilter.value.instrumentation = null;
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
-      // eslint-disable-next-line no-unused-expressions
-      (selectedTab.value === 'results') ? updateResults() : updateSites();
+      updateResults();
     };
 
     return {
@@ -67,16 +66,10 @@ export default defineComponent({
       <v-expansion-panel-content
         color="blue-grey darken-3"
       >
-        <DistanceRange
-          v-if="selectedTab==='results'"
-        />
+        <DistanceRange />
         <Instrumentation />
-        <DateRange
-          v-if="selectedTab==='results'"
-        />
-        <TimeRange
-          v-if="selectedTab==='results'"
-        />
+        <DateRange />
+        <TimeRange />
         <v-row>
           <v-col
             cols="6"
@@ -86,7 +79,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="selectedTab==='results'? updateResults() : updateSites()"
+              @click="updateResults()"
             >
               <div
                 class="white--text"

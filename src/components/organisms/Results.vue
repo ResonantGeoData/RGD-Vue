@@ -304,7 +304,7 @@ export default defineComponent({
         />
       </template>
       <!-- eslint-disable-next-line -->
-      <template #item.show_footprint="{item, expand, isExpanded}">
+      <template #item.show_footprint="{item}">
         <v-simple-checkbox
           v-ripple
           dark
