@@ -187,7 +187,7 @@ export default defineComponent({
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
         // imageryProvider: false,
         imageryProviderViewModels: imageryViewModels,
-        selectedImageryProviderViewModel: imageryViewModels[0],
+        selectedImageryProviderViewModel: imageryViewModels[5],  // Voyager
         animation: false,
         timeline: false,
         infoBox: false,
