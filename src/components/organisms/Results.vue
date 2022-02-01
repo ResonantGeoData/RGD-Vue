@@ -2,7 +2,7 @@
 import {
   defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
-import { clearMetaDataDrawer } from '@/store';
+import { clearMetaDataDrawer, selectedTab } from '@/store';
 import {
   searchResults,
   searchLimit,
@@ -10,9 +10,7 @@ import {
   searchResultsTotal,
   updateResults,
   selectResultForMetadataDrawer,
-  updateRegions,
-  regionsList,
-  regionsTotal,
+  updateSites,
 } from '@/store/search';
 import {
   addFootprint,
@@ -30,12 +28,6 @@ import FocusedData from '../molecules/FocusedData.vue';
 
 export default defineComponent({
   name: 'Results',
-  props: {
-    regions: {
-      type: Boolean,
-      required: false,
-    },
-  },
   components: {
     FilterMenu,
     FocusedData,
@@ -55,18 +47,13 @@ export default defineComponent({
       itemsPerPage: 10,
     } as DataOptions);
 
-    let headers = [
+    const headers = [
       {
         text: '', value: 'show_overlay', width: 1, sortable: false,
       },
       {
         text: 'ID-Name',
         value: 'id-name',
-        sortable: false,
-      },
-      {
-        text: 'Name',
-        value: 'region_id',
         sortable: false,
       },
       {
@@ -91,20 +78,14 @@ export default defineComponent({
         sortable: false,
       },
     ];
-    if (props.regions) {
-      headers = headers.filter((header) => ['region_id', 'show_footprint', 'show_metadata'].includes(header.value));
-    }
+
     const itemsPerPageOptions = [5, 10, 15];
 
     const updateOptions = () => {
       const { page, itemsPerPage } = tableOptions;
       searchLimit.value = itemsPerPage;
       searchOffset.value = (page - 1) * itemsPerPage;
-      if (props.regions) {
-        updateRegions();
-      } else {
-        updateResults();
-      }
+      updateResults();
     };
 
     watch(tableOptions, updateOptions, {
@@ -118,7 +99,7 @@ export default defineComponent({
       return str;
     };
 
-    const toggleValue = (fieldName: string, spatialId: number, value: boolean) => {
+    const toggleValue = (fieldName: string, spatialId: number, value?: boolean) => {
       let addFunc;
       let removeFunc;
       if (fieldName === 'show_footprint') {
@@ -133,32 +114,20 @@ export default defineComponent({
       }
 
       if (value && addFunc) {
-        addFunc(spatialId, props.regions);
+        addFunc(spatialId);
       } else if (removeFunc) {
-        removeFunc(spatialId, props.regions);
+        removeFunc(spatialId);
       }
 
-      if (!props.regions) {
-        if (!searchResults.value) return null;
-        searchResults.value = searchResults.value.map(
-          (entry) => {
-            if (entry.spatial_id === spatialId) {
-              return { ...entry, [fieldName]: value };
-            }
-            return entry;
-          },
-        );
-      } else {
-        if (!regionsList.value) return null;
-        regionsList.value = regionsList.value.map(
-          (entry) => {
-            if (entry.id === spatialId) {
-              return { ...entry, [fieldName]: value };
-            }
-            return entry;
-          },
-        );
-      }
+      if (!searchResults.value) return null;
+      searchResults.value = searchResults.value.map(
+        (entry) => {
+          if (entry.spatial_id === spatialId) {
+            return { ...entry, [fieldName]: value };
+          }
+          return entry;
+        },
+      );
 
       return null;
     };
@@ -166,9 +135,6 @@ export default defineComponent({
     const getFocusedData = async (
       item: { spatial_id: number; subentry_name: string },
     ) => {
-      if (props.regions) {
-        return;
-      }
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
       focusedData.value.spatialId = item.spatial_id;
@@ -190,8 +156,6 @@ export default defineComponent({
     return {
       props,
       searchResults,
-      regionsList,
-      regionsTotal,
       ...toRefs(tableOptions),
       headers,
       ellipsisText,
@@ -201,6 +165,8 @@ export default defineComponent({
       getFocusedData,
       focusedData,
       focusFlag,
+      updateSites,
+      selectedTab,
     };
   },
 });
@@ -212,12 +178,11 @@ export default defineComponent({
     <FilterMenu />
     <v-data-table
       :headers="headers"
-      :items="!props.regions ?searchResults :regionsList"
+      :items="searchResults"
       :page.sync="page"
       :items-per-page.sync="itemsPerPage"
-      :server-items-length="!props.regions ?searchResultsTotal :regionsTotal"
+      :server-items-length="searchResultsTotal"
       :footer-props="{ itemsPerPageOptions }"
-      :class="props.regions ? 'px-5' : ''"
       dense
       calculate-widths
     >
@@ -250,12 +215,6 @@ export default defineComponent({
         </div>
       </template>
       <!-- eslint-disable-next-line -->
-      <template #item.region_id="{item}">
-        <div>
-          {{ item.region_id }}
-        </div>
-      </template>
-      <!-- eslint-disable-next-line -->
       <template #item.subentry_type="{item}">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -272,6 +231,7 @@ export default defineComponent({
           </span>
         </v-tooltip>
       </template>
+
       <!-- eslint-disable-next-line -->
       <template #item.show_footprint="{item}">
         <v-simple-checkbox
@@ -294,7 +254,7 @@ export default defineComponent({
       </template>
     </v-data-table>
     <FocusedData
-      v-if="focusFlag && !props.regions"
+      v-if="focusFlag"
       :focused-data="focusedData"
     />
   </div>

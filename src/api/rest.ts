@@ -159,6 +159,21 @@ export async function rgdRegionSites(
   return response.data;
 }
 
+export async function basicSiteList(
+  regionID?: number| null,
+  date?: string | null,
+  originator?: string | null,
+) {
+  const response = await axiosInstance.get('/watch/basic/site', {
+    params: {
+      regionID,
+      date,
+      originator,
+    },
+  });
+  return response.data;
+}
+
 export async function rgdImagerySTAC(
   spatialID: number,
 ) {

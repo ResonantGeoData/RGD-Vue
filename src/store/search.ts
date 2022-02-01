@@ -1,17 +1,19 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdSearch, basicRegionList,
+  rgdImagery, rgdSearch, basicRegionList, basicSiteList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import { drawerContents } from '@/store';
 import {
-  RGDResultList, SearchParameters, ResultsFilter, RegionResult,
+  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter, SitesResult,
 } from './types';
 
 export const regionsList = ref<RegionResult[]>();
 
 export const regionsTotal = ref<number>();
+
+export const siteList = ref<SitesResult[]>();
 
 export const geometryInputSelection = ref();
 
@@ -25,9 +27,23 @@ export const searchLimit = ref<number>(10);
 
 export const searchOffset = ref<number>(0);
 
+export const regionsLimit = ref<number>(10);
+
+export const regionsOffset = ref<number>(0);
+
 export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
+
+export const searchParameters = ref<SearchParameters>({
+  predicate: 'intersects',
+  acquired: {
+    startDate: null,
+    endDate: null,
+    startDateModal: false,
+    endDateModal: false,
+  },
+});
 
 export const resultsFilter = ref<ResultsFilter>({
   distance: {
@@ -40,16 +56,6 @@ export const resultsFilter = ref<ResultsFilter>({
     endTime: null,
     startTimeModal: false,
     endTimeModal: false,
-  },
-});
-
-export const searchParameters = ref<SearchParameters>({
-  predicate: 'intersects',
-  acquired: {
-    startDate: null,
-    endDate: null,
-    startDateModal: false,
-    endDateModal: false,
   },
 });
 
@@ -73,10 +79,24 @@ export const updateResults = async () => {
 };
 
 export const updateRegions = async () => {
-  const res = await basicRegionList(searchLimit.value,
-    searchOffset.value);
+  const res = await basicRegionList(regionsLimit.value,
+    regionsOffset.value);
   regionsList.value = res.results;
   regionsTotal.value = res.count;
+};
+
+export const sitesFilter = ref<SitesFilter>({
+  regionID: null,
+  date: '',
+  originator: '',
+});
+
+export const updateSites = async () => {
+  const res = await basicSiteList(
+    sitesFilter.value.regionID,
+    sitesFilter.value.date, sitesFilter.value.originator,
+  );
+  siteList.value = res.results;
 };
 
 export const selectResultForMetadataDrawer = async (spatialId: number, region?: boolean) => {
