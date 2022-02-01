@@ -24,6 +24,7 @@ export default defineComponent({
     v-model="resultsFilter.collections"
     label="Collections"
     outlined
+    multiple
     :items="collections"
     :item-text="'name'"
     :item-value="'id'"
