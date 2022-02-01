@@ -70,8 +70,10 @@ export default defineComponent({
             value: modifyValueByKey(drawerContents.value[keyName], keyName),
           }),
         );
-        stac.value = await rgdImagerySTAC(drawerContents.value.spatial_id);
-        copiedStac.value = false;
+        if (drawerContents.value.spatial_id) {
+          stac.value = await rgdImagerySTAC(drawerContents.value.spatial_id);
+          copiedStac.value = false;
+        }
       }
     });
 
