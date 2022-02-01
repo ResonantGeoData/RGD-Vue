@@ -197,6 +197,15 @@ export default defineComponent({
         fullscreenButton: false,
         selectionIndicator: false,
       });
+      // Viewer.clock is read-only, but we can set its values and zoom to them
+      cesiumViewer.value.clock.startTime = Cesium.JulianDate.fromIso8601('2012-12-25');
+      cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601('2015-12-25');
+      cesiumViewer.value.clock.stopTime = Cesium.JulianDate.now();
+      cesiumViewer.value.timeline.updateFromClock();
+      cesiumViewer.value.timeline.zoomTo(
+        cesiumViewer.value.clock.startTime,
+        cesiumViewer.value.clock.stopTime,
+      );
 
       const SELECTED_DATE_MARGIN_DAYS = 10;
 
