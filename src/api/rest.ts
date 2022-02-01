@@ -173,3 +173,10 @@ export async function basicSiteList(
   });
   return response.data;
 }
+
+export async function rgdImagerySTAC(
+  spatialID: number,
+) {
+  const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}/stac`);
+  return response.data;
+}
