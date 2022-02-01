@@ -2,10 +2,11 @@
 import {
   defineComponent,
   onMounted,
+  ref,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import { cesiumViewer } from '@/store/cesium/index';
+import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
 import { useMap } from '@/store/cesium/search';
 import { Clock, JulianDate } from 'cesium';
 import { searchParameters } from '@/store/search';
@@ -13,6 +14,8 @@ import { searchParameters } from '@/store/search';
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
+    const properties = ref();
+    const dialog = ref(false);
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -243,10 +246,25 @@ export default defineComponent({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
       Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+
+      // Tooltip handler for showing an entity's properties
+      const handlerToolTips = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.scene.canvas);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handlerToolTips.setInputAction((movement: any) => {
+        const selectedEntity = getSelectedEntityFromPoint(movement.position);
+
+        if (selectedEntity != null) {
+          properties.value = selectedEntity.properties.getValue(Cesium.JulianDate.now());
+          dialog.value = true;
+          // show pop up tooltip with table of properties
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     });
 
     return {
       useMap,
+      dialog,
+      properties,
     };
   },
 });
@@ -256,7 +274,30 @@ export default defineComponent({
   <div
     id="cesiumContainer"
     :class="useMap? 'draw-mode': ''"
-  />
+  >
+    <v-dialog
+      v-model="dialog"
+      open-on-hover
+      right
+      max-width="300px"
+    >
+      <v-card>
+        <v-simple-table
+          class="px-5"
+        >
+          <tbody>
+            <tr
+              v-for="(value, key) in properties"
+              :key="key"
+            >
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <style>
