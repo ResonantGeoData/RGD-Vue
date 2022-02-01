@@ -28,12 +28,6 @@ import FocusedData from '../molecules/FocusedData.vue';
 
 export default defineComponent({
   name: 'Results',
-  props: {
-    regions: {
-      type: Boolean,
-      required: false,
-    },
-  },
   components: {
     FilterMenu,
     FocusedData,
@@ -120,9 +114,9 @@ export default defineComponent({
       }
 
       if (value && addFunc) {
-        addFunc(spatialId, props.regions);
+        addFunc(spatialId);
       } else if (removeFunc) {
-        removeFunc(spatialId, props.regions);
+        removeFunc(spatialId);
       }
 
       if (!searchResults.value) return null;
@@ -141,9 +135,6 @@ export default defineComponent({
     const getFocusedData = async (
       item: { spatial_id: number; subentry_name: string },
     ) => {
-      if (props.regions) {
-        return;
-      }
       focusedData.value.bandsList = [];
       focusedData.value.images = [];
       focusedData.value.spatialId = item.spatial_id;
@@ -224,12 +215,6 @@ export default defineComponent({
         </div>
       </template>
       <!-- eslint-disable-next-line -->
-      <template #item.region_id="{item}">
-        <div>
-          {{ item.region_id }}
-        </div>
-      </template>
-      <!-- eslint-disable-next-line -->
       <template #item.subentry_type="{item}">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -250,7 +235,6 @@ export default defineComponent({
       <!-- eslint-disable-next-line -->
       <template #item.show_footprint="{item}">
         <v-simple-checkbox
-          v-if="selectedTab !=='regions'"
           v-ripple
           dark
           :value="item.show_footprint"
@@ -270,7 +254,7 @@ export default defineComponent({
       </template>
     </v-data-table>
     <FocusedData
-      v-if="focusFlag && !props.regions"
+      v-if="focusFlag"
       :focused-data="focusedData"
     />
   </div>
