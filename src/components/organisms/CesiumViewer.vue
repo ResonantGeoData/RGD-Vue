@@ -211,15 +211,14 @@ export default defineComponent({
       const handlerToolTips = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.scene.canvas);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       handlerToolTips.setInputAction((movement: any) => {
-        const selectedEntity = getSelectedEntityFromPoint(movement.endPosition);
+        const selectedEntity = getSelectedEntityFromPoint(movement.position);
 
         if (selectedEntity != null) {
           properties.value = selectedEntity.properties.getValue(Cesium.JulianDate.now());
           dialog.value = true;
-          console.log(properties.value);
           // show pop up tooltip with table of properties
         }
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     });
 
     return {
