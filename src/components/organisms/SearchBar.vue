@@ -79,11 +79,10 @@ export default defineComponent({
       <v-tab href="#regions">
         REGIONS
       </v-tab>
-      <v-tab href="#search">
+      <!-- <v-tab href="#search">
         SEARCH
-      </v-tab>
+      </v-tab> -->
       <v-tab
-        v-if="reveal"
         href="#results"
       >
         RESULTS
@@ -139,9 +138,7 @@ export default defineComponent({
           flat
           color="blue-grey darken-4"
         >
-          <Results
-            v-if="reveal"
-          />
+          <Results />
         </v-card>
       </v-tab-item>
     </v-tabs-items>
