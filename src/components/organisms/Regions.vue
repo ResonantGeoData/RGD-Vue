@@ -14,6 +14,7 @@ import {
   sitesFilter,
   updateSites,
   specifiedShape,
+  searchParameters,
 } from '@/store/search';
 import {
   addFootprint,
@@ -75,8 +76,6 @@ export default defineComponent({
       regionsLimit.value = itemsPerPage;
       regionsOffset.value = (page - 1) * itemsPerPage;
       updateRegions();
-      console.log(regionsLimit.value);
-      console.log(regionsOffset.value);
     };
 
     watch(tableOptions, updateOptions, {
@@ -110,21 +109,18 @@ export default defineComponent({
     };
 
     const useRegionForSearch = (region: any) => {
-      console.log(region.region_id);
       if (previous) {
         removeFootprint(previous.id, true);
       }
-      // searchParameters.value = {
-      //   ...searchParameters.value,
-      //   acquired: {
-      //     ...searchParameters.value.acquired,
-      //     startDate: region.start_date,
-      //     endDate: region.end_date,
-      //   },
-      // };
+      searchParameters.value = {
+        ...searchParameters.value,
+        acquired: {
+          ...searchParameters.value.acquired,
+          startDate: region.start_date,
+          endDate: region.end_date,
+        },
+      };
       specifiedShape.value = region.footprint;
-      // console.log('search params');
-      // console.log(searchParameters.value);
       updateResults();
       addFootprint(region.id, true);
       previous = region;
