@@ -51,6 +51,7 @@ export const resultsFilter = ref<ResultsFilter>({
     max: null,
   },
   instrumentation: null,
+  collections: null,
   time: {
     startTime: null,
     endTime: null,

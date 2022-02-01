@@ -216,23 +216,33 @@ export default defineComponent({
         'settime',
         ({ clock }: Record<string, Clock>) => {
           const julian: JulianDate = clock.currentTime;
-          const currentDate: Date = new Date(julian.toString());
-          const startDate = currentDate;
-          startDate.setDate(currentDate.getDate() - SELECTED_DATE_MARGIN_DAYS);
-          const endDate = currentDate;
-          endDate.setDate(currentDate.getDate() + SELECTED_DATE_MARGIN_DAYS);
-          const toFormattedDateString = (date: Date) => {
-            const YYYY = date.getUTCFullYear();
-            const MM = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-            const DD = date.getUTCDate().toString().padStart(2, '0');
-            return `${YYYY}-${MM}-${DD}`;
-          };
+          // const currentDate: Date = new Date(julian.toString());
+          // const startDate = currentDate;
+          // startDate.setDate(currentDate.getDate() - SELECTED_DATE_MARGIN_DAYS);
+          // const endDate = currentDate;
+          // endDate.setDate(currentDate.getDate() + SELECTED_DATE_MARGIN_DAYS);
+          // const toFormattedDateString = (date: Date) => {
+          //   const YYYY = date.getUTCFullYear();
+          //   const MM = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+          //   const DD = date.getUTCDate().toString().padStart(2, '0');
+          //   return `${YYYY}-${MM}-${DD}`; // Needs to be ISO 8601
+          // };
+
+          console.log(julian);
+          // const startDate = Cesium.JulianDate.addDays(julian, SELECTED_DATE_MARGIN_DAYS);
+          // const endDate = Cesium.JulianDate.addDays(julian, -SELECTED_DATE_MARGIN_DAYS);
+
+          const startDate = { ...julian };
+          startDate.dayNumber += SELECTED_DATE_MARGIN_DAYS;
+          const endDate = { ...julian };
+          endDate.dayNumber -= SELECTED_DATE_MARGIN_DAYS;
+
           searchParameters.value = {
             ...searchParameters.value,
             acquired: {
               ...searchParameters.value.acquired,
-              startDate: toFormattedDateString(startDate),
-              endDate: toFormattedDateString(endDate),
+              startDate: Cesium.JulianDate.toIso8601(startDate),
+              endDate: Cesium.JulianDate.toIso8601(endDate),
             },
           };
         },

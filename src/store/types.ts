@@ -93,6 +93,7 @@ export interface ResultsFilter {
     max: string | null;
   };
   instrumentation: string | null;
+  collections: string | null;
   time: {
     startTime: string | null;
     endTime: string | null;

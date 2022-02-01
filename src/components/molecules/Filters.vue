@@ -31,6 +31,7 @@ export default defineComponent({
       resultsFilter.value.distance.min = null;
       resultsFilter.value.distance.max = null;
       resultsFilter.value.instrumentation = null;
+      resultsFilter.value.collections = null;
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
       updateResults();
@@ -42,6 +43,7 @@ export default defineComponent({
       selectedTab,
       sitesFilter,
       updateSites,
+      resultsFilter,
     };
   },
 });
@@ -55,6 +57,12 @@ export default defineComponent({
         color="blue-grey darken-3"
       >
         <div>
+          <v-icon
+            small
+            @click="updateResults()"
+          >
+            mdi-refresh
+          </v-icon>
           Filters
           <v-icon
             small
@@ -68,7 +76,14 @@ export default defineComponent({
       >
         <DistanceRange />
         <Instrumentation />
-        <DateRange />
+        <!-- <DateRange /> -->
+        <v-text-field
+          v-model="resultsFilter.collections"
+          label="Collections"
+          outlined
+          dense
+          @input="$emit('input', resultsFilter)"
+        />
         <TimeRange />
         <v-row>
           <v-col

@@ -45,6 +45,8 @@ export async function rgdSearch(
   } else {
     geometry = q;
   }
+  console.log(acquiredAfter);
+  console.log(acquiredBefore);
   const response = await axiosInstance.get('rgd/search', {
     params: {
       limit,
