@@ -182,3 +182,8 @@ export async function rgdImagerySTAC(
   const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}/stac`);
   return response.data;
 }
+
+export async function rgdCollections() {
+  const response = await axiosInstance.get('/rgd/collection');
+  return response.data;
+}
