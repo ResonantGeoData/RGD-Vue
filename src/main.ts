@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import '@/plugins/composition';
+import Clipboard from 'v-clipboard';
 import Cesium from './plugins/cesium';
 import App from './App.vue';
 import router from './router';
@@ -17,6 +18,8 @@ Sentry.init({
 async function login() {
   return restoreLogin();
 }
+
+Vue.use(Clipboard);
 
 login().then(() => {
   new Vue({

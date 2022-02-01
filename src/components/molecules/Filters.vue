@@ -2,14 +2,19 @@
 import {
   defineComponent,
 } from '@vue/composition-api';
-
+import { selectedTab } from '@/store';
 import {
   resultsFilter,
   updateResults,
-} from '@/store';
+  sitesFilter,
+  updateSites,
+} from '@/store/search';
 import TimeRange from '../atoms/TimeRange.vue';
 import DistanceRange from '../atoms/DistanceRange.vue';
 import Instrumentation from '../atoms/Instrumentation.vue';
+import DateRange from '../atoms/DateRange.vue';
+import Predicate from '../atoms/Predicate.vue';
+import GeoJsonForm from './GeoJsonForm.vue';
 
 export default defineComponent({
   name: 'FilterMenu',
@@ -17,6 +22,9 @@ export default defineComponent({
     TimeRange,
     DistanceRange,
     Instrumentation,
+    Predicate,
+    GeoJsonForm,
+    DateRange,
   },
   setup() {
     const clearFilters = () => {
@@ -31,6 +39,9 @@ export default defineComponent({
     return {
       updateResults,
       clearFilters,
+      selectedTab,
+      sitesFilter,
+      updateSites,
     };
   },
 });
@@ -53,12 +64,11 @@ export default defineComponent({
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content
-        color="#8999A0"
+        color="blue-grey darken-3"
       >
-        <DistanceRange
-          class="mt-3"
-        />
+        <DistanceRange />
         <Instrumentation />
+        <DateRange />
         <TimeRange />
         <v-row>
           <v-col
@@ -69,7 +79,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="updateResults"
+              @click="updateResults()"
             >
               <div
                 class="white--text"

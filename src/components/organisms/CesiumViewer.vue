@@ -2,22 +2,20 @@
 import {
   defineComponent,
   onMounted,
-  watch,
+  ref,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
-import {
-  useMap, drawnShape, specifiedShape,
-} from '@/store';
-import { cesiumViewer } from '@/store/cesium';
-import { Entity } from 'cesium';
-import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
+import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
+import { useMap } from '@/store/cesium/search';
+import { Clock, JulianDate } from 'cesium';
+import { searchParameters } from '@/store/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
-    const polyPoints: number[][][] = [[]];
-
+    const properties = ref();
+    const dialog = ref(false);
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -194,14 +192,52 @@ export default defineComponent({
       cesiumViewer.value = new Cesium.Viewer('cesiumContainer', {
         // imageryProvider: false,
         imageryProviderViewModels: imageryViewModels,
-        selectedImageryProviderViewModel: imageryViewModels[0],
+        selectedImageryProviderViewModel: imageryViewModels[5], // Voyager
         animation: false,
-        timeline: false,
+        timeline: true,
         infoBox: false,
         homeButton: false,
         fullscreenButton: false,
         selectionIndicator: false,
       });
+      // Viewer.clock is read-only, but we can set its values and zoom to them
+      cesiumViewer.value.clock.startTime = Cesium.JulianDate.fromIso8601('2012-12-25');
+      cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601('2015-12-25');
+      cesiumViewer.value.clock.stopTime = Cesium.JulianDate.now();
+      cesiumViewer.value.timeline.updateFromClock();
+      cesiumViewer.value.timeline.zoomTo(
+        cesiumViewer.value.clock.startTime,
+        cesiumViewer.value.clock.stopTime,
+      );
+
+      const SELECTED_DATE_MARGIN_DAYS = 10;
+
+      cesiumViewer.value.timeline.addEventListener(
+        'settime',
+        ({ clock }: Record<string, Clock>) => {
+          const julian: JulianDate = clock.currentTime;
+          const currentDate: Date = new Date(julian.toString());
+          const startDate = currentDate;
+          startDate.setDate(currentDate.getDate() - SELECTED_DATE_MARGIN_DAYS);
+          const endDate = currentDate;
+          endDate.setDate(currentDate.getDate() + SELECTED_DATE_MARGIN_DAYS);
+          const toFormattedDateString = (date: Date) => {
+            const YYYY = date.getUTCFullYear();
+            const MM = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+            const DD = date.getUTCDate().toString().padStart(2, '0');
+            return `${YYYY}-${MM}-${DD}`;
+          };
+          searchParameters.value = {
+            ...searchParameters.value,
+            acquired: {
+              ...searchParameters.value.acquired,
+              startDate: toFormattedDateString(startDate),
+              endDate: toFormattedDateString(endDate),
+            },
+          };
+        },
+        false,
+      );
       // Remove the Terrain section of the baseLayerPicker
       cesiumViewer.value.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll();
 
@@ -209,115 +245,26 @@ export default defineComponent({
       cesiumViewer.value.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-93.849688, 40.690265, 4000000),
       });
+      Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+
+      // Tooltip handler for showing an entity's properties
+      const handlerToolTips = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.scene.canvas);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handlerToolTips.setInputAction((movement: any) => {
+        const selectedEntity = getSelectedEntityFromPoint(movement.position);
+
+        if (selectedEntity != null) {
+          properties.value = selectedEntity.properties.getValue(Cesium.JulianDate.now());
+          dialog.value = true;
+          // show pop up tooltip with table of properties
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     });
-
-    watch(useMap, (val) => {
-      if (!val) { return; }
-      {
-        cesiumViewer.value.cesiumWidget.screenSpaceEventHandler.removeInputAction(
-          Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK,
-        );
-        const createPoint = (worldPosition: number): Entity => {
-          const point = cesiumViewer.value.entities.add({
-            position: worldPosition,
-            point: {
-              color: Cesium.Color.GREY,
-              pixelSize: 10,
-              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            },
-          });
-          return point;
-        };
-        const drawShape = (positionData: number[]) => {
-          const shape = cesiumViewer.value.entities.add({
-            polygon: {
-              hierarchy: positionData,
-              outline: true,
-              outlineColor: Cesium.Color.RED,
-              outlineWidth: 3,
-              fill: false,
-            },
-          });
-          return shape;
-        };
-
-        let activeShapePoints: number[] = [];
-        let activeShape: number | null;
-        let floatingPoint: Entity | null;
-        const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.value.canvas);
-        handler.setInputAction((event: { position: number }) => {
-          const earthPosition = cesiumViewer.value.camera.pickEllipsoid(event.position);
-          if (Cesium.defined(earthPosition)) {
-            if (activeShapePoints.length === 0) {
-              floatingPoint = createPoint(earthPosition);
-              activeShapePoints.push(earthPosition);
-              // eslint-disable-next-line max-len
-              const dynamicPositions = new Cesium.CallbackProperty((() => new Cesium.PolygonHierarchy(activeShapePoints)), false);
-              activeShape = drawShape(dynamicPositions);
-            }
-            activeShapePoints.push(earthPosition);
-            createPoint(earthPosition);
-          }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        handler.setInputAction((event: { endPosition: number }) => {
-          if (Cesium.defined(floatingPoint)) {
-            const newPosition = cesiumViewer.value.camera.pickEllipsoid(event.endPosition);
-            if (floatingPoint?.position && Cesium.defined(newPosition)) {
-              (floatingPoint.position as ConstantPositionProperty).setValue(newPosition);
-              activeShapePoints.pop();
-              activeShapePoints.push(newPosition);
-            }
-          }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        const terminateShape = () => {
-          activeShapePoints.pop();
-          drawShape(activeShapePoints);
-          cesiumViewer.value.entities.remove(floatingPoint);
-          cesiumViewer.value.entities.remove(activeShape);
-          floatingPoint = null;
-          activeShape = null;
-          activeShapePoints = [];
-          useMap.value = false;
-        };
-        handler.setInputAction(() => {
-          activeShapePoints.forEach((element) => {
-            polyPoints[0].push([
-              Cesium.Math.toDegrees(
-                (Cesium.Cartographic.fromCartesian(element)
-                ).longitude,
-              ),
-              Cesium.Math.toDegrees(
-                (Cesium.Cartographic.fromCartesian(element)
-                ).latitude,
-              ),
-            ]);
-          });
-          polyPoints[0].push(polyPoints[0][0]);
-          drawnShape.value.type = 'Polygon';
-          drawnShape.value.coordinates = polyPoints;
-          terminateShape();
-        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-      }
-    });
-
-    watch(specifiedShape, () => {
-      const uploadedFootprint: number[] = [];
-      specifiedShape.value.coordinates[0].forEach((e: number[]) => {
-        uploadedFootprint.push(Cesium.Cartesian3.fromDegrees(e[0], e[1]));
-      });
-      cesiumViewer.value.entities.add({
-        polygon: {
-          hierarchy: uploadedFootprint,
-          outline: true,
-          outlineColor: Cesium.Color.RED,
-          outlineWidth: 3,
-          fill: false,
-        },
-      });
-    }, { deep: true });
 
     return {
       useMap,
+      dialog,
+      properties,
     };
   },
 });
@@ -327,7 +274,30 @@ export default defineComponent({
   <div
     id="cesiumContainer"
     :class="useMap? 'draw-mode': ''"
-  />
+  >
+    <v-dialog
+      v-model="dialog"
+      open-on-hover
+      right
+      max-width="300px"
+    >
+      <v-card>
+        <v-simple-table
+          class="px-5"
+        >
+          <tbody>
+            <tr
+              v-for="(value, key) in properties"
+              :key="key"
+            >
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <style>

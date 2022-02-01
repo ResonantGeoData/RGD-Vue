@@ -3,7 +3,7 @@ import {
   defineComponent,
 } from '@vue/composition-api';
 
-import { resultsFilter } from '@/store';
+import { resultsFilter } from '@/store/search';
 
 export default defineComponent({
   name: 'DistanceRange',
