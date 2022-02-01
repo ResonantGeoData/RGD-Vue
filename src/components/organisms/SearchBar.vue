@@ -2,7 +2,7 @@
 import {
   defineComponent, ref, watch,
 } from '@vue/composition-api';
-import { selectedTab } from '@/store';
+import { selectedTab, clearMetaDataDrawer } from '@/store';
 import {
   drawnShape,
   searchResults,
@@ -62,6 +62,7 @@ export default defineComponent({
       searchResults,
       updateResults,
       reveal,
+      clearMetaDataDrawer,
     };
   },
 });
@@ -78,7 +79,10 @@ export default defineComponent({
       background-color="blue-grey darken-2 large-text"
       style="z-index: 2"
     >
-      <v-tab href="#regions">
+      <v-tab
+        href="#regions"
+        @click="clearMetaDataDrawer()"
+      >
         Regions
       </v-tab>
       <!-- <v-tab href="#search">
@@ -86,6 +90,7 @@ export default defineComponent({
       </v-tab> -->
       <v-tab
         href="#results"
+        @click="clearMetaDataDrawer()"
       >
         Imagery
       </v-tab>
