@@ -59,7 +59,7 @@ export default defineComponent({
         <div>
           <v-icon
             small
-            @click="updateResults()"
+            @click.native.stop="updateResults()"
           >
             mdi-refresh
           </v-icon>
