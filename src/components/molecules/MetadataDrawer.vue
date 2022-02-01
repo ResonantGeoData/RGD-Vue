@@ -71,6 +71,7 @@ export default defineComponent({
           }),
         );
         stac.value = await rgdImagerySTAC(drawerContents.value.spatial_id);
+        copiedStac.value = false;
       }
     });
 
