@@ -2,6 +2,7 @@
 import {
   defineComponent,
   onMounted,
+  ref,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
@@ -11,6 +12,8 @@ import { useMap } from '@/store/cesium/search';
 export default defineComponent({
   name: 'CesiumViewer',
   setup() {
+    const properties = ref();
+    const dialog = ref(false);
     onMounted(async () => {
       // Create ProviderViewModel based on different imagery sources
       // - these can be used without Cesium Ion
@@ -211,17 +214,18 @@ export default defineComponent({
         const selectedEntity = getSelectedEntityFromPoint(movement.endPosition);
 
         if (selectedEntity != null) {
-          const properties = selectedEntity.properties.getValue(Cesium.JulianDate.now());
-          console.log(properties);
+          properties.value = selectedEntity.properties.getValue(Cesium.JulianDate.now());
+          dialog.value = true;
+          console.log(properties.value);
           // show pop up tooltip with table of properties
-        } else {
-          // hide popup tooltip
         }
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     });
 
     return {
       useMap,
+      dialog,
+      properties,
     };
   },
 });
@@ -231,7 +235,30 @@ export default defineComponent({
   <div
     id="cesiumContainer"
     :class="useMap? 'draw-mode': ''"
-  />
+  >
+    <v-dialog
+      v-model="dialog"
+      open-on-hover
+      right
+      max-width="300px"
+    >
+      <v-card>
+        <v-simple-table
+          class="px-5"
+        >
+          <tbody>
+            <tr
+              v-for="(value, key) in properties"
+              :key="key"
+            >
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <style>
