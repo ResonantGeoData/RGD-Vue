@@ -23,13 +23,12 @@ export default defineComponent({
   <v-combobox
     v-model="resultsFilter.collections"
     label="Collections"
-    outlined
-    multiple
     :items="collections"
     :item-text="'name'"
     :item-value="'id'"
+    outlined
+    multiple
     dense
-    return-object
     @input="$emit('input', resultsFilter)"
   />
 </template>

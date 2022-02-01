@@ -38,6 +38,9 @@ export default defineComponent({
       resultsFilter.value.time.endTime = null;
       updateResults();
     };
+    const test = () => {
+      console.log(resultsFilter.value);
+    };
 
     return {
       updateResults,
@@ -46,6 +49,7 @@ export default defineComponent({
       sitesFilter,
       updateSites,
       resultsFilter,
+      test,
     };
   },
 });
@@ -90,7 +94,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="updateResults()"
+              @click="updateResults(), test()"
             >
               <div
                 class="white--text"

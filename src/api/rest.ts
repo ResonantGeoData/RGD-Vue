@@ -36,6 +36,7 @@ export async function rgdSearch(
   instrumentation?: string | null,
   startTime?: string | null,
   endTime?: string | null,
+  collections?: string| null,
 
 ) {
   let geometry;
@@ -59,6 +60,7 @@ export async function rgdSearch(
       instrumentation,
       time_of_day_after: startTime,
       time_of_day_before: endTime,
+      collections,
     },
     /* eslint-enable @typescript-eslint/camelcase */
   });

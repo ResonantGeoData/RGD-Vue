@@ -35,7 +35,7 @@ export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
 
-export const collections = ref();
+export const collections = ref({});
 
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
@@ -53,7 +53,7 @@ export const resultsFilter = ref<ResultsFilter>({
     max: null,
   },
   instrumentation: null,
-  collections: null,
+  collections: [],
   time: {
     startTime: null,
     endTime: null,
@@ -63,6 +63,11 @@ export const resultsFilter = ref<ResultsFilter>({
 });
 
 export const updateResults = async () => {
+  const collectionIDs: any[] = [];
+  // eslint-disable-next-line no-unused-expressions
+  resultsFilter.value.collections?.forEach((element) => {
+    collectionIDs.push(element.id);
+  });
   const res = await rgdSearch(
     searchLimit.value,
     searchOffset.value,
@@ -75,6 +80,7 @@ export const updateResults = async () => {
     resultsFilter.value.instrumentation,
     resultsFilter.value.time.startTime,
     resultsFilter.value.time.endTime,
+    collectionIDs,
 
   );
   searchResults.value = res.data.results;
