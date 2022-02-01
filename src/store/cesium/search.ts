@@ -1,7 +1,7 @@
 import Cesium from '@/plugins/cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
-import { Entity, Cartesian3, GeoJsonDataSource } from 'cesium';
-import { drawnShape, specifiedShape } from '@/store/search';
+import { Entity, Cartesian3 } from 'cesium'; // GeoJsonDataSource
+import { drawnShape } from '@/store/search'; // specifiedShape
 import { ref, watch } from '@vue/composition-api';
 import { cesiumViewer } from '@/store/cesium';
 
@@ -9,15 +9,16 @@ export const useMap = ref(false);
 
 export const polyPoints: number[][][] = [];
 
-let searchSource: GeoJsonDataSource;
-watch(specifiedShape, async () => {
-  cesiumViewer.value.dataSources.remove(searchSource);
-  searchSource = await cesiumViewer.value.dataSources.add(
-    Cesium.GeoJsonDataSource.load(specifiedShape.value, {
-      stroke: Cesium.Color.HOTPINK,
-    }),
-  );
-}, { deep: true });
+// NOTE: disabled for WATCH demo where region/sites are shown
+// let searchSource: GeoJsonDataSource;
+// watch(specifiedShape, async () => {
+//   cesiumViewer.value.dataSources.remove(searchSource);
+//   searchSource = await cesiumViewer.value.dataSources.add(
+//     Cesium.GeoJsonDataSource.load(specifiedShape.value, {
+//       stroke: Cesium.Color.HOTPINK,
+//     }),
+//   );
+// }, { deep: true });
 
 watch(useMap, () => {
   if (!useMap) { return; }

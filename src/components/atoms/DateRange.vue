@@ -39,7 +39,6 @@ export default defineComponent({
   <v-row
     no-gutters
     justify="center"
-    class="px-5"
   >
     <v-dialog
       v-model="searchParameters.acquired.startDateModal"

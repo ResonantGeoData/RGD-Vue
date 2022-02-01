@@ -1,6 +1,6 @@
 import { ref } from '@vue/composition-api';
 
-export const selectedTab = ref('search');
+export const selectedTab = ref('regions');
 
 export const drawerContents = ref();
 
