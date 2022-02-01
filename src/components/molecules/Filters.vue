@@ -15,6 +15,7 @@ import Instrumentation from '../atoms/Instrumentation.vue';
 import DateRange from '../atoms/DateRange.vue';
 import Predicate from '../atoms/Predicate.vue';
 import GeoJsonForm from './GeoJsonForm.vue';
+import Collections from '../atoms/Collections.vue';
 
 export default defineComponent({
   name: 'FilterMenu',
@@ -25,6 +26,7 @@ export default defineComponent({
     Predicate,
     GeoJsonForm,
     DateRange,
+    Collections,
   },
   setup() {
     const clearFilters = () => {
@@ -76,13 +78,7 @@ export default defineComponent({
       >
         <DistanceRange />
         <Instrumentation />
-        <v-text-field
-          v-model="resultsFilter.collections"
-          label="Collections"
-          outlined
-          dense
-          @input="$emit('input', resultsFilter)"
-        />
+        <Collections />
         <DateRange />
         <TimeRange />
         <v-row>

@@ -1,6 +1,6 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdSearch, basicRegionList, basicSiteList,
+  rgdImagery, rgdSearch, basicRegionList, basicSiteList, rgdCollections,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
@@ -34,6 +34,8 @@ export const regionsOffset = ref<number>(0);
 export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
+
+export const collections = ref();
 
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
@@ -121,4 +123,10 @@ export const selectResultForMetadataDrawer = async (spatialId: number, region?: 
       )[0].properties;
     }
   }
+};
+
+export const getCollections = async () => {
+  const res = await rgdCollections();
+  console.log(res);
+  collections.value = res.results;
 };

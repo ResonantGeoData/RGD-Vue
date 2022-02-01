@@ -14,7 +14,7 @@ import {
   sitesFilter,
   updateSites,
   specifiedShape,
-  searchParameters,
+  getCollections,
 } from '@/store/search';
 import { RegionResult } from '@/store/types';
 import {
@@ -124,6 +124,7 @@ export default defineComponent({
       // };
       specifiedShape.value = region.footprint as Polygon | MultiPolygon;
       updateResults();
+      getCollections();
       addFootprint(region.id, true);
       previous = region;
     };
