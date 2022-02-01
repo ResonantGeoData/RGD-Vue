@@ -6,6 +6,8 @@ import { selectedTab } from '@/store';
 import {
   resultsFilter,
   updateResults,
+  sitesFilter,
+  updateSites,
 } from '@/store/search';
 import TimeRange from '../atoms/TimeRange.vue';
 import DistanceRange from '../atoms/DistanceRange.vue';
@@ -38,6 +40,8 @@ export default defineComponent({
       updateResults,
       clearFilters,
       selectedTab,
+      sitesFilter,
+      updateSites,
     };
   },
 });
@@ -62,23 +66,10 @@ export default defineComponent({
       <v-expansion-panel-content
         color="blue-grey darken-3"
       >
-        <GeoJsonForm
-          v-if="selectedTab==='regions'"
-        />
-        <Predicate
-          v-if="selectedTab==='regions'"
-          class="mt-3"
-        />
-        <DistanceRange
-          v-if="selectedTab==='results'"
-        />
+        <DistanceRange />
         <Instrumentation />
-        <DateRange
-          v-if="selectedTab==='regions'"
-        />
-        <TimeRange
-          v-if="selectedTab==='results'"
-        />
+        <DateRange />
+        <TimeRange />
         <v-row>
           <v-col
             cols="6"
@@ -88,7 +79,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="updateResults"
+              @click="updateResults()"
             >
               <div
                 class="white--text"

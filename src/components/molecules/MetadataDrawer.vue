@@ -3,7 +3,7 @@
 import {
   defineComponent, watch, ref,
 } from '@vue/composition-api';
-
+import { rgdImagerySTAC } from '@/api/rest';
 import { drawerContents } from '@/store';
 
 export default defineComponent({
@@ -56,17 +56,25 @@ export default defineComponent({
     ]);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const metadata = ref<{ key: string; value: any }[]>([]);
+    const copiedStac = ref(false);
+    const stac = ref();
 
-    watch(drawerContents, () => {
+    watch(drawerContents, async () => {
       showDrawer.value = drawerContents.value !== undefined;
-      metadata.value = Object.entries(fieldsShown).filter(
-        ([keyName]) => drawerContents.value[keyName] !== undefined,
-      ).map(
-        ([keyName, label]) => ({
-          key: label,
-          value: modifyValueByKey(drawerContents.value[keyName], keyName),
-        }),
-      );
+      if (showDrawer.value) {
+        metadata.value = Object.entries(fieldsShown).filter(
+          ([keyName]) => drawerContents.value[keyName] !== undefined,
+        ).map(
+          ([keyName, label]) => ({
+            key: label,
+            value: modifyValueByKey(drawerContents.value[keyName], keyName),
+          }),
+        );
+        if (drawerContents.value.spatial_id) {
+          stac.value = await rgdImagerySTAC(drawerContents.value.spatial_id);
+          copiedStac.value = false;
+        }
+      }
     });
 
     return {
@@ -74,6 +82,8 @@ export default defineComponent({
       drawerContents,
       headers,
       metadata,
+      copiedStac,
+      stac,
     };
   },
 });
@@ -84,7 +94,7 @@ export default defineComponent({
   <v-navigation-drawer
     v-if="showDrawer"
     class="drawer"
-    width="300px"
+    width="350px"
     :value="showDrawer"
     color="blue-grey darken-4"
   >
@@ -95,6 +105,16 @@ export default defineComponent({
       hide-default-footer
       class="px-5"
     />
+    <v-btn
+      v-if="drawerContents.spatial_id"
+      v-clipboard="() => stac"
+      v-clipboard:success="() => copiedStac = true"
+      block
+      class="mt-5"
+    >
+      <v-icon>{{ copiedStac ?"mdi-check" :"mdi-content-copy" }}</v-icon>
+      {{ copiedStac ?"STAC Copied" :"Copy STAC" }}
+    </v-btn>
   </v-navigation-drawer>
 </template>
 

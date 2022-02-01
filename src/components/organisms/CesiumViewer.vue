@@ -8,6 +8,8 @@ import {
 import Cesium from '@/plugins/cesium';
 import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
 import { useMap } from '@/store/cesium/search';
+import { Clock, JulianDate } from 'cesium';
+import { searchParameters } from '@/store/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
@@ -192,12 +194,50 @@ export default defineComponent({
         imageryProviderViewModels: imageryViewModels,
         selectedImageryProviderViewModel: imageryViewModels[5], // Voyager
         animation: false,
-        timeline: false,
+        timeline: true,
         infoBox: false,
         homeButton: false,
         fullscreenButton: false,
         selectionIndicator: false,
       });
+      // Viewer.clock is read-only, but we can set its values and zoom to them
+      cesiumViewer.value.clock.startTime = Cesium.JulianDate.fromIso8601('2012-12-25');
+      cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601('2015-12-25');
+      cesiumViewer.value.clock.stopTime = Cesium.JulianDate.now();
+      cesiumViewer.value.timeline.updateFromClock();
+      cesiumViewer.value.timeline.zoomTo(
+        cesiumViewer.value.clock.startTime,
+        cesiumViewer.value.clock.stopTime,
+      );
+
+      const SELECTED_DATE_MARGIN_DAYS = 10;
+
+      cesiumViewer.value.timeline.addEventListener(
+        'settime',
+        ({ clock }: Record<string, Clock>) => {
+          const julian: JulianDate = clock.currentTime;
+          const currentDate: Date = new Date(julian.toString());
+          const startDate = currentDate;
+          startDate.setDate(currentDate.getDate() - SELECTED_DATE_MARGIN_DAYS);
+          const endDate = currentDate;
+          endDate.setDate(currentDate.getDate() + SELECTED_DATE_MARGIN_DAYS);
+          const toFormattedDateString = (date: Date) => {
+            const YYYY = date.getUTCFullYear();
+            const MM = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+            const DD = date.getUTCDate().toString().padStart(2, '0');
+            return `${YYYY}-${MM}-${DD}`;
+          };
+          searchParameters.value = {
+            ...searchParameters.value,
+            acquired: {
+              ...searchParameters.value.acquired,
+              startDate: toFormattedDateString(startDate),
+              endDate: toFormattedDateString(endDate),
+            },
+          };
+        },
+        false,
+      );
       // Remove the Terrain section of the baseLayerPicker
       cesiumViewer.value.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll();
 
