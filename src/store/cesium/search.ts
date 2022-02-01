@@ -9,15 +9,16 @@ export const useMap = ref(false);
 
 export const polyPoints: number[][][] = [];
 
-let searchSource: GeoJsonDataSource;
-watch(specifiedShape, async () => {
-  cesiumViewer.value.dataSources.remove(searchSource);
-  searchSource = await cesiumViewer.value.dataSources.add(
-    Cesium.GeoJsonDataSource.load(specifiedShape.value, {
-      stroke: Cesium.Color.HOTPINK,
-    }),
-  );
-}, { deep: true });
+// NOTE: disabled for WATCH demo where region/sites are shown
+// let searchSource: GeoJsonDataSource;
+// watch(specifiedShape, async () => {
+//   cesiumViewer.value.dataSources.remove(searchSource);
+//   searchSource = await cesiumViewer.value.dataSources.add(
+//     Cesium.GeoJsonDataSource.load(specifiedShape.value, {
+//       stroke: Cesium.Color.HOTPINK,
+//     }),
+//   );
+// }, { deep: true });
 
 watch(useMap, () => {
   if (!useMap) { return; }

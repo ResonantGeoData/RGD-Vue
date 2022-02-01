@@ -27,6 +27,10 @@ export const searchLimit = ref<number>(10);
 
 export const searchOffset = ref<number>(0);
 
+export const regionsLimit = ref<number>(10);
+
+export const regionsOffset = ref<number>(0);
+
 export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
@@ -75,8 +79,8 @@ export const updateResults = async () => {
 };
 
 export const updateRegions = async () => {
-  const res = await basicRegionList(searchLimit.value,
-    searchOffset.value);
+  const res = await basicRegionList(regionsLimit.value,
+    regionsOffset.value);
   regionsList.value = res.results;
   regionsTotal.value = res.count;
 };

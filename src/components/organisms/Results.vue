@@ -10,10 +10,6 @@ import {
   searchResultsTotal,
   updateResults,
   selectResultForMetadataDrawer,
-  updateRegions,
-  regionsList,
-  regionsTotal,
-  sitesFilter,
   updateSites,
 } from '@/store/search';
 import {
@@ -44,7 +40,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    const originatorOptions = ['te', 'kitware'];
     const focusedData = ref<FocusedDataType>({
       bandsList: [],
       images: [],
@@ -58,7 +53,7 @@ export default defineComponent({
       itemsPerPage: 10,
     } as DataOptions);
 
-    let headers = [
+    const headers = [
       {
         text: '', value: 'show_overlay', width: 1, sortable: false,
       },
@@ -68,22 +63,10 @@ export default defineComponent({
         sortable: false,
       },
       {
-        text: 'Name',
-        value: 'region_id',
-        sortable: false,
-      },
-      {
         text: 'Data Type',
         value: 'subentry_type',
         align: 'center',
         width: '1',
-        sortable: false,
-      },
-      {
-        text: '',
-        value: 'select_originator',
-        align: 'center',
-        width: '30%',
         sortable: false,
       },
       {
@@ -101,20 +84,14 @@ export default defineComponent({
         sortable: false,
       },
     ];
-    if (props.regions) {
-      headers = headers.filter((header) => ['region_id', 'select_originator', 'show_footprint', 'show_metadata'].includes(header.value));
-    }
+
     const itemsPerPageOptions = [5, 10, 15];
 
     const updateOptions = () => {
       const { page, itemsPerPage } = tableOptions;
       searchLimit.value = itemsPerPage;
       searchOffset.value = (page - 1) * itemsPerPage;
-      if (props.regions) {
-        updateRegions();
-      } else {
-        updateResults();
-      }
+      updateResults();
     };
 
     watch(tableOptions, updateOptions, {
@@ -128,7 +105,7 @@ export default defineComponent({
       return str;
     };
 
-    const toggleValue = (fieldName: string, spatialId: number, value: boolean) => {
+    const toggleValue = (fieldName: string, spatialId: number, value?: boolean) => {
       let addFunc;
       let removeFunc;
       if (fieldName === 'show_footprint') {
@@ -148,27 +125,15 @@ export default defineComponent({
         removeFunc(spatialId, props.regions);
       }
 
-      if (!props.regions) {
-        if (!searchResults.value) return null;
-        searchResults.value = searchResults.value.map(
-          (entry) => {
-            if (entry.spatial_id === spatialId) {
-              return { ...entry, [fieldName]: value };
-            }
-            return entry;
-          },
-        );
-      } else {
-        if (!regionsList.value) return null;
-        regionsList.value = regionsList.value.map(
-          (entry) => {
-            if (entry.id === spatialId) {
-              return { ...entry, [fieldName]: value };
-            }
-            return entry;
-          },
-        );
-      }
+      if (!searchResults.value) return null;
+      searchResults.value = searchResults.value.map(
+        (entry) => {
+          if (entry.spatial_id === spatialId) {
+            return { ...entry, [fieldName]: value };
+          }
+          return entry;
+        },
+      );
 
       return null;
     };
@@ -200,8 +165,6 @@ export default defineComponent({
     return {
       props,
       searchResults,
-      regionsList,
-      regionsTotal,
       ...toRefs(tableOptions),
       headers,
       ellipsisText,
@@ -211,8 +174,6 @@ export default defineComponent({
       getFocusedData,
       focusedData,
       focusFlag,
-      originatorOptions,
-      sitesFilter,
       updateSites,
       selectedTab,
     };
@@ -223,17 +184,14 @@ export default defineComponent({
 
 <template>
   <div>
-    <FilterMenu
-      v-if="selectedTab==='results'"
-    />
+    <FilterMenu />
     <v-data-table
       :headers="headers"
-      :items="!props.regions ?searchResults :regionsList"
+      :items="searchResults"
       :page.sync="page"
       :items-per-page.sync="itemsPerPage"
-      :server-items-length="!props.regions ?searchResultsTotal :regionsTotal"
+      :server-items-length="searchResultsTotal"
       :footer-props="{ itemsPerPageOptions }"
-      :class="props.regions ? 'px-4' : ''"
       dense
       calculate-widths
     >
@@ -288,25 +246,11 @@ export default defineComponent({
           </span>
         </v-tooltip>
       </template>
-      <!-- eslint-disable-next-line -->
-      <template #item.select_originator="{item}">
-        <v-select
-          v-if="item.show_footprint"
-          v-model="sitesFilter.originator"
-          value=""
-          label="Originator"
-          :items="originatorOptions"
-          small-chips
-          dense
-          single-line
-          @input="$emit('input', sitesFilter),
-                  $emit('input', sitesFilter.regionID=item.region_id),
-                  updateSites()"
-        />
-      </template>
+
       <!-- eslint-disable-next-line -->
       <template #item.show_footprint="{item}">
         <v-simple-checkbox
+          v-if="selectedTab !=='regions'"
           v-ripple
           dark
           :value="item.show_footprint"

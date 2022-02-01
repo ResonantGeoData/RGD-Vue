@@ -18,6 +18,7 @@ import LatLongForm from '../molecules/LatLongForm.vue';
 import Results from './Results.vue';
 import Predicate from '../atoms/Predicate.vue';
 import DateRange from '../atoms/DateRange.vue';
+import Regions from './Regions.vue';
 
 export default defineComponent({
   name: 'SearchBar',
@@ -30,6 +31,7 @@ export default defineComponent({
     Predicate,
     DateRange,
     Results,
+    Regions,
   },
   props: {
     value: {
@@ -77,7 +79,7 @@ export default defineComponent({
       style="z-index: 2"
     >
       <v-tab href="#regions">
-        REGIONS
+        Regions
       </v-tab>
       <!-- <v-tab href="#search">
         SEARCH
@@ -85,7 +87,7 @@ export default defineComponent({
       <v-tab
         href="#results"
       >
-        RESULTS
+        Imagery
       </v-tab>
     </v-tabs>
     <v-tabs-items
@@ -96,7 +98,7 @@ export default defineComponent({
         value="regions"
       >
         <v-card flat>
-          <Results regions />
+          <Regions regions />
         </v-card>
       </v-tab-item>
       <v-tab-item
