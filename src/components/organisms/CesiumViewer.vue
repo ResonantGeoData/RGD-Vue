@@ -228,7 +228,6 @@ export default defineComponent({
           //   return `${YYYY}-${MM}-${DD}`; // Needs to be ISO 8601
           // };
 
-          console.log(julian);
           // const startDate = Cesium.JulianDate.addDays(julian, SELECTED_DATE_MARGIN_DAYS);
           // const endDate = Cesium.JulianDate.addDays(julian, -SELECTED_DATE_MARGIN_DAYS);
 
@@ -241,8 +240,8 @@ export default defineComponent({
             ...searchParameters.value,
             acquired: {
               ...searchParameters.value.acquired,
-              startDate: Cesium.JulianDate.toIso8601(startDate),
-              endDate: Cesium.JulianDate.toIso8601(endDate),
+              startDate: Cesium.JulianDate.toIso8601(startDate, 0),
+              endDate: Cesium.JulianDate.toIso8601(endDate, 0),
             },
           };
         },

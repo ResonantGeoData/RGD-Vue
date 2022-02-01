@@ -114,14 +114,14 @@ export default defineComponent({
       if (previous) {
         removeFootprint(previous.id, true);
       }
-      searchParameters.value = {
-        ...searchParameters.value,
-        acquired: {
-          ...searchParameters.value.acquired,
-          startDate: region.start_date,
-          endDate: region.end_date,
-        },
-      };
+      // searchParameters.value = {
+      //   ...searchParameters.value,
+      //   acquired: {
+      //     ...searchParameters.value.acquired,
+      //     startDate: region.start_date,
+      //     endDate: region.end_date,
+      //   },
+      // };
       specifiedShape.value = region.footprint as Polygon | MultiPolygon;
       updateResults();
       addFootprint(region.id, true);

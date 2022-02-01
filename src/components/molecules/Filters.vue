@@ -76,7 +76,6 @@ export default defineComponent({
       >
         <DistanceRange />
         <Instrumentation />
-        <!-- <DateRange /> -->
         <v-text-field
           v-model="resultsFilter.collections"
           label="Collections"
@@ -84,6 +83,7 @@ export default defineComponent({
           dense
           @input="$emit('input', resultsFilter)"
         />
+        <DateRange />
         <TimeRange />
         <v-row>
           <v-col

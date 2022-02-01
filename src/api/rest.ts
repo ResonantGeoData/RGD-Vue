@@ -29,8 +29,8 @@ export async function rgdSearch(
   offset?: number,
   q?: Polygon | MultiPolygon,
   predicate?: string | null,
-  acquiredAfter?: string | null,
   acquiredBefore?: string | null,
+  acquiredAfter?: string | null,
   distanceMin? : string | null,
   distanceMax? : string | null,
   instrumentation?: string | null,
@@ -45,22 +45,22 @@ export async function rgdSearch(
   } else {
     geometry = q;
   }
-  console.log(acquiredAfter);
-  console.log(acquiredBefore);
   const response = await axiosInstance.get('rgd/search', {
+    /* eslint-disable @typescript-eslint/camelcase */
     params: {
       limit,
       offset,
       q: geometry,
       predicate,
-      acquiredAfter,
-      acquiredBefore,
-      distanceMin,
-      distanceMax,
+      acquired_after: acquiredAfter,
+      acquired_before: acquiredBefore,
+      distance_min: distanceMin,
+      distance_max: distanceMax,
       instrumentation,
-      startTime,
-      endTime,
+      time_of_day_after: startTime,
+      time_of_day_before: endTime,
     },
+    /* eslint-enable @typescript-eslint/camelcase */
   });
   return response;
 }
