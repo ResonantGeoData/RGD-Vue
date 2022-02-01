@@ -16,10 +16,12 @@ import {
   specifiedShape,
   searchParameters,
 } from '@/store/search';
+import { RegionResult } from '@/store/types';
 import {
   addFootprint,
   removeFootprint,
 } from '@/store/cesium/footprints';
+import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
 import FocusedData from '../molecules/FocusedData.vue';
@@ -38,8 +40,8 @@ export default defineComponent({
   },
 
   setup(props) {
-    const selected: any[] = [];
-    let previous: any;
+    const selected: RegionResult[] = [];
+    let previous: RegionResult;
     const originatorOptions = ['all', 'te', 'kitware'];
 
     const tableOptions = reactive({
@@ -108,7 +110,7 @@ export default defineComponent({
       return null;
     };
 
-    const useRegionForSearch = (region: any) => {
+    const useRegionForSearch = (region: RegionResult) => {
       if (previous) {
         removeFootprint(previous.id, true);
       }
@@ -120,7 +122,7 @@ export default defineComponent({
           endDate: region.end_date,
         },
       };
-      specifiedShape.value = region.footprint;
+      specifiedShape.value = region.footprint as Polygon | MultiPolygon;
       updateResults();
       addFootprint(region.id, true);
       previous = region;
