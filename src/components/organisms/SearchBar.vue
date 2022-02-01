@@ -79,9 +79,9 @@ export default defineComponent({
       <v-tab href="#regions">
         REGIONS
       </v-tab>
-      <!-- <v-tab href="#search">
+      <v-tab href="#search">
         SEARCH
-      </v-tab> -->
+      </v-tab>
       <v-tab
         v-if="reveal"
         href="#results"

@@ -2,7 +2,7 @@
 import {
   defineComponent, reactive, watch, toRefs, ref,
 } from '@vue/composition-api';
-import { clearMetaDataDrawer } from '@/store';
+import { clearMetaDataDrawer, selectedTab } from '@/store';
 import {
   searchResults,
   searchLimit,
@@ -214,6 +214,7 @@ export default defineComponent({
       originatorOptions,
       sitesFilter,
       updateSites,
+      selectedTab,
     };
   },
 });
