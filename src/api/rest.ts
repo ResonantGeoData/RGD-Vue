@@ -127,7 +127,7 @@ export async function imageryBands(
 export async function basicRegionList(
   limit?: number,
   offset?: number,
-  q?: string,
+  q?: Polygon | MultiPolygon,
   predicate?: string | null,
   acquiredAfter?: string | null,
   acquiredBefore?: string | null,
