@@ -56,8 +56,8 @@ export default defineComponent({
         sortable: false,
       },
       {
-        text: '',
-        value: 'select_originator',
+        text: 'Originator',
+        value: 'properties.originator',
         align: 'center',
         width: '30%',
         sortable: false,
@@ -164,7 +164,7 @@ export default defineComponent({
     @input="useRegionForSearch(selected[0])"
   >
     <!-- eslint-disable-next-line -->
-    <template #item.select_originator="{item}">
+    <!-- <template #item.select_originator="{item}"> -->
       <!-- fix originator
       <v-select
         v-model="sitesFilter.originator"
@@ -179,7 +179,7 @@ export default defineComponent({
                 updateSites()"
       />
       -->
-    </template>
+    <!-- </template> -->
 
     <!-- eslint-disable-next-line -->
     <template #item.show_metadata="{item}">
