@@ -163,24 +163,6 @@ export default defineComponent({
     @input="useRegionForSearch(selected[0])"
   >
     <!-- eslint-disable-next-line -->
-    <template #item.select_originator="{item}">
-      <!-- fix originator
-      <v-select
-      v-model="sitesFilter.originator"
-      value=""
-      label="Originator"
-      :items="originatorOptions"
-      small-chips
-      dense
-      single-line
-      @input="$emit('input', sitesFilter),
-      $emit('input', sitesFilter.regionID=item.region_id),
-      updateSites()"
-      />
-      -->
-    </template>
-
-    <!-- eslint-disable-next-line -->
     <template #item.show_metadata="{item}">
       <v-simple-checkbox
         v-ripple
