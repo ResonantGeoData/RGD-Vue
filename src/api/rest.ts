@@ -1,9 +1,11 @@
 import axios from 'axios';
 import OauthClient from '@girder/oauth-client';
-import { GeoJSON, Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
+import { GeoJSON, Polygon, MultiPolygon } from 'geojson'; // eslint-disable-line
+import { stringify } from 'qs';  // eslint-disable-line
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
+  paramsSerializer: (params) => stringify(params, { arrayFormat: 'repeat' }),
 });
 export const oauthClient = new OauthClient(
   process.env.VUE_APP_OAUTH_API_ROOT,
@@ -29,13 +31,14 @@ export async function rgdSearch(
   offset?: number,
   q?: Polygon | MultiPolygon,
   predicate?: string | null,
-  acquiredAfter?: string | null,
   acquiredBefore?: string | null,
+  acquiredAfter?: string | null,
   distanceMin? : string | null,
   distanceMax? : string | null,
   instrumentation?: string | null,
   startTime?: string | null,
   endTime?: string | null,
+  collections?: string[] | number[],
 
 ) {
   let geometry;
@@ -46,19 +49,22 @@ export async function rgdSearch(
     geometry = q;
   }
   const response = await axiosInstance.get('rgd/search', {
+    /* eslint-disable @typescript-eslint/camelcase */
     params: {
       limit,
       offset,
       q: geometry,
       predicate,
-      acquiredAfter,
-      acquiredBefore,
-      distanceMin,
-      distanceMax,
+      acquired_after: acquiredAfter,
+      acquired_before: acquiredBefore,
+      distance_min: distanceMin,
+      distance_max: distanceMax,
       instrumentation,
-      startTime,
-      endTime,
+      time_of_day_after: startTime,
+      time_of_day_before: endTime,
+      collections,
     },
+    /* eslint-enable @typescript-eslint/camelcase */
   });
   return response;
 }
@@ -128,26 +134,22 @@ export async function basicRegionList(
   distanceMin? : string | null,
   distanceMax? : string | null,
   regionId? : string | null,
-  // instrumentation?: string | null,
-  // startTime?: string | null,
-  // endTime?: string | null,
 
 ) {
   const response = await axiosInstance.get('/watch/basic/region', {
+    /* eslint-disable @typescript-eslint/camelcase */
     params: {
       limit,
       offset,
       q,
       predicate,
-      startDate: acquiredAfter,
-      endDate: acquiredBefore,
-      distanceMin,
-      distanceMax,
-      regionId,
-      // instrumentation,
-      // startTime,
-      // endTime,
+      acquired_after: acquiredAfter,
+      acquired_before: acquiredBefore,
+      distance_min: distanceMin,
+      distance_max: distanceMax,
+      region_id: regionId,
     },
+    /* eslint-enable @typescript-eslint/camelcase */
   });
   return response.data;
 }
@@ -179,4 +181,9 @@ export async function rgdImagerySTAC(
 ) {
   const response = await axiosInstance.get(`/rgd_imagery/raster/${spatialID}/stac`);
   return response.data;
+}
+
+export async function rgdCollections() {
+  const response = await axiosInstance.get('/rgd/collection');
+  return response.data.results;
 }

@@ -15,6 +15,7 @@ import Instrumentation from '../atoms/Instrumentation.vue';
 import DateRange from '../atoms/DateRange.vue';
 import Predicate from '../atoms/Predicate.vue';
 import GeoJsonForm from './GeoJsonForm.vue';
+import Collections from '../atoms/Collections.vue';
 
 export default defineComponent({
   name: 'FilterMenu',
@@ -25,12 +26,14 @@ export default defineComponent({
     Predicate,
     GeoJsonForm,
     DateRange,
+    Collections,
   },
   setup() {
     const clearFilters = () => {
       resultsFilter.value.distance.min = null;
       resultsFilter.value.distance.max = null;
       resultsFilter.value.instrumentation = null;
+      resultsFilter.value.collections = [];
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
       updateResults();
@@ -42,6 +45,7 @@ export default defineComponent({
       selectedTab,
       sitesFilter,
       updateSites,
+      resultsFilter,
     };
   },
 });
@@ -55,6 +59,12 @@ export default defineComponent({
         color="blue-grey darken-3"
       >
         <div>
+          <v-icon
+            small
+            @click.native.stop="updateResults()"
+          >
+            mdi-refresh
+          </v-icon>
           Filters
           <v-icon
             small
@@ -68,6 +78,7 @@ export default defineComponent({
       >
         <DistanceRange />
         <Instrumentation />
+        <Collections />
         <DateRange />
         <TimeRange />
         <v-row>

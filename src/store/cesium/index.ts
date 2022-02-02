@@ -13,17 +13,27 @@ export const cesiumViewer = ref();
 
 /* eslint-disable @typescript-eslint/camelcase */
 // See also https://gitlab.kitware.com/smart/watch/-/blob/master/watch/heuristics.py#L45
+// const HUERISTIC_STATUS_DATA = {
+//   positive_annotated: '#808000', // olive
+//   positive_partial: '#32CD32', // limegreen
+//   positive_pending: '#2E8B57', // seagreen
+//   positive_excluded: '#006400', // darkgreen
+//   positive_unbounded: '#4682B4', // steelblue
+//   negative: '#FF4500', // orangered
+//   negative_unbounded: '#FF1493', // deeppink
+//   ignore: '#800080', // purple
+// };
 const HUERISTIC_STATUS_DATA = {
-  positive_annotated: '#808000', // olive
-  positive_partial: '#32CD32', // limegreen
-  positive_pending: '#2E8B57', // seagreen
-  positive_excluded: '#006400', // darkgreen
-  positive_unbounded: '#4682B4', // steelblue
+  positive_annotated: '#000000',
+  positive_partial: '#000000',
+  positive_pending: '#000000',
+  positive_excluded: '#006400',
+  positive_unbounded: '#9400D3', // darkviolet
   negative: '#FF4500', // orangered
   negative_unbounded: '#FF1493', // deeppink
-  ignore: '#800080', // purple
+  ignore: '#FFA07A', // lightsalmon
 };
-/* eslint-enable no-param-reassign */
+/* eslint-enable @typescript-eslint/camelcase */
 
 export const addGeojson = async (geojson: GeoJSON): Promise<GeoJsonDataSource> => {
   // cesiumViewer.value.dataSources.remove(source);

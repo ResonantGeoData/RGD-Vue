@@ -1,12 +1,20 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdSearch, basicRegionList, basicSiteList,
+  rgdImagery,
+  rgdSearch,
+  basicRegionList,
+  basicSiteList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import { drawerContents } from '@/store';
 import {
-  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter, SitesResult,
+  RGDResultList,
+  SearchParameters,
+  ResultsFilter,
+  RegionResult,
+  SitesFilter,
+  SitesResult,
 } from './types';
 
 export const regionsList = ref<RegionResult[]>();
@@ -35,6 +43,8 @@ export const searchResultsTotal = ref<number>();
 
 export const searchInstrumentation = ref<string|null>('');
 
+export const collections = ref({});
+
 export const searchParameters = ref<SearchParameters>({
   predicate: 'intersects',
   acquired: {
@@ -51,6 +61,7 @@ export const resultsFilter = ref<ResultsFilter>({
     max: null,
   },
   instrumentation: null,
+  collections: [],
   time: {
     startTime: null,
     endTime: null,
@@ -60,6 +71,13 @@ export const resultsFilter = ref<ResultsFilter>({
 });
 
 export const updateResults = async () => {
+  const collectionIDs: number[] = [];
+  // eslint-disable-next-line no-unused-expressions
+  resultsFilter.value.collections?.forEach((element) => {
+    if (element.id) {
+      collectionIDs.push(element.id);
+    }
+  });
   const res = await rgdSearch(
     searchLimit.value,
     searchOffset.value,
@@ -72,6 +90,7 @@ export const updateResults = async () => {
     resultsFilter.value.instrumentation,
     resultsFilter.value.time.startTime,
     resultsFilter.value.time.endTime,
+    collectionIDs,
 
   );
   searchResults.value = res.data.results;

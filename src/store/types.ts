@@ -87,12 +87,17 @@ export interface SearchParameters {
   };
 }
 
+export interface Collection {
+  id: number | null;
+  name: string | null;
+}
 export interface ResultsFilter {
   distance: {
     min: string | null;
     max: string | null;
   };
   instrumentation: string | null;
+  collections: Collection[];
   time: {
     startTime: string | null;
     endTime: string | null;
