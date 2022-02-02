@@ -62,6 +62,12 @@ export const resultsFilter = ref<ResultsFilter>({
   },
   instrumentation: null,
   collections: [],
+  acquired: {
+    startDate: null,
+    endDate: null,
+    startDateModal: false,
+    endDateModal: false,
+  },
   time: {
     startTime: null,
     endTime: null,
@@ -83,8 +89,8 @@ export const updateResults = async () => {
     searchOffset.value,
     specifiedShape.value,
     searchParameters.value.predicate,
-    searchParameters.value.acquired.startDate,
-    searchParameters.value.acquired.endDate,
+    resultsFilter.value.acquired.startDate,
+    resultsFilter.value.acquired.endDate,
     resultsFilter.value.distance.min,
     resultsFilter.value.distance.max,
     resultsFilter.value.instrumentation,

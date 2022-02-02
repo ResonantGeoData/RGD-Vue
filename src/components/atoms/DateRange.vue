@@ -3,7 +3,7 @@ import {
   defineComponent, ref,
 } from '@vue/composition-api';
 
-import { searchParameters } from '@/store/search';
+import { resultsFilter } from '@/store/search';
 
 export default defineComponent({
   name: 'DateRange',
@@ -15,15 +15,15 @@ export default defineComponent({
 
     const updateInput = () => {
       if (startDate.value) {
-        searchParameters.value.acquired.startDate = `${startDate.value}T${startTime.value}`;
+        resultsFilter.value.acquired.startDate = `${startDate.value}T${startTime.value}`;
       }
       if (endDate.value) {
-        searchParameters.value.acquired.endDate = `${endDate.value}T${endTime.value}`;
+        resultsFilter.value.acquired.endDate = `${endDate.value}T${endTime.value}`;
       }
     };
 
     return {
-      searchParameters,
+      resultsFilter,
       startTime,
       startDate,
       endTime,
@@ -41,7 +41,7 @@ export default defineComponent({
     justify="center"
   >
     <v-dialog
-      v-model="searchParameters.acquired.startDateModal"
+      v-model="resultsFilter.acquired.startDateModal"
       width="600px"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -50,7 +50,7 @@ export default defineComponent({
           class="pr-3"
         >
           <v-text-field
-            :value.sync="searchParameters.acquired.startDate"
+            :value.sync="resultsFilter.acquired.startDate"
             prepend-icon="mdi-calendar"
             append-outer-icon="mdi-minus"
             clearable
@@ -74,21 +74,21 @@ export default defineComponent({
         <v-btn
           text
           color="primary"
-          @click="searchParameters.acquired.startDateModal = false"
+          @click="resultsFilter.acquired.startDateModal = false"
         >
           Cancel
         </v-btn>
         <v-btn
           text
           color="primary"
-          @click="searchParameters.acquired.startDateModal = false, updateInput()"
+          @click="resultsFilter.acquired.startDateModal = false, updateInput()"
         >
           OK
         </v-btn>
       </div>
     </v-dialog>
     <v-dialog
-      v-model="searchParameters.acquired.endDateModal"
+      v-model="resultsFilter.acquired.endDateModal"
       width="600px"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -96,7 +96,7 @@ export default defineComponent({
           cols="5"
         >
           <v-text-field
-            :value.sync="searchParameters.acquired.endDate"
+            :value.sync="resultsFilter.acquired.endDate"
             prepend-icon="mdi-calendar"
             clearable
             readonly
@@ -119,14 +119,14 @@ export default defineComponent({
         <v-btn
           text
           color="primary"
-          @click="searchParameters.acquired.endDateModal = false"
+          @click="resultsFilter.acquired.endDateModal = false"
         >
           Cancel
         </v-btn>
         <v-btn
           text
           color="primary"
-          @click="searchParameters.acquired.endDateModal = false, updateInput()"
+          @click="resultsFilter.acquired.endDateModal = false, updateInput()"
         >
           OK
         </v-btn>

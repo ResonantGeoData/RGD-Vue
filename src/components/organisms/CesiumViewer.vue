@@ -9,7 +9,7 @@ import Cesium from '@/plugins/cesium';
 import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
 import { useMap } from '@/store/cesium/search';
 import { Clock, JulianDate } from 'cesium';
-import { searchParameters } from '@/store/search';
+import { resultsFilter } from '@/store/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
@@ -237,10 +237,10 @@ export default defineComponent({
           const endDate = { ...julian };
           endDate.dayNumber -= SELECTED_DATE_MARGIN_DAYS;
 
-          searchParameters.value = {
-            ...searchParameters.value,
+          resultsFilter.value = {
+            ...resultsFilter.value,
             acquired: {
-              ...searchParameters.value.acquired,
+              ...resultsFilter.value.acquired,
               startDate: Cesium.JulianDate.toIso8601(startDate, 0),
               endDate: Cesium.JulianDate.toIso8601(endDate, 0),
             },
