@@ -58,7 +58,7 @@ export default defineComponent({
       dense
     >
       <v-img
-        src="RGD_Logo.png"
+        src="WATCH_Logo.png"
         height="calc(100% - 5px)"
         contain
         class="flex-shrink-1 ml-5"
