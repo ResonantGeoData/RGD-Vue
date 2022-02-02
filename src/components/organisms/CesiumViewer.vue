@@ -319,18 +319,19 @@ export default defineComponent({
   cursor: crosshair
 }
 .cesium-viewer-timelineContainer {
-  height: 37px;
-  font-size: 18px;
+  height: 50px;
+  font-size: 20px;
 }
 .cesium-timeline-main {
   border: none;
 }
 .cesium-timeline-bar {
-  cursor: crosshair;
-  height: 2em;
+  cursor: pointer;
+  height: 3em;
+  background-color: #1E1E1E;
 }
 .cesium-timeline-needle {
-  top: 0.5em;
+  top: 1em;
   width: 2px;
 }
 .cesium-timeline-icon16 {
