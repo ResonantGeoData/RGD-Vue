@@ -166,16 +166,16 @@ export default defineComponent({
     <template #item.select_originator="{item}">
       <!-- fix originator
       <v-select
-        v-model="sitesFilter.originator"
-        value=""
-        label="Originator"
-        :items="originatorOptions"
-        small-chips
-        dense
-        single-line
-        @input="$emit('input', sitesFilter),
-                $emit('input', sitesFilter.regionID=item.region_id),
-                updateSites()"
+      v-model="sitesFilter.originator"
+      value=""
+      label="Originator"
+      :items="originatorOptions"
+      small-chips
+      dense
+      single-line
+      @input="$emit('input', sitesFilter),
+      $emit('input', sitesFilter.regionID=item.region_id),
+      updateSites()"
       />
       -->
     </template>
