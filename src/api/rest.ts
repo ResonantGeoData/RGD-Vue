@@ -53,7 +53,7 @@ export async function rgdSearch(
     params: {
       limit,
       offset,
-      q: geometry,
+      q: JSON.stringify(geometry),
       predicate,
       acquired_after: acquiredAfter,
       acquired_before: acquiredBefore,
@@ -136,12 +136,19 @@ export async function basicRegionList(
   regionId? : string | null,
 
 ) {
+  let geometry;
+  if (q?.coordinates.length === 0) {
+    // Catch if empty geometry is given (the default value for type sanity)
+    geometry = undefined;
+  } else {
+    geometry = q;
+  }
   const response = await axiosInstance.get('/watch/basic/region', {
     /* eslint-disable @typescript-eslint/camelcase */
     params: {
       limit,
       offset,
-      q,
+      q: JSON.stringify(geometry),
       predicate,
       acquired_after: acquiredAfter,
       acquired_before: acquiredBefore,
