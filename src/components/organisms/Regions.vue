@@ -55,8 +55,8 @@ export default defineComponent({
         sortable: false,
       },
       {
-        text: '',
-        value: 'select_originator',
+        text: 'Originator',
+        value: 'properties.originator',
         align: 'center',
         width: '30%',
         sortable: false,
