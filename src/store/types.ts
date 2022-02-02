@@ -1,4 +1,3 @@
-import { collections } from './search';
 import { GeoJSON } from 'geojson';  // eslint-disable-line
 
 export type RGDResult = {
@@ -88,7 +87,7 @@ export interface SearchParameters {
   };
 }
 
-export interface Collections {
+export interface Collection {
   id: number | null;
   name: string | null;
 }
@@ -98,7 +97,7 @@ export interface ResultsFilter {
     max: string | null;
   };
   instrumentation: string | null;
-  collections: Array<Collections>;
+  collections: Collection[];
   time: {
     startTime: string | null;
     endTime: string | null;

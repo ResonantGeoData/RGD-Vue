@@ -36,7 +36,7 @@ export async function rgdSearch(
   instrumentation?: string | null,
   startTime?: string | null,
   endTime?: string | null,
-  collections?: string| null,
+  collections?: string[] | number[],
 
 ) {
   let geometry;
@@ -46,6 +46,7 @@ export async function rgdSearch(
   } else {
     geometry = q;
   }
+  console.log(collections);
   const response = await axiosInstance.get('rgd/search', {
     /* eslint-disable @typescript-eslint/camelcase */
     params: {
@@ -187,5 +188,5 @@ export async function rgdImagerySTAC(
 
 export async function rgdCollections() {
   const response = await axiosInstance.get('/rgd/collection');
-  return response.data;
+  return response.data.results;
 }

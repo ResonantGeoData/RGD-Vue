@@ -2,15 +2,17 @@
 import {
   defineComponent, ref,
 } from '@vue/composition-api';
-import { collections, resultsFilter } from '@/store/search';
+import { resultsFilter } from '@/store/search';
+import { rgdCollections } from '@/api/rest';
 
 export default defineComponent({
   name: 'Collections',
   setup() {
-    const selected = ref();
-
+    const collections = ref([]);
+    rgdCollections().then((result) => {
+      collections.value = result;
+    });
     return {
-      selected,
       collections,
       resultsFilter,
     };

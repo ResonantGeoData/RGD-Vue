@@ -33,13 +33,10 @@ export default defineComponent({
       resultsFilter.value.distance.min = null;
       resultsFilter.value.distance.max = null;
       resultsFilter.value.instrumentation = null;
-      resultsFilter.value.collections = null;
+      resultsFilter.value.collections = [];
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
       updateResults();
-    };
-    const test = () => {
-      console.log(resultsFilter.value);
     };
 
     return {
@@ -49,7 +46,6 @@ export default defineComponent({
       sitesFilter,
       updateSites,
       resultsFilter,
-      test,
     };
   },
 });
@@ -94,7 +90,7 @@ export default defineComponent({
               outlined
               large
               width="100%"
-              @click="updateResults(), test()"
+              @click="updateResults()"
             >
               <div
                 class="white--text"

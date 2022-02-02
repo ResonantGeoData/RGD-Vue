@@ -1,12 +1,20 @@
 import { ref } from '@vue/composition-api';
 import {
-  rgdImagery, rgdSearch, basicRegionList, basicSiteList, rgdCollections,
+  rgdImagery,
+  rgdSearch,
+  basicRegionList,
+  basicSiteList,
 } from '@/api/rest';
 // eslint-disable-next-line import/no-unresolved
 import { Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
 import { drawerContents } from '@/store';
 import {
-  RGDResultList, SearchParameters, ResultsFilter, RegionResult, SitesFilter, SitesResult,
+  RGDResultList,
+  SearchParameters,
+  ResultsFilter,
+  RegionResult,
+  SitesFilter,
+  SitesResult,
 } from './types';
 
 export const regionsList = ref<RegionResult[]>();
@@ -63,10 +71,12 @@ export const resultsFilter = ref<ResultsFilter>({
 });
 
 export const updateResults = async () => {
-  const collectionIDs: any[] = [];
+  const collectionIDs: number[] = [];
   // eslint-disable-next-line no-unused-expressions
   resultsFilter.value.collections?.forEach((element) => {
-    collectionIDs.push(element.id);
+    if (element.id) {
+      collectionIDs.push(element.id);
+    }
   });
   const res = await rgdSearch(
     searchLimit.value,
@@ -129,10 +139,4 @@ export const selectResultForMetadataDrawer = async (spatialId: number, region?: 
       )[0].properties;
     }
   }
-};
-
-export const getCollections = async () => {
-  const res = await rgdCollections();
-  console.log(res);
-  collections.value = res.results;
 };
