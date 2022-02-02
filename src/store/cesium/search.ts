@@ -1,13 +1,23 @@
 import Cesium from '@/plugins/cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
 import { Entity, Cartesian3 } from 'cesium'; // GeoJsonDataSource
-import { drawnShape } from '@/store/search'; // specifiedShape
+import { drawnShape, updateResults } from '@/store/search'; // specifiedShape
 import { ref, watch } from '@vue/composition-api';
 import { cesiumViewer } from '@/store/cesium';
 
 export const useMap = ref(false);
 
 export const polyPoints: number[][][] = [];
+
+export interface AcquiredDate {
+  dayNumber: number;
+}
+
+export const startDate = ref<AcquiredDate>();
+
+export const endDate = ref<AcquiredDate>();
+
+watch(startDate, updateResults, { deep: true });
 
 // NOTE: disabled for WATCH demo where region/sites are shown
 // let searchSource: GeoJsonDataSource;

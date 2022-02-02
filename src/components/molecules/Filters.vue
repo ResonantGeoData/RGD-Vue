@@ -82,7 +82,7 @@ export default defineComponent({
         <Instrumentation />
         <Collections />
         <DateRange />
-        <TimeRange />
+        <!-- <TimeRange /> -->
         <v-row>
           <v-col
             cols="6"

@@ -7,7 +7,7 @@ import {
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
-import { useMap } from '@/store/cesium/search';
+import { useMap, startDate, endDate } from '@/store/cesium/search';
 import { Clock, JulianDate } from 'cesium';
 import { resultsFilter } from '@/store/search';
 
@@ -232,17 +232,17 @@ export default defineComponent({
           // const startDate = Cesium.JulianDate.addDays(julian, SELECTED_DATE_MARGIN_DAYS);
           // const endDate = Cesium.JulianDate.addDays(julian, -SELECTED_DATE_MARGIN_DAYS);
 
-          const startDate = { ...julian };
-          startDate.dayNumber += SELECTED_DATE_MARGIN_DAYS;
-          const endDate = { ...julian };
-          endDate.dayNumber -= SELECTED_DATE_MARGIN_DAYS;
+          startDate.value = { ...julian };
+          startDate.value.dayNumber += SELECTED_DATE_MARGIN_DAYS;
+          endDate.value = { ...julian };
+          endDate.value.dayNumber -= SELECTED_DATE_MARGIN_DAYS;
 
           resultsFilter.value = {
             ...resultsFilter.value,
             acquired: {
               ...resultsFilter.value.acquired,
-              startDate: Cesium.JulianDate.toIso8601(startDate, 0),
-              endDate: Cesium.JulianDate.toIso8601(endDate, 0),
+              startDate: Cesium.JulianDate.toIso8601(startDate.value, 0),
+              endDate: Cesium.JulianDate.toIso8601(endDate.value, 0),
             },
           };
         },
