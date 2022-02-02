@@ -301,12 +301,30 @@ export default defineComponent({
 </template>
 
 <style>
-  #cesiumContainer{
-    width: 100% !important;
-    height: calc(100vh - 48px) !important;
-    cursor: grab;
-  }
-  #cesiumContainer.draw-mode{
-    cursor: crosshair
-  }
+#cesiumContainer{
+  width: 100% !important;
+  height: calc(100vh - 48px) !important;
+  cursor: grab;
+}
+#cesiumContainer.draw-mode{
+  cursor: crosshair
+}
+.cesium-viewer-timelineContainer {
+  height: 37px;
+  font-size: 18px;
+}
+.cesium-timeline-main {
+  border: none;
+}
+.cesium-timeline-bar {
+  cursor: crosshair;
+  height: 2em;
+}
+.cesium-timeline-needle {
+  top: 0.5em;
+  width: 2px;
+}
+.cesium-timeline-icon16 {
+  background-image: none;
+}
 </style>
