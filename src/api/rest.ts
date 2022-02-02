@@ -1,9 +1,11 @@
 import axios from 'axios';
 import OauthClient from '@girder/oauth-client';
-import { GeoJSON, Polygon, MultiPolygon } from 'geojson';  // eslint-disable-line
+import { GeoJSON, Polygon, MultiPolygon } from 'geojson'; // eslint-disable-line
+import { stringify } from 'qs';  // eslint-disable-line
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.VUE_APP_API_ROOT}api`,
+  paramsSerializer: (params) => stringify(params, { arrayFormat: 'repeat' }),
 });
 export const oauthClient = new OauthClient(
   process.env.VUE_APP_OAUTH_API_ROOT,
@@ -46,7 +48,6 @@ export async function rgdSearch(
   } else {
     geometry = q;
   }
-  console.log(collections);
   const response = await axiosInstance.get('rgd/search', {
     /* eslint-disable @typescript-eslint/camelcase */
     params: {
@@ -133,26 +134,22 @@ export async function basicRegionList(
   distanceMin? : string | null,
   distanceMax? : string | null,
   regionId? : string | null,
-  // instrumentation?: string | null,
-  // startTime?: string | null,
-  // endTime?: string | null,
 
 ) {
   const response = await axiosInstance.get('/watch/basic/region', {
+    /* eslint-disable @typescript-eslint/camelcase */
     params: {
       limit,
       offset,
       q,
       predicate,
-      startDate: acquiredAfter,
-      endDate: acquiredBefore,
-      distanceMin,
-      distanceMax,
-      regionId,
-      // instrumentation,
-      // startTime,
-      // endTime,
+      acquired_after: acquiredAfter,
+      acquired_before: acquiredBefore,
+      distance_min: distanceMin,
+      distance_max: distanceMax,
+      region_id: regionId,
     },
+    /* eslint-enable @typescript-eslint/camelcase */
   });
   return response.data;
 }
