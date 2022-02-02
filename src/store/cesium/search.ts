@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { debounce } from 'lodash';
 import Cesium from '@/plugins/cesium';
 import ConstantPositionProperty from 'cesium/Source/DataSources/ConstantPositionProperty';
 import { Entity, Cartesian3 } from 'cesium'; // GeoJsonDataSource
@@ -17,7 +20,7 @@ export const startDate = ref<AcquiredDate>();
 
 export const endDate = ref<AcquiredDate>();
 
-watch(startDate, updateResults, { deep: true });
+watch(startDate, debounce(updateResults, 500), { deep: true });
 
 // NOTE: disabled for WATCH demo where region/sites are shown
 // let searchSource: GeoJsonDataSource;
