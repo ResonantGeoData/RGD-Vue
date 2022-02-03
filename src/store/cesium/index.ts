@@ -43,7 +43,7 @@ export const addGeojson = async (geojson: GeoJSON): Promise<GeoJsonDataSource> =
   // Change display properties for all entities in data source
   /* eslint-disable no-param-reassign */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  source.entities.values.forEach((entity: {polygon: any; properties: any}) => {
+  source.entities.values.forEach(async (entity: {polygon: any; properties: any}) => {
     let color;
     if (entity.properties?.status && entity.properties.status?._value in HUERISTIC_STATUS_DATA) {
       const status = entity.properties.status?._value as keyof typeof HUERISTIC_STATUS_DATA;
