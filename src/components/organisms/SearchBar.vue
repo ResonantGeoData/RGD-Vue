@@ -55,7 +55,7 @@ export default defineComponent({
 
     // call updateRegions immediately so the list is ready
     // and no delay is introduced  when the regions tab is selected
-    updateRegions();
+    // updateRegions();
 
     return {
       selectedTab,
@@ -79,15 +79,18 @@ export default defineComponent({
       background-color="blue-grey darken-2 large-text"
       style="z-index: 2"
     >
-      <v-tab
+      <!-- <v-tab
         href="#regions"
         @click="clearMetaDataDrawer()"
       >
         Regions
-      </v-tab>
-      <!-- <v-tab href="#search">
-        SEARCH
       </v-tab> -->
+      <v-tab
+        href="#search"
+        @click="clearMetaDataDrawer()"
+      >
+        SEARCH
+      </v-tab>
       <v-tab
         href="#results"
         @click="clearMetaDataDrawer()"
@@ -130,6 +133,7 @@ export default defineComponent({
                   block
                   x-large
                   type="submit"
+                  class="mt-6"
                 >
                   Search
                 </v-btn>

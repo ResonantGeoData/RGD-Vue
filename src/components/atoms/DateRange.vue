@@ -93,7 +93,7 @@ export default defineComponent({
     >
       <template v-slot:activator="{ on, attrs }">
         <v-col
-          cols="5"
+          cols="6"
         >
           <v-text-field
             :value.sync="searchParameters.acquired.endDate"

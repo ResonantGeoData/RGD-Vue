@@ -78,8 +78,8 @@ export default defineComponent({
       >
         <DistanceRange />
         <Instrumentation />
-        <Collections />
-        <DateRange />
+        <!-- <Collections />
+        <DateRange /> -->
         <TimeRange />
         <v-row>
           <v-col
