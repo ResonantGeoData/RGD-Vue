@@ -20,6 +20,9 @@ export const startDate = ref<AcquiredDate>();
 
 export const endDate = ref<AcquiredDate>();
 
+export const timeLineStartDate = ref('');
+export const timeLineEndDate = ref('');
+
 watch(startDate, debounce(updateResults, 500), { deep: true });
 
 // NOTE: disabled for WATCH demo where region/sites are shown

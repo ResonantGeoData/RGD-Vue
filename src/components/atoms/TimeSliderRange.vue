@@ -3,32 +3,19 @@ import {
   defineComponent, ref,
 } from '@vue/composition-api';
 
-import { resultsFilter } from '@/store/search';
+import { timeLineStartDate, timeLineEndDate } from '@/store/cesium/search';
 
 export default defineComponent({
-  name: 'DateRange',
+  name: 'TimeSliderRange',
   setup() {
-    const startDate = ref('');
-    const startTime = ref('');
-    const endDate = ref('');
-    const endTime = ref('');
-
-    const updateInput = () => {
-      if (startDate.value) {
-        resultsFilter.value.acquired.startDate = `${startDate.value}T${startTime.value}`;
-      }
-      if (endDate.value) {
-        resultsFilter.value.acquired.endDate = `${endDate.value}T${endTime.value}`;
-      }
-    };
+    const timeLineStartDateModal = ref(false);
+    const timeLineEndDateModal = ref(false);
 
     return {
-      resultsFilter,
-      startTime,
-      startDate,
-      endTime,
-      endDate,
-      updateInput,
+      timeLineStartDate,
+      timeLineEndDate,
+      timeLineStartDateModal,
+      timeLineEndDateModal,
     };
   },
 });
@@ -41,8 +28,8 @@ export default defineComponent({
     justify="center"
   >
     <v-dialog
-      v-model="resultsFilter.acquired.startDateModal"
-      width="600px"
+      v-model="timeLineStartDateModal"
+      width="300px"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-col
@@ -50,7 +37,7 @@ export default defineComponent({
           class="pr-3"
         >
           <v-text-field
-            :value.sync="resultsFilter.acquired.startDate"
+            :value.sync="timeLineStartDate"
             prepend-icon="mdi-calendar"
             append-outer-icon="mdi-minus"
             clearable
@@ -58,77 +45,69 @@ export default defineComponent({
             dense
             v-bind="attrs"
             v-on="on"
-            @click:clear="resultsFilter.acquired.startDate = null"
           />
         </v-col>
       </template>
       <div class="d-flex justify-space-between blue-grey darken-4">
         <v-date-picker
-          v-model="startDate"
+          v-model="timeLineStartDate"
           scrollable
-        />
-        <v-time-picker
-          v-model="startTime"
         />
       </div>
       <div class="d-flex justify-space-between blue-grey darken-4">
         <v-btn
           text
           color="primary"
-          @click="resultsFilter.acquired.startDateModal = false"
+          @click="timeLineStartDateModal = false"
         >
           Cancel
         </v-btn>
         <v-btn
           text
           color="primary"
-          @click="resultsFilter.acquired.startDateModal = false, updateInput()"
+          @click="timeLineStartDateModal = false"
         >
           OK
         </v-btn>
       </div>
     </v-dialog>
     <v-dialog
-      v-model="resultsFilter.acquired.endDateModal"
-      width="600px"
+      v-model="timeLineEndDateModal"
+      width="300px"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-col
           cols="5"
         >
           <v-text-field
-            :value.sync="resultsFilter.acquired.endDate"
+            :value.sync="timeLineEndDate"
             prepend-icon="mdi-calendar"
             clearable
             readonly
             dense
             v-bind="attrs"
             v-on="on"
-            @click:clear="resultsFilter.acquired.endDate = null"
           />
         </v-col>
       </template>
       <div class="d-flex justify-space-between blue-grey darken-4">
         <v-date-picker
-          v-model="endDate"
+          v-model="timeLineEndDate"
           scrollable
-        />
-        <v-time-picker
-          v-model="endTime"
         />
       </div>
       <div class="d-flex justify-space-between blue-grey darken-4">
         <v-btn
           text
           color="primary"
-          @click="resultsFilter.acquired.endDateModal = false"
+          @click="timeLineEndDateModal = false"
         >
           Cancel
         </v-btn>
         <v-btn
           text
           color="primary"
-          @click="resultsFilter.acquired.endDateModal = false, updateInput()"
+          @click="timeLineEndDateModal = false"
         >
           OK
         </v-btn>

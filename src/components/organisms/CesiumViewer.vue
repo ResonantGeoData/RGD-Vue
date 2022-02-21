@@ -3,11 +3,14 @@ import {
   defineComponent,
   onMounted,
   ref,
+  watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
-import { useMap, startDate, endDate } from '@/store/cesium/search';
+import {
+  useMap, startDate, endDate, timeLineStartDate, timeLineEndDate,
+} from '@/store/cesium/search';
 import { Clock, JulianDate } from 'cesium';
 import { resultsFilter } from '@/store/search';
 
@@ -203,13 +206,40 @@ export default defineComponent({
       });
       // Viewer.clock is read-only, but we can set its values and zoom to them
       cesiumViewer.value.clock.startTime = Cesium.JulianDate.fromIso8601('2012-12-25');
-      cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601('2015-12-25');
+      // cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601(midDate);
       cesiumViewer.value.clock.stopTime = Cesium.JulianDate.now();
       cesiumViewer.value.timeline.updateFromClock();
       cesiumViewer.value.timeline.zoomTo(
         cesiumViewer.value.clock.startTime,
         cesiumViewer.value.clock.stopTime,
       );
+      watch(timeLineStartDate, () => {
+        cesiumViewer.value.clock.startTime = timeLineStartDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineStartDate.value)
+          : Cesium.JulianDate.fromIso8601('2012-12-25');
+        cesiumViewer.value.clock.stopTime = timeLineEndDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineEndDate.value)
+          : Cesium.JulianDate.now();
+        cesiumViewer.value.timeline.updateFromClock();
+        cesiumViewer.value.timeline.zoomTo(
+          cesiumViewer.value.clock.startTime,
+          cesiumViewer.value.clock.stopTime,
+        );
+      });
+
+      watch(timeLineEndDate, () => {
+        cesiumViewer.value.clock.startTime = timeLineStartDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineStartDate.value)
+          : Cesium.JulianDate.fromIso8601('2012-12-25');
+        cesiumViewer.value.clock.stopTime = timeLineEndDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineEndDate.value)
+          : Cesium.JulianDate.now();
+        cesiumViewer.value.timeline.updateFromClock();
+        cesiumViewer.value.timeline.zoomTo(
+          cesiumViewer.value.clock.startTime,
+          cesiumViewer.value.clock.stopTime,
+        );
+      });
 
       const SELECTED_DATE_MARGIN_DAYS = 10;
 
