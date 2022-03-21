@@ -3,13 +3,16 @@ import {
   defineComponent,
   onMounted,
   ref,
+  watch,
 }
   from '@vue/composition-api';
 import Cesium from '@/plugins/cesium';
 import { cesiumViewer, getSelectedEntityFromPoint } from '@/store/cesium/index';
-import { useMap } from '@/store/cesium/search';
+import {
+  useMap, cesiumStartDate, cesiumEndDate, timeLineStartDate, timeLineEndDate,
+} from '@/store/cesium/search';
 import { Clock, JulianDate } from 'cesium';
-import { searchParameters } from '@/store/search';
+import { resultsFilter } from '@/store/search';
 
 export default defineComponent({
   name: 'CesiumViewer',
@@ -203,46 +206,58 @@ export default defineComponent({
       });
       // Viewer.clock is read-only, but we can set its values and zoom to them
       cesiumViewer.value.clock.startTime = Cesium.JulianDate.fromIso8601('2012-12-25');
-      cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601('2015-12-25');
+      // cesiumViewer.value.clock.currentTime = Cesium.JulianDate.fromIso8601(midDate);
       cesiumViewer.value.clock.stopTime = Cesium.JulianDate.now();
       cesiumViewer.value.timeline.updateFromClock();
       cesiumViewer.value.timeline.zoomTo(
         cesiumViewer.value.clock.startTime,
         cesiumViewer.value.clock.stopTime,
       );
+      watch(timeLineStartDate, () => {
+        cesiumViewer.value.clock.startTime = timeLineStartDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineStartDate.value)
+          : Cesium.JulianDate.fromIso8601('2012-12-25');
+        cesiumViewer.value.clock.stopTime = timeLineEndDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineEndDate.value)
+          : Cesium.JulianDate.now();
+        cesiumViewer.value.timeline.updateFromClock();
+        cesiumViewer.value.timeline.zoomTo(
+          cesiumViewer.value.clock.startTime,
+          cesiumViewer.value.clock.stopTime,
+        );
+      });
 
-      const SELECTED_DATE_MARGIN_DAYS = 10;
+      watch(timeLineEndDate, () => {
+        cesiumViewer.value.clock.startTime = timeLineStartDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineStartDate.value)
+          : Cesium.JulianDate.fromIso8601('2012-12-25');
+        cesiumViewer.value.clock.stopTime = timeLineEndDate.value
+          ? Cesium.JulianDate.fromIso8601(timeLineEndDate.value)
+          : Cesium.JulianDate.now();
+        cesiumViewer.value.timeline.updateFromClock();
+        cesiumViewer.value.timeline.zoomTo(
+          cesiumViewer.value.clock.startTime,
+          cesiumViewer.value.clock.stopTime,
+        );
+      });
 
       cesiumViewer.value.timeline.addEventListener(
         'settime',
         ({ clock }: Record<string, Clock>) => {
           const julian: JulianDate = clock.currentTime;
-          // const currentDate: Date = new Date(julian.toString());
-          // const startDate = currentDate;
-          // startDate.setDate(currentDate.getDate() - SELECTED_DATE_MARGIN_DAYS);
-          // const endDate = currentDate;
-          // endDate.setDate(currentDate.getDate() + SELECTED_DATE_MARGIN_DAYS);
-          // const toFormattedDateString = (date: Date) => {
-          //   const YYYY = date.getUTCFullYear();
-          //   const MM = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-          //   const DD = date.getUTCDate().toString().padStart(2, '0');
-          //   return `${YYYY}-${MM}-${DD}`; // Needs to be ISO 8601
-          // };
 
-          // const startDate = Cesium.JulianDate.addDays(julian, SELECTED_DATE_MARGIN_DAYS);
-          // const endDate = Cesium.JulianDate.addDays(julian, -SELECTED_DATE_MARGIN_DAYS);
+          // set selected cesium date to 24 hr period
+          cesiumStartDate.value = { ...julian };
+          cesiumStartDate.value.secondsOfDay = 0.0;
+          cesiumEndDate.value = { ...julian };
+          cesiumEndDate.value.secondsOfDay = 86400;
 
-          const startDate = { ...julian };
-          startDate.dayNumber += SELECTED_DATE_MARGIN_DAYS;
-          const endDate = { ...julian };
-          endDate.dayNumber -= SELECTED_DATE_MARGIN_DAYS;
-
-          searchParameters.value = {
-            ...searchParameters.value,
+          resultsFilter.value = {
+            ...resultsFilter.value,
             acquired: {
-              ...searchParameters.value.acquired,
-              startDate: Cesium.JulianDate.toIso8601(startDate, 0),
-              endDate: Cesium.JulianDate.toIso8601(endDate, 0),
+              ...resultsFilter.value.acquired,
+              startDate: Cesium.JulianDate.toIso8601(cesiumStartDate.value, 0),
+              endDate: Cesium.JulianDate.toIso8601(cesiumEndDate.value, 0),
             },
           };
         },

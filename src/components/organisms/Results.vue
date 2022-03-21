@@ -25,12 +25,14 @@ import { imageryBands, rgdImagery } from '@/api/rest';
 import type { DataOptions } from 'vuetify';
 import FilterMenu from '../molecules/Filters.vue';
 import FocusedData from '../molecules/FocusedData.vue';
+import TimeSliderRange from '../atoms/TimeSliderRange.vue';
 
 export default defineComponent({
   name: 'Results',
   components: {
     FilterMenu,
     FocusedData,
+    TimeSliderRange,
   },
 
   setup(props) {
@@ -176,6 +178,12 @@ export default defineComponent({
 <template>
   <div>
     <FilterMenu />
+    <div
+      class="subtitle-1 ml-5"
+    >
+      Set Time Slider Range
+    </div>
+    <TimeSliderRange />
     <v-data-table
       :headers="headers"
       :items="searchResults"

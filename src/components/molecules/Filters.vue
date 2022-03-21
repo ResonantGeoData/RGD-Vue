@@ -34,6 +34,8 @@ export default defineComponent({
       resultsFilter.value.distance.max = null;
       resultsFilter.value.instrumentation = null;
       resultsFilter.value.collections = [];
+      resultsFilter.value.acquired.startDate = null;
+      resultsFilter.value.acquired.endDate = null;
       resultsFilter.value.time.startTime = null;
       resultsFilter.value.time.endTime = null;
       updateResults();
@@ -80,7 +82,7 @@ export default defineComponent({
         <Instrumentation />
         <Collections />
         <DateRange />
-        <TimeRange />
+        <!-- <TimeRange /> -->
         <v-row>
           <v-col
             cols="6"

@@ -98,6 +98,12 @@ export interface ResultsFilter {
   };
   instrumentation: string | null;
   collections: Collection[];
+  acquired: {
+    startDate: string | null;
+    endDate: string | null;
+    startDateModal?: boolean;
+    endDateModal?: boolean;
+  };
   time: {
     startTime: string | null;
     endTime: string | null;
